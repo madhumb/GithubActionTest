@@ -87,8 +87,14 @@ jobs:
      
       - name: Setup .env file
         run: |
-          echo "SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode)" >> .env
-          echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
+          cat <<EOF > .env
+          SECRET_KEY="$(echo $SECRET_KEY_BASE64 | base64 --decode)"
+          BASE_URL="$(echo $BASE_URL_BASE64 | base64 --decode)"
+          EOF
+          # |
+          # echo "SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode)" >> .env
+          # echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
+          cat .env
  
       - name: Generate env.g.dart with Envied
         run: | 
