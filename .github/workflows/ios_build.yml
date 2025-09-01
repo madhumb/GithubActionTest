@@ -90,7 +90,10 @@ jobs:
           BASE_URL_BASE64: ${{ secrets.BASE_URL_BASE64 }}
  
       - name: Generate env.g.dart with Envied
-        run: dart run build_runner build --delete-conflicting-outputs
+        run: | 
+          dart run build_runner build --delete-conflicting-outputs
+          flutter pub run build_runner build --delete-conflicting-outputs
+
           
 
       - name: create Exportplist file
