@@ -112,8 +112,8 @@ jobs:
           EOF
     
           
-    #   - name: Build Flutter iOS
-    #     run: flutter build ipa --flavor star -t lib/main_star.dart --release --no-codesign --export-options-plist ExportOptions.plist
+      - name: Build Flutter iOS
+        run: flutter build ipa --flavor star -t lib/main_star.dart --release --no-codesign --export-options-plist ExportOptions.plist -v
 
         
       # Archive the app with Xcode
