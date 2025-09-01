@@ -138,7 +138,9 @@ jobs:
 
   
       - name: Install fastlane
-        run: gem install fastlane
+        run: | 
+          gem install fastlane -NV
+          echo "$HOME/.gem/ruby/3.3.0/bin" >> $GITHUB_PATH
     
       - name: Run fastlane
         run: fastlane ios beta flavor:star bundle_id:com.gnkbros.app
