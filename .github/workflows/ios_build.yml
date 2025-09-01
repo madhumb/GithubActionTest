@@ -120,7 +120,7 @@ jobs:
             <true/>
             <key>compileBitcode</key>
             <true/>
-            <key>signingStyle</key><string>automatic</string>
+            <key>signingStyle</key><string>Manual</string>
             <key>teamID</key><string>ZCEY7L7MT7</string>
             <key>provisioningProfiles</key>
             <dict>
@@ -135,8 +135,8 @@ jobs:
         run: |
           flutter build ipa --flavor star -t lib/main_star.dart --release --no-codesign --export-options-plist ExportOptions.plist
           
-      - name: Run fastlane
-        run: fastlane ios beta flavor:star bundle_id:com.gnkbros.app
+      # - name: Run fastlane
+      #   run: fastlane ios beta flavor:star bundle_id:com.gnkbros.app
         env:
          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
          CERT_PASSWORD: ${{ secrets.CERT_PASSWORD }}
@@ -157,17 +157,17 @@ jobs:
       #       CODE_SIGN_STYLE=Automatic \
       #       -destination 'generic/platform=iOS' \
 
-      # - name: Archive app manual
-      #   run: |
-      #     xcodebuild -workspace ios/Runner.xcworkspace \
-      #       -scheme "star" \
-      #       -configuration "star Release" \
-      #       -archivePath build/Runner.xcarchive \
-      #       archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
-      #       CODE_SIGN_STYLE=Manual \
-      #       -destination 'generic/platform=iOS' \
-      #       PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
-      #       PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
+      - name: Archive app manual
+        run: |
+          xcodebuild -workspace ios/Runner.xcworkspace \
+            -scheme "star" \
+            -configuration "star Release" \
+            -archivePath build/Runner.xcarchive \
+            archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
+            CODE_SIGN_STYLE=Manual \
+            -destination 'generic/platform=iOS' \
+            PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
+            PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
 
       # Export IPA
       - name: Export IPA
