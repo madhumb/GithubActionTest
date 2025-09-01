@@ -69,15 +69,12 @@ jobs:
       # Install provisioning profile
       - name: Install provisioning profile
         run: |
-        
-         echo "Secret length: ${#PROV_PRO_APPStore_GNK}"
-
+      
          echo "$PROV_PRO_APPStore_GNK" | base64 --decode > app.mobileprovision
          file app.mobileprovision
-         ls -lh app.mobileprovision
          
          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(security cms -D -i app.mobileprovision)")
-
+         echo $PROFILE_UUID 
          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
          cp app.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
 
@@ -151,6 +148,7 @@ jobs:
 
       - name: Archive app manual
         run: |
+          echo 'PROFILE_UUID $PROFILE_UUID'
           xcodebuild -workspace ios/Runner.xcworkspace \
             -scheme "star" \
             -configuration "star Release" \
