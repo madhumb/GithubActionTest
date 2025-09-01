@@ -36,7 +36,6 @@ jobs:
          flutter clean
          rm -rf ios/Pods ios/Podfile.lock
          flutter pub get
-         flutter pub run build_runner build --delete-conflicting-outputs
 
          cd ios && pod install
          
@@ -95,7 +94,12 @@ jobs:
           # echo "SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode)" >> .env
           # echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
           cat .env
- 
+
+      - name: flutter pub run build_runner build --delete-conflicting-outputs
+        run: |
+          flutter pub run build_runner build --delete-conflicting-outputs
+
+  
       - name: Generate env.g.dart with Envied
         run: | 
           dart run build_runner build --delete-conflicting-outputs
