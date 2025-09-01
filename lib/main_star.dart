@@ -1,6 +1,6 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_github_actions/main.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:sep_roject/main.dart';
 
 void main() async {
   await runMainApp(firebaseOptions: DefaultFirebaseOptions.currentPlatform);

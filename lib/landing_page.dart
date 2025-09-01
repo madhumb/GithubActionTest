@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_github_actions/app_values.dart';
-import 'package:flutter_github_actions/env.dart';
+import 'package:sep_roject/app_values.dart';
+import 'package:sep_roject/env.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
