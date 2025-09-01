@@ -16,8 +16,8 @@ jobs:
         PROV_PRO_APPStore_GNK: ${{ secrets.PROV_PRO_APPStore_GNK }}
         SECRET_KEY_BASE64: ${{ secrets.SECRET_KEY_BASE64 }}
         BASE_URL_BASE64: ${{ secrets.BASE_URL_BASE64 }}
-
-
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
 
     steps:
       - name: Checkout source
@@ -136,15 +136,7 @@ jobs:
           flutter build ipa --flavor star -t lib/main_star.dart --release --no-codesign --export-options-plist ExportOptions.plist
           
       # - name: Run fastlane
-      #   run: fastlane ios beta flavor:star bundle_id:com.gnkbros.app
-        env:
-         KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-         CERT_PASSWORD: ${{ secrets.CERT_PASSWORD }}
-         IOS_CERT_BASE64: ${{ secrets.IOS_CERT_BASE64 }}
-         PROV_PRO_APPStore_GNK: ${{ secrets.PROV_PRO_APPStore_GNK }}
-         APPLE_ID: ${{ secrets.APPLE_ID }}
-         FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
-     
+      #   run: fastlane ios beta flavor:star bundle_id:com.gnkbros.app     
         
       # Archive the app with Xcode
       # - name: Archive app Automatic
