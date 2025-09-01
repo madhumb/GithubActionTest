@@ -126,8 +126,10 @@ jobs:
           EOF
     
           
-      # - name: Build Flutter iOS
-      #   run: flutter build ipa --flavor star -t lib/main_star.dart --release --codesign --export-options-plist ExportOptions.plist
+      - name: Build Flutter iOS
+        run: |
+          flutter build ipa --flavor star -t lib/main_star.dart --release --codesign --export-options-plist ExportOptions.plist
+          fastlane ios beta
 
         
       # Archive the app with Xcode
@@ -141,17 +143,17 @@ jobs:
       #       CODE_SIGN_STYLE=Automatic \
       #       -destination 'generic/platform=iOS' \
 
-      - name: Archive app manual
-        run: |
-          xcodebuild -workspace ios/Runner.xcworkspace \
-            -scheme "star" \
-            -configuration "star Release" \
-            -archivePath build/Runner.xcarchive \
-            archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
-            CODE_SIGN_STYLE=Manual \
-            -destination 'generic/platform=iOS' \
-            PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
-            PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
+      # - name: Archive app manual
+      #   run: |
+      #     xcodebuild -workspace ios/Runner.xcworkspace \
+      #       -scheme "star" \
+      #       -configuration "star Release" \
+      #       -archivePath build/Runner.xcarchive \
+      #       archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
+      #       CODE_SIGN_STYLE=Manual \
+      #       -destination 'generic/platform=iOS' \
+      #       PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
+      #       PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
 
       # Export IPA
       - name: Export IPA
