@@ -135,10 +135,13 @@ jobs:
           flutter build ipa --flavor star -t lib/main_star.dart --release --codesign --export-options-plist ExportOptions.plist
           
       - name: Deploy to TestFlight
-        uses: maierj/fastlane-action@v2
+        uses: maierj/fastlane-action@v3.1.0
         with:
             lane: ios beta
-            options: "--flavor star --bundle_id com.gnkbros.app"      
+            options: '{"flavor": "star", "bundle_id": "com.gnkbros.app"}'   
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}   
 
         
       # Archive the app with Xcode
