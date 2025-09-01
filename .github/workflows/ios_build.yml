@@ -127,7 +127,7 @@ jobs:
     
           
       - name: Build Flutter iOS
-        run: flutter build ipa --flavor star -t lib/main_star.dart --release --codesign --export-options-plist ExportOptions.plist
+        run: flutter build ipa --flavor star -t lib/main_star.dart --release --codesign --export-options-plist ExportOptions.plist --allow-provisioning-updates
 
         
       # Archive the app with Xcode
