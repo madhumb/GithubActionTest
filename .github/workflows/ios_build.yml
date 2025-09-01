@@ -95,9 +95,9 @@ jobs:
           # echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
           cat .env
 
-      - name: flutter pub run build_runner build --delete-conflicting-outputs
-        run: |
-          flutter pub run build_runner build --delete-conflicting-outputs
+      # - name: flutter pub run build_runner build --delete-conflicting-outputs
+      #   run: |
+      #     flutter pub run build_runner build --delete-conflicting-outputs
 
   
       - name: Generate env.g.dart with Envied
