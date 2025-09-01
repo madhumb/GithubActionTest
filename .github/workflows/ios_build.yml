@@ -33,6 +33,7 @@ jobs:
       # Install dependencies
       - name: Flutter pub get
         run: |
+         sudo gem install fastlane -NV
          flutter clean
          rm -rf ios/Pods ios/Podfile.lock
          flutter pub get
