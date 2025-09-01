@@ -134,6 +134,11 @@ jobs:
         run: |
           flutter build ipa --flavor star -t lib/main_star.dart --release --no-codesign --export-options-plist ExportOptions.plist
           
+    
+      - name: Install Fastlane
+        run: sudo gem install fastlane -NV   
+
+      
       - name: Deploy to TestFlight
         uses: maierj/fastlane-action@v3.1.0
         with:
@@ -168,13 +173,13 @@ jobs:
       #       PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
 
       # Export IPA
-      # - name: Export IPA
-      #   run: |
+      - name: Export IPA
+        run: |
           
-      #     xcodebuild -exportArchive \
-      #       -archivePath build/Runner.xcarchive \
-      #       -exportOptionsPlist ExportOptions.plist \
-      #       -exportPath build/
+          xcodebuild -exportArchive \
+            -archivePath build/ios/archive/Runner.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath build/
 
       # # Upload artifact (IPA)
       # - name: Upload IPA
