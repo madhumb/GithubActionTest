@@ -87,13 +87,16 @@ jobs:
       - name: Setup .env file
         run: |
           cat <<EOF > .env
-          SECRET_KEY="$(echo $SECRET_KEY_BASE64 | base64 --decode)"
-          BASE_URL="$(echo $BASE_URL_BASE64 | base64 --decode)"
+          SECRET_KEY="$(echo $SECRET_KEY_BASE64 | base64 --decode | tr -d '\r')"
+          BASE_URL="$(echo $BASE_URL_BASE64 | base64 --decode | tr -d '\r')"
           EOF
           # |
           # echo "SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode)" >> .env
           # echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
-          cat .env
+          echo "" >> .env
+          file .env
+          flutter pub run build_runner build --delete-conflicting-outputs
+
 
       # - name: flutter pub run build_runner build --delete-conflicting-outputs
       #   run: |
