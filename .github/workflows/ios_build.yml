@@ -131,17 +131,27 @@ jobs:
 
         
       # Archive the app with Xcode
-      - name: Archive app
+      - name: Archive app Automatic
         run: |
           xcodebuild -workspace ios/Runner.xcworkspace \
             -scheme "star" \
             -configuration "star Release" \
             -archivePath build/Runner.xcarchive \
             archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
-            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_STYLE=Automatic \
             -destination 'generic/platform=iOS' \
-            PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
-            PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
+
+      # - name: Archive app
+      #   run: |
+      #     xcodebuild -workspace ios/Runner.xcworkspace \
+      #       -scheme "star" \
+      #       -configuration "star Release" \
+      #       -archivePath build/Runner.xcarchive \
+      #       archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
+      #       CODE_SIGN_STYLE=Manual \
+      #       -destination 'generic/platform=iOS' \
+      #       PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
+      #       PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
 
       # Export IPA
       - name: Export IPA
