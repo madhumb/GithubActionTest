@@ -135,13 +135,6 @@ jobs:
         run: |
           flutter build ipa --flavor star -t lib/main_star.dart --release --no-codesign --export-options-plist ExportOptions.plist
           
-
-  
-      - name: Install fastlane
-        run: | 
-          gem install fastlane -NV
-          echo "$HOME/.gem/ruby/3.3.0/bin" >> $GITHUB_PATH
-    
       - name: Run fastlane
         run: fastlane ios beta flavor:star bundle_id:com.gnkbros.app
         env:
