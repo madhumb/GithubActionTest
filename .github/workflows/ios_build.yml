@@ -69,12 +69,12 @@ jobs:
       # Install provisioning profile
       - name: Install provisioning profile
         run: |
-      
+        
          echo "$PROV_PRO_APPStore_GNK" | base64 --decode > app.mobileprovision
          file app.mobileprovision
          
          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(security cms -D -i app.mobileprovision)")
-         echo $PROFILE_UUID 
+
          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
          cp app.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
 
@@ -146,18 +146,18 @@ jobs:
       #       CODE_SIGN_STYLE=Automatic \
       #       -destination 'generic/platform=iOS' \
 
-      - name: Archive app manual
-        run: |
-          echo 'PROFILE_UUID $PROFILE_UUID'
-          xcodebuild -workspace ios/Runner.xcworkspace \
-            -scheme "star" \
-            -configuration "star Release" \
-            -archivePath build/Runner.xcarchive \
-            archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
-            CODE_SIGN_STYLE=Manual \
-            -destination 'generic/platform=iOS' \
-            PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
-            PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
+      # - name: Archive app manual
+      #   run: |
+      #     echo 'PROFILE_UUID $PROFILE_UUID'
+      #     xcodebuild -workspace ios/Runner.xcworkspace \
+      #       -scheme "star" \
+      #       -configuration "star Release" \
+      #       -archivePath build/Runner.xcarchive \
+      #       archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
+      #       CODE_SIGN_STYLE=Manual \
+      #       -destination 'generic/platform=iOS' \
+      #       PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
+      #       PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
 
       # Export IPA
       - name: Export IPA
