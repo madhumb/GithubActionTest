@@ -1,0 +1,112 @@
+name: Generating AAB and APK with respect to flavor
+
+on:
+  workflow_dispatch:   # this enables manual trigger
+#  push:
+#    branches:
+#      - main   # runs on push to main branch
+#  pull_request:
+#    branches:
+#      - main  # PR must target main
+
+jobs:
+  build-generation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.24.5'
+          cache: true
+
+      - run: flutter pub get
+
+      # Setup .env file from base64 secrets
+      - name: Setup .env file
+        run: |
+          echo "SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode)" >> .env
+          echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
+        env:
+          SECRET_KEY_BASE64: ${{ secrets.SECRET_KEY_BASE64 }}
+          BASE_URL: ${{ secrets.BASE_URL_BASE64 }}
+
+      # Generate env.g.dart using Envied
+      - name: Generate env.g.dart with Envied
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      # Setup all keystores
+      - name: Setup Keystores
+        run: |
+          mkdir -p android/keystore
+          echo "$MAIN_KEYSTORE_BASE64" | base64 --decode > android/keystore/main.jks
+          echo "$CHECKCIRCLE_KEYSTORE_BASE64" | base64 --decode > android/keystore/check-circle.jks
+          echo "$FAVORITE_KEYSTORE_BASE64" | base64 --decode > android/keystore/favorite.jks
+          echo "$STAR_KEYSTORE_BASE64" | base64 --decode > android/keystore/star.jks
+        env:
+          MAIN_KEYSTORE_BASE64: ${{ secrets.MAIN_KEYSTORE_BASE64 }}
+          CHECKCIRCLE_KEYSTORE_BASE64: ${{ secrets.CHECKCIRCLE_KEYSTORE_BASE64 }}
+          FAVORITE_KEYSTORE_BASE64: ${{ secrets.FAVORITE_KEYSTORE_BASE64 }}
+          STAR_KEYSTORE_BASE64: ${{ secrets.STAR_KEYSTORE_BASE64 }}
+
+      # Generate signing.properties dynamically
+      - name: Setup signing.properties
+        run: |
+          cat > android/signing.properties <<EOF
+          # ---------------- release ----------------
+          release.storeFile=../keystore/main.jks
+          release.storePassword=${{ secrets.MAIN_KEYSTORE_PASSWORD }}
+          release.keyAlias=${{ secrets.MAIN_KEY_ALIAS }}
+          release.keyPassword=${{ secrets.MAIN_KEY_PASSWORD }}
+
+          # ---------------- checkcircle ----------------
+          checkcircle.storeFile=../keystore/check-circle.jks
+          checkcircle.storePassword=${{ secrets.CHECKCIRCLE_KEYSTORE_PASSWORD }}
+          checkcircle.keyAlias=${{ secrets.CHECKCIRCLE_KEY_ALIAS }}
+          checkcircle.keyPassword=${{ secrets.CHECKCIRCLE_KEY_PASSWORD }}
+
+          # ---------------- star ----------------
+          star.storeFile=../keystore/star.jks
+          star.storePassword=${{ secrets.STAR_KEYSTORE_PASSWORD }}
+          star.keyAlias=${{ secrets.STAR_KEY_ALIAS }}
+          star.keyPassword=${{ secrets.STAR_KEY_PASSWORD }}
+
+          # ---------------- favorite ----------------
+          favorite.storeFile=../keystore/favorite.jks
+          favorite.storePassword=${{ secrets.FAVORITE_KEYSTORE_PASSWORD }}
+          favorite.keyAlias=${{ secrets.FAVORITE_KEY_ALIAS }}
+          favorite.keyPassword=${{ secrets.FAVORITE_KEY_PASSWORD }}
+          EOF
+
+      # Build per flavor
+#      - name: Build Main APK & AAB
+#        run: |
+#          flutter build apk --release -t lib/main.dart
+#          flutter build appbundle --release -t lib/main.dart
+
+      - name: Build Checkcircle APK & AAB
+        run: |
+          flutter build apk --flavor checkcircle --release -t lib/main_checkcircle.dart
+          flutter build appbundle --flavor checkcircle --release -t lib/main_checkcircle.dart
+
+      - name: Build Favorite APK & AAB
+        run: |
+          flutter build apk --flavor favorite --release -t lib/main_favorite.dart
+          flutter build appbundle --flavor favorite --release -t lib/main_favorite.dart
+
+      - name: Build Star APK & AAB
+        run: |
+          flutter build apk --flavor star --release -t lib/main_star.dart
+          flutter build appbundle --flavor star --release -t lib/main_star.dart
+
+      # Upload artifacts
+      - name: Upload All APKs and AABs
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-builds
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            build/app/outputs/bundle/*/*.aab

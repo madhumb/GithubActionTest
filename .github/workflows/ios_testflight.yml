@@ -1,0 +1,55 @@
+name: iOS TestFlight Release
+
+on:
+  # push:
+  #   branches:
+  #     - main  # Trigger on main branch push
+  workflow_dispatch:  # Or manually trigger
+
+jobs:
+  build-and-deploy:
+    runs-on: macos-latest
+    env:
+      FLUTTER_VERSION: 'stable'
+      GITHUB_RUN_NUMBER: ${{ github.run_number }}
+      BUNDLE_ID: ${{ secrets.BUNDLE_ID }}
+      API_KEY_BASE64: ${{ secrets.APPSTORE_CONNECT_KEY_BASE64 }}
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2️⃣ Set up Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      # 3️⃣ Install dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4️⃣ Decode App Store Connect API Key
+      - name: Decode App Store Connect API Key
+        run: echo "$API_KEY_BASE64" | base64 --decode > AuthKey.p8
+
+      # 5️⃣ Build iOS IPA
+      - name: Build iOS IPA
+        run: flutter build ios --release --build-number $GITHUB_RUN_NUMBER --no-codesign
+
+      # 6️⃣ Install Fastlane
+      - name: Install Fastlane
+        run: sudo gem install fastlane
+
+      # 7️⃣ Upload IPA to TestFlight
+      - name: Upload to TestFlight
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
+          FASTLANE_APPLE_APPLICATION_IDENTIFIER: ${{ env.BUNDLE_ID }}
+          FASTLANE_USER: your_apple_id@example.com
+        run: |
+          fastlane pilot upload \
+            --api_key_path AuthKey.p8 \
+            --skip_submission true \
+            --skip_waiting_for_build_processing true

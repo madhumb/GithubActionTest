@@ -1,0 +1,198 @@
+name: Generating Parallel AAB and APK with respect to flavor
+
+on:
+  workflow_dispatch:   # this enables manual trigger
+    inputs:
+      flavor:
+        description: 'Choose which flavor to build'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - checkcircle
+          - favorite
+          - star
+#  push:
+#    branches:
+#      - main   # runs on push to main branch
+#  pull_request:
+#    branches:
+#      - main  # PR must target main
+
+jobs:
+  # Common setup step (matrix not needed since signing differs per flavor)
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      flutter-version: 3.24.5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.24.5'
+          cache: true
+
+
+  # ---------------- Checkcircle ----------------
+  build-checkcircle:
+    needs: setup
+    if: ${{ github.event.inputs.flavor == 'checkcircle' || github.event.inputs.flavor == 'all' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: ${{ needs.setup.outputs.flutter-version }}
+      - run: flutter pub get
+
+      # Setup .env file from base64 secrets
+      - name: Setup .env file
+        run: |
+          echo "SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode)" >> .env
+          echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
+        env:
+          SECRET_KEY_BASE64: ${{ secrets.SECRET_KEY_BASE64 }}
+          BASE_URL_BASE64: ${{ secrets.BASE_URL_BASE64 }}
+
+      # Generate env.g.dart using Envied
+      - name: Generate env.g.dart with Envied
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Setup Keystore
+        run: |
+          mkdir -p android/keystore
+          echo "$CHECKCIRCLE_KEYSTORE_BASE64" | base64 --decode > android/keystore/check-circle.jks
+          cat > android/signing.properties <<EOF
+          checkcircle.storeFile=../keystore/check-circle.jks
+          checkcircle.storePassword=${{ secrets.CHECKCIRCLE_KEYSTORE_PASSWORD }}
+          checkcircle.keyAlias=${{ secrets.CHECKCIRCLE_KEY_ALIAS }}
+          checkcircle.keyPassword=${{ secrets.CHECKCIRCLE_KEY_PASSWORD }}
+          EOF
+        env:
+          CHECKCIRCLE_KEYSTORE_BASE64: ${{ secrets.CHECKCIRCLE_KEYSTORE_BASE64 }}
+
+      - name: Build Checkcircle APK & AAB
+        run: |
+          flutter build apk --flavor checkcircle --release -t lib/main_checkcircle.dart
+          flutter build appbundle --flavor checkcircle --release -t lib/main_checkcircle.dart
+
+      - name: Upload Checkcircle Builds
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkcircle-builds
+          path: |
+            build/app/outputs/flutter-apk/*checkcircle*.apk
+            build/app/outputs/bundle/checkcircleRelease/*.aab
+
+  # ---------------- Favorite ----------------
+  build-favorite:
+    needs: setup
+    if: ${{ github.event.inputs.flavor == 'favorite' || github.event.inputs.flavor == 'all' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: ${{ needs.setup.outputs.flutter-version }}
+      - run: flutter pub get
+
+      # Setup .env file from base64 secrets
+      - name: Setup .env file
+        run: |
+          echo "SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode)" >> .env
+          echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
+        env:
+          SECRET_KEY_BASE64: ${{ secrets.SECRET_KEY_BASE64 }}
+          BASE_URL_BASE64: ${{ secrets.BASE_URL_BASE64 }}
+
+      # Generate env.g.dart using Envied
+      - name: Generate env.g.dart with Envied
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Setup Keystore
+        run: |
+          mkdir -p android/keystore
+          echo "$FAVORITE_KEYSTORE_BASE64" | base64 --decode > android/keystore/favorite.jks
+          cat > android/signing.properties <<EOF
+          favorite.storeFile=../keystore/favorite.jks
+          favorite.storePassword=${{ secrets.FAVORITE_KEYSTORE_PASSWORD }}
+          favorite.keyAlias=${{ secrets.FAVORITE_KEY_ALIAS }}
+          favorite.keyPassword=${{ secrets.FAVORITE_KEY_PASSWORD }}
+          EOF
+        env:
+          FAVORITE_KEYSTORE_BASE64: ${{ secrets.FAVORITE_KEYSTORE_BASE64 }}
+
+      - name: Build Favorite APK & AAB
+        run: |
+          flutter build apk --flavor favorite --release -t lib/main_favorite.dart
+          flutter build appbundle --flavor favorite --release -t lib/main_favorite.dart
+
+      - name: Upload Favorite Builds
+        uses: actions/upload-artifact@v4
+        with:
+          name: favorite-builds
+          path: |
+            build/app/outputs/flutter-apk/*favorite*.apk
+            build/app/outputs/bundle/favoriteRelease/*.aab
+
+  # ---------------- Star ----------------
+  build-star:
+    needs: setup
+    if: ${{ github.event.inputs.flavor == 'star' || github.event.inputs.flavor == 'all' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: ${{ needs.setup.outputs.flutter-version }}
+      - run: flutter pub get
+
+      # Setup .env file from base64 secrets
+      - name: Setup .env file
+        run: |
+          echo "SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode)" >> .env
+          echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
+        env:
+          SECRET_KEY_BASE64: ${{ secrets.SECRET_KEY_BASE64 }}
+          BASE_URL_BASE64: ${{ secrets.BASE_URL_BASE64 }}
+
+      # Generate env.g.dart using Envied
+      - name: Generate env.g.dart with Envied
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Setup Keystore
+        run: |
+          mkdir -p android/keystore
+          echo "$STAR_KEYSTORE_BASE64" | base64 --decode > android/keystore/star.jks
+          cat > android/signing.properties <<EOF
+          star.storeFile=../keystore/star.jks
+          star.storePassword=${{ secrets.STAR_KEYSTORE_PASSWORD }}
+          star.keyAlias=${{ secrets.STAR_KEY_ALIAS }}
+          star.keyPassword=${{ secrets.STAR_KEY_PASSWORD }}
+          EOF
+        env:
+          STAR_KEYSTORE_BASE64: ${{ secrets.STAR_KEYSTORE_BASE64 }}
+
+      - name: Build Star APK & AAB
+        run: |
+          flutter build apk --flavor star --release -t lib/main_star.dart
+          flutter build appbundle --flavor star --release -t lib/main_star.dart
+
+      - name: Upload Star Builds
+        uses: actions/upload-artifact@v4
+        with:
+          name: star-builds
+          path: |
+            build/app/outputs/flutter-apk/*star*.apk
+            build/app/outputs/bundle/starRelease/*.aab

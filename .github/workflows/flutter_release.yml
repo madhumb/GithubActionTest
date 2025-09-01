@@ -1,0 +1,69 @@
+name: Flutter CI/CD Release
+
+on:
+  workflow_dispatch: # manual trigger
+#   push:
+#     branches:
+#       - main
+
+jobs:
+#   android:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         flavour: [star]
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Setup Flutter
+#         uses: subosito/flutter-action@v2
+#         with:
+#           flutter-version: "3.24.0"
+
+#       - name: Install dependencies
+#         run: flutter pub get
+
+    #   - name: Build Android AppBundle
+    #     run: flutter build appbundle --flavor ${{ matrix.flavour }} -t lib/main_${{ matrix.flavour }}.dart
+
+      # 🔑 Upload to Play Store with Fastlane
+    #   - name: Upload to Play Store
+    #     uses: maierj/fastlane-action@v3.0.0
+    #     with:
+    #       lane: "android deploy_${{ matrix.flavour }}"
+    #     env:
+    #       SUPPLY_JSON_KEY: ${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}
+    #       GOOGLE_PLAY_TRACK: internal # or alpha/beta/production
+
+  ios:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        flavour: [star]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.24.5'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build iOS
+        run: flutter build ipa --flavor ${{ matrix.flavour }} -t lib/main_${{ matrix.flavour }}.dart --release
+
+      # 🔑 Upload to TestFlight / App Store with Fastlane
+      - name: Upload to TestFlight
+        uses: maierj/fastlane-action@v3.0.0
+        with:
+          lane: "ios deploy_${{ matrix.flavour }}"
+        env:
+          APP_STORE_CONNECT_API_KEY_PATH: ${{ secrets.APP_STORE_CONNECT_API_KEY_PATH }}
