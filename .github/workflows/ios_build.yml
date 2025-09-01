@@ -132,7 +132,7 @@ jobs:
           
       - name: Build Flutter iOS
         run: |
-          flutter build ipa --flavor star -t lib/main_star.dart --release --codesign --export-options-plist ExportOptions.plist
+          flutter build ipa --flavor star -t lib/main_star.dart --release --no-codesign --export-options-plist ExportOptions.plist
           
       - name: Deploy to TestFlight
         uses: maierj/fastlane-action@v3.1.0
