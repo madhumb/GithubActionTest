@@ -14,6 +14,8 @@ jobs:
         CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}   # your .p12 export password
         IOS_CERT_BASE64: ${{ secrets.IOS_CERT_BASE64 }}
         PROV_PRO_APPStore_GNK: ${{ secrets.PROV_PRO_APPStore_GNK }}
+        SECRET_KEY_BASE64: ${{ secrets.SECRET_KEY_BASE64 }}
+        BASE_URL_BASE64: ${{ secrets.BASE_URL_BASE64 }}
 
 
 
@@ -53,13 +55,13 @@ jobs:
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" ~/Library/Keychains/build.keychain
           rm certificate.p12
 
-      - name: Debug Secret
-        run: |
-         if [ -z "$PROV_PRO_APPStore_GNK" ]; then
-           echo "❌ Secret is empty or not passed to env."
-          else
-           echo "✅ Secret length: ${#PROV_PRO_APPStore_GNK}"
-          fi
+      # - name: Debug Secret
+      #   run: |
+      #    if [ -z "$PROV_PRO_APPStore_GNK" ]; then
+      #      echo "❌ Secret is empty or not passed to env."
+      #     else
+      #      echo "✅ Secret length: ${#PROV_PRO_APPStore_GNK}"
+      #     fi
        
 
       # Install provisioning profile
@@ -85,16 +87,11 @@ jobs:
         run: |
           echo "SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode)" >> .env
           echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
-        env:
-          SECRET_KEY_BASE64: ${{ secrets.SECRET_KEY_BASE64 }}
-          BASE_URL_BASE64: ${{ secrets.BASE_URL_BASE64 }}
  
       - name: Generate env.g.dart with Envied
         run: | 
           dart run build_runner build --delete-conflicting-outputs
           flutter pub run build_runner build --delete-conflicting-outputs
-
-          
 
       - name: create Exportplist file
         run: |
@@ -116,21 +113,21 @@ jobs:
     
           
       - name: Build Flutter iOS
-        run: flutter build ipa --flavor star -t lib/main_star.dart --release --no-codesign --export-options-plist ExportOptions.plist -v
+        run: flutter build ipa --flavor star -t lib/main_star.dart --release --no-codesign --export-options-plist ExportOptions.plist
 
         
       # Archive the app with Xcode
-      - name: Archive app
-        run: |
-          xcodebuild -workspace ios/Runner.xcworkspace \
-            -scheme "star" \
-            -configuration "star Release"
-            -archivePath build/Runner.xcarchive \
-            archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
-            CODE_SIGN_STYLE=Manual \
-            -destination 'generic/platform=iOS' \
-            PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
-            PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
+      # - name: Archive app
+      #   run: |
+      #     xcodebuild -workspace ios/Runner.xcworkspace \
+      #       -scheme "star" \
+      #       -configuration "star Release" \
+      #       -archivePath build/Runner.xcarchive \
+      #       archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
+      #       CODE_SIGN_STYLE=Manual \
+      #       -destination 'generic/platform=iOS' \
+      #       PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
+      #       PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
 
       # Export IPA
       - name: Export IPA
