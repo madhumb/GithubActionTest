@@ -112,12 +112,12 @@ jobs:
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
           <dict>
-            <key>method</key><string>app-store</string>
+            <key>method</key><string>app-store-connect</string>
             <key>uploadBitcode</key>
             <true/>
             <key>compileBitcode</key>
             <true/>
-            <key>signingStyle</key><string>Manual</string>
+            <key>signingStyle</key><string>manual</string>
             <key>teamID</key><string>ZCEY7L7MT7</string>
             <key>provisioningProfiles</key>
             <dict>
