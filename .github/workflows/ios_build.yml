@@ -31,18 +31,47 @@ jobs:
           cache: true # set your Flutter version
 
       # Install dependencies
-      - name: Flutter pub get
-        run: |
-         sudo gem install fastlane -NV
-         flutter clean
-         rm -rf ios/Pods ios/Podfile.lock
-         flutter pub get
+      # - name: Flutter pub get
+      #   run: |
+      #    sudo gem install fastlane -NV
+      #    flutter clean
+      #    rm -rf ios/Pods ios/Podfile.lock
+      #    flutter pub get
 
-         sudo gem install cocoapods
-         pod repo update
-         cd ios
-         pod install --repo-update
+      #    sudo gem install cocoapods
+      #    pod repo update
+      #    cd ios
+      #    pod install --repo-update
          
+      - name: Cache CocoaPods
+        uses: actions/cache@v3
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+    # Cache Xcode DerivedData
+      
+      - name: Cache Xcode DerivedData
+        uses: actions/cache@v3
+        with:
+        path: ~/Library/Developer/Xcode/DerivedData
+        key: ${{ runner.os }}-deriveddata-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-deriveddata-
+
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install --repo-update
+
+      - name: Flutter clean
+        run: flutter clean
+
+      - name: Get dependencies
+        run: flutter pub get
+
 
       - name: Decode and verify certificate
         run: |
