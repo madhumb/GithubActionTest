@@ -71,8 +71,7 @@ jobs:
         run: |
           cd ios
           pod install --verbose --no-repo-update
-          cd ..
-
+        
 
       - name: Decode and verify certificate
         run: |
