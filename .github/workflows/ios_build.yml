@@ -41,7 +41,7 @@ jobs:
          sudo gem install cocoapods
          pod repo update
          cd ios
-         pod install --verbose
+         pod install --repo-update
          
 
       - name: Decode and verify certificate
