@@ -38,7 +38,10 @@ jobs:
          rm -rf ios/Pods ios/Podfile.lock
          flutter pub get
 
-         cd ios && pod install
+         sudo gem install cocoapods
+         pod repo update
+         cd ios
+         pod install --verbose
          
 
       - name: Decode and verify certificate
