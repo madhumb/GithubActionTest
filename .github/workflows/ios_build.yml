@@ -108,27 +108,27 @@ jobs:
         run: | 
           dart run build_runner build --delete-conflicting-outputs
 
-      - name: create Exportplist file
-        run: |
-          cat > ExportOptions.plist <<EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-            <key>method</key><string>app-store-connect</string>
-            <key>uploadBitcode</key>
-            <true/>
-            <key>compileBitcode</key>
-            <true/>
-            <key>signingStyle</key><string>manual</string>
-            <key>teamID</key><string>ZCEY7L7MT7</string>
-            <key>provisioningProfiles</key>
-            <dict>
-              <key>com.gnkbros.app</key><string>com.gnkbros.app appstore</string>
-            </dict>
-          </dict>
-          </plist>
-          EOF
+      # - name: create Exportplist file
+      #   run: |
+      #     cat > ExportOptions.plist <<EOF
+      #     <?xml version="1.0" encoding="UTF-8"?>
+      #     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+      #     <plist version="1.0">
+      #     <dict>
+      #       <key>method</key><string>app-store-connect</string>
+      #       <key>uploadBitcode</key>
+      #       <true/>
+      #       <key>compileBitcode</key>
+      #       <true/>
+      #       <key>signingStyle</key><string>manual</string>
+      #       <key>teamID</key><string>ZCEY7L7MT7</string>
+      #       <key>provisioningProfiles</key>
+      #       <dict>
+      #         <key>com.gnkbros.app</key><string>com.gnkbros.app appstore</string>
+      #       </dict>
+      #     </dict>
+      #     </plist>
+      #     EOF
     
           
       - name: Build Flutter iOS
