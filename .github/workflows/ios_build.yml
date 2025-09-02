@@ -174,8 +174,9 @@ jobs:
             
       - name: upload from fastlane
         run: |
+            IPA_PATH=$(ls build/ios/ipa/*.ipa)
             fastlane pilot upload \
-                --ipa build/ios/ipa/Runner.ipa \
+                --ipa "$IPA_PATH" \
                 --apple_id "$APPLE_ID" \
                 --skip_waiting_for_build_processing true        
       
