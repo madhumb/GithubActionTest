@@ -131,7 +131,7 @@ jobs:
           
       - name: Build Flutter iOS
         run: |
-          flutter build ipa --flavor star -t lib/main_star.dart --release -v --export-options-plist ExportOptions.plist
+          flutter build ipa --flavor star -t lib/main_star.dart 
 
       # - name: Export IPA
       #   run: |
