@@ -135,7 +135,21 @@ jobs:
             --ipa sep-roject/build/ios/ipa/Runner.ipa \
             --apple_id "$APPLE_ID" \
             --skip_waiting_for_build_processing true
-          
+
+      - name: Export IPA
+        run: |
+            xcodebuild -exportArchive \
+            -archivePath build/ios/archive/Runner.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath build/
+            
+      - name: upload from fastlane
+        run: |
+            fastlane pilot upload \
+                --ipa sep-roject/build/ios/ipa/Runner.ipa \
+                --apple_id "$APPLE_ID" \
+                --skip_waiting_for_build_processing true        
+      
       # - name: Run fastlane
       #   run: fastlane ios beta flavor:star bundle_id:com.gnkbros.app     
         
@@ -164,13 +178,7 @@ jobs:
       #       PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
 
       # Export IPA
-      - name: Export IPA
-        run: |
-          
-          xcodebuild -exportArchive \
-            -archivePath build/ios/archive/Runner.xcarchive \
-            -exportOptionsPlist ExportOptions.plist \
-            -exportPath build/
+     
 
       # # Upload artifact (IPA)
       # - name: Upload IPA
