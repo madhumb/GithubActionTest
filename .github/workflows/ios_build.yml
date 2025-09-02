@@ -70,7 +70,8 @@ jobs:
       - name: Install CocoaPods
         run: |
           cd ios
-          pod install --repo-update
+          timeout 600 pod install --verbose
+          cd ..
 
 
       - name: Decode and verify certificate
