@@ -133,14 +133,14 @@ jobs:
           
       - name: Build Flutter iOS
         run: |
-          flutter build ipa --flavor star -t lib/main_star.dart --release -v
+          flutter build ipa --flavor star -t lib/main_star.dart --release -v --export-options-plist ExportOptions.plist -v
 
-      - name: Export IPA
-        run: |
-            xcodebuild -exportArchive \
-            -archivePath build/ios/archive/Runner.xcarchive \
-            -exportOptionsPlist ExportOptions.plist \
-            -exportPath build/
+      # - name: Export IPA
+      #   run: |
+      #       xcodebuild -exportArchive \
+      #       -archivePath build/ios/archive/Runner.xcarchive \
+      #       -exportOptionsPlist ExportOptions.plist \
+      #       -exportPath build/
             
       - name: upload from fastlane
         run: |
