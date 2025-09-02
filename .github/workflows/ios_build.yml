@@ -73,15 +73,13 @@ jobs:
       - name: Install provisioning profile
         run: |
         
-         echo "$PROV_PRO_APPStore_GNK" | base64 --decode > app.mobileprovision
-         file app.mobileprovision
-         
-         PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(security cms -D -i app.mobileprovision)")
+         echo "$PROV_PRO_APPStore_GNK" | base64 --decode > com.gnkbros.app.mobileprovision         
+         PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(security cms -D -i com.gnkbros.app.mobileprovision)")
 
          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-         cp app.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+         cp com.gnkbros.app.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
 
-         security cms -D -i app.mobileprovision > profile.plist
+         security cms -D -i com.gnkbros.app.mobileprovision > profile.plist
          /usr/libexec/PlistBuddy -c "Print :UUID" profile.plist
       
      
@@ -133,7 +131,7 @@ jobs:
           
       - name: Build Flutter iOS
         run: |
-          flutter build ipa --flavor star -t lib/main_star.dart --release -v --export-options-plist ExportOptions.plist -v
+          flutter build ipa --flavor star -t lib/main_star.dart --release -v --export-options-plist ExportOptions.plist
 
       # - name: Export IPA
       #   run: |
