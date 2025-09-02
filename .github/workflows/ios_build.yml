@@ -63,19 +63,14 @@ jobs:
 
       - name: Flutter clean
         run: flutter clean
-    
 
       - name: Get dependencies
         run: flutter pub get
-
-
 
       - name: Install CocoaPods
         run: |
           cd ios
           pod install --repo-update
-
-      
 
 
       - name: Decode and verify certificate
@@ -165,7 +160,7 @@ jobs:
           
       - name: Build Flutter iOS
         run: |
-          flutter build ipa --flavor star -t lib/main_star.dart 
+          flutter build ipa --flavor star -t lib/main_star.dart --release
 
       # - name: Export IPA
       #   run: |
