@@ -70,10 +70,7 @@ jobs:
       - name: Install CocoaPods
         run: |
           cd ios
-           
-          (pod install --verbose &) ; pid=$!
-          (sleep 600 && kill -9 $pid) &
-          wait $pid
+          pod install --verbose --no-repo-update
           cd ..
 
 
