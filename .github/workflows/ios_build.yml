@@ -61,16 +61,21 @@ jobs:
          restore-keys: |
           ${{ runner.os }}-deriveddata-
 
+      - name: Flutter clean
+        run: flutter clean
+    
+
+      - name: Get dependencies
+        run: flutter pub get
+
+
+
       - name: Install CocoaPods
         run: |
           cd ios
           pod install --repo-update
 
-      - name: Flutter clean
-        run: flutter clean
-
-      - name: Get dependencies
-        run: flutter pub get
+      
 
 
       - name: Decode and verify certificate
