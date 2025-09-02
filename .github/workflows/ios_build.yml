@@ -70,7 +70,10 @@ jobs:
       - name: Install CocoaPods
         run: |
           cd ios
-          gtimeout 600 pod install --verbose
+           
+          (pod install --verbose &) ; pid=$!
+          (sleep 600 && kill -9 $pid) &
+          wait $pid
           cd ..
 
 
