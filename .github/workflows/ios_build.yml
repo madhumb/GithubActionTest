@@ -56,9 +56,9 @@ jobs:
       - name: Cache Xcode DerivedData
         uses: actions/cache@v3
         with:
-        path: ~/Library/Developer/Xcode/DerivedData
-        key: ${{ runner.os }}-deriveddata-${{ github.sha }}
-        restore-keys: |
+         path: ~/Library/Developer/Xcode/DerivedData
+         key: ${{ runner.os }}-deriveddata-${{ github.sha }}
+         restore-keys: |
           ${{ runner.os }}-deriveddata-
 
       - name: Install CocoaPods
