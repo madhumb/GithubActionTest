@@ -172,13 +172,13 @@ jobs:
       #       -exportOptionsPlist ExportOptions.plist \
       #       -exportPath build/
             
-      - name: upload from fastlane
-        run: |
-            IPA_PATH=$(ls build/ios/ipa/*.ipa)
-            fastlane pilot upload \
-                --ipa "$IPA_PATH" \
-                --apple_id "$APPLE_ID" \
-                --skip_waiting_for_build_processing true        
+      # - name: upload from fastlane
+      #   run: |
+      #       IPA_PATH=$(ls build/ios/ipa/*.ipa)
+      #       fastlane pilot upload \
+      #           --ipa "$IPA_PATH" \
+      #           --apple_id "$APPLE_ID" \
+      #           --skip_waiting_for_build_processing true        
       
       # - name: Run fastlane
       #   run: fastlane ios beta flavor:star bundle_id:com.gnkbros.app     
