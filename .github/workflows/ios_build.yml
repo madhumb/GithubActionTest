@@ -158,12 +158,12 @@ jobs:
       #     EOF
     
           
-      - name: Build Flutter iOS
-        run: |
-          flutter build ipa --flavor star -t lib/main_star.dart --release --no-codesign
+      # - name: Build Flutter iOS
+      #   run: |
+      #     flutter build ipa --flavor star -t lib/main_star.dart --release --no-codesign
       
-      - name: List IPA files
-        run: ls -lh build/ios/ipa      
+      # - name: List IPA files
+      #   run: ls -lh build/ios/ipa      
 
       # - name: Export IPA
       #   run: |
@@ -184,15 +184,15 @@ jobs:
       #   run: fastlane ios beta flavor:star bundle_id:com.gnkbros.app     
         
       # Archive the app with Xcode
-      # - name: Archive app Automatic
-      #   run: |
-      #     xcodebuild -workspace ios/Runner.xcworkspace \
-      #       -scheme "star" \
-      #       -configuration "star Release" \
-      #       -archivePath build/Runner.xcarchive \
-      #       archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
-      #       CODE_SIGN_STYLE=Automatic \
-      #       -destination 'generic/platform=iOS' \
+      - name: Archive app Automatic
+        run: |
+          xcodebuild -workspace ios/Runner.xcworkspace \
+            -scheme "star" \
+            -configuration "star Release" \
+            -archivePath build/Runner.xcarchive \
+            archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
+            CODE_SIGN_STYLE=Automatic \
+            -destination 'generic/platform=iOS' \
 
       # - name: Archive app manual
       #   run: |
