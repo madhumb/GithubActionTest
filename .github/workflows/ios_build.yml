@@ -61,16 +61,13 @@ jobs:
          restore-keys: |
           ${{ runner.os }}-deriveddata-
 
-      - name: Flutter clean
-        run: flutter clean
-
-      - name: Get dependencies
-        run: flutter pub get
 
       - name: Install CocoaPods
         run: |
           rm -rf ios/Pods ios/Podfile.lock
-  
+          rm -rf ~/Library/Developer/Xcode/DerivedData/*
+          flutter clean
+          flutter pub get
           cd ios
           pod install --verbose --no-repo-update
         
@@ -198,9 +195,7 @@ jobs:
 
       - name: Archive app manual
         run: |
-          rm -rf ~/Library/Developer/Xcode/DerivedData/*
-          flutter clean
-          flutter pub get
+          
           echo $PROFILE_UUID
           xcodebuild -workspace ios/Runner.xcworkspace \
             -scheme "star" \
