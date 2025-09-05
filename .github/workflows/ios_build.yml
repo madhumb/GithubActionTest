@@ -207,7 +207,11 @@ jobs:
       #       archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
       #       CODE_SIGN_STYLE=Automatic \
       #       -destination 'generic/platform=iOS' \
-
+     
+     
+      # 6️⃣ Clean DerivedData (optional, prevents hangs)
+      - name: Clean Xcode DerivedData
+        run: rm -rf ~/Library/Developer/Xcode/DerivedData
 
       - name: Build IPA (raw log) manual
         run: |
@@ -220,7 +224,8 @@ jobs:
          -configuration "star Release" \
          PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
             PRODUCT_BUNDLE_IDENTIFIER="com.gnkbros.app" \
-          -archivePath build/Runner.xcarchive 
+          -archivePath build/Runner.xcarchive \
+          archive -verbose | tee xcodebuild.log
 
       # - name: Archive app manual
       #   run: |
