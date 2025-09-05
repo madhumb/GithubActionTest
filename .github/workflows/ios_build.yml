@@ -183,29 +183,29 @@ jobs:
       # - name: Run fastlane
       #   run: fastlane ios beta flavor:star bundle_id:com.gnkbros.app     
         
-      # Archive the app with Xcode
-      - name: Archive app Automatic
+      # # Archive the app with Xcode
+      # - name: Archive app Automatic
+      #   run: |
+      #     xcodebuild -workspace ios/Runner.xcworkspace \
+      #       -scheme "star" \
+      #       -configuration "star Release" \
+      #       -archivePath build/ios/archive/Runner.xcarchive \
+      #       archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
+      #       CODE_SIGN_STYLE=Automatic \
+      #       -destination 'generic/platform=iOS' \
+
+      - name: Archive app manual
         run: |
+          echo 'PROFILE_UUID $PROFILE_UUID'
           xcodebuild -workspace ios/Runner.xcworkspace \
             -scheme "star" \
             -configuration "star Release" \
             -archivePath build/Runner.xcarchive \
             archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
-            CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_STYLE=Manual \
             -destination 'generic/platform=iOS' \
-
-      # - name: Archive app manual
-      #   run: |
-      #     echo 'PROFILE_UUID $PROFILE_UUID'
-      #     xcodebuild -workspace ios/Runner.xcworkspace \
-      #       -scheme "star" \
-      #       -configuration "star Release" \
-      #       -archivePath build/Runner.xcarchive \
-      #       archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
-      #       CODE_SIGN_STYLE=Manual \
-      #       -destination 'generic/platform=iOS' \
-      #       PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
-      #       PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
+            PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
+            PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
 
       # Export IPA
      
