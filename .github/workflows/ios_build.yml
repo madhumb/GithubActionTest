@@ -106,6 +106,7 @@ jobs:
          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(
             security cms -D -i com.gnkbros.app.mobileprovision
          )")
+         echo "Profile UUID: $PROFILE_UUID"
 
          NAME=$(/usr/libexec/PlistBuddy -c "Print :Name" /dev/stdin <<< "$(security cms -D -i com.gnkbros.app.mobileprovision)")
          BUNDLE=$(/usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" /dev/stdin <<< "$(security cms -D -i com.gnkbros.app.mobileprovision)")
@@ -225,7 +226,7 @@ jobs:
           CODE_SIGN_STYLE=Manual \
          -configuration "star Release" \
          PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
-            PRODUCT_BUNDLE_IDENTIFIER=$BUNDLE -allowProvisioningUpdates
+            PRODUCT_BUNDLE_IDENTIFIER=$BUNDLE 
           -archivePath build/Runner.xcarchive \
          archive | tee xcodebuild.log
          grep "error:" -A 5 -B 5 xcodebuild.log || true
