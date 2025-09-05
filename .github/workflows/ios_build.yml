@@ -69,6 +69,7 @@ jobs:
           flutter pub get
           cd ios
           pod install --verbose --no-repo-update
+          cd ..
         
        # 5️⃣ Prebuild Flutter frameworks
       - name: Prebuild Flutter frameworks
