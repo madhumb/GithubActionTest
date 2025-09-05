@@ -218,6 +218,9 @@ jobs:
 
       - name: Build IPA (raw log) manual
         run: |
+         echo "Installed provisioning profiles:"
+         ls ~/Library/MobileDevice/Provisioning\ Profiles
+         echo "UUID used: $PROFILE_UUID"
          echo "$PROFILE_UUID"
          set -o pipefail
          xcodebuild -workspace ios/Runner.xcworkspace \
