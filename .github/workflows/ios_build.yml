@@ -202,7 +202,7 @@ jobs:
             -configuration "star Release" \
             -archivePath build/Runner.xcarchive \
             archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
-            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_STYLE=Automatic \
             -destination 'generic/platform=iOS' \
             PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
             PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
