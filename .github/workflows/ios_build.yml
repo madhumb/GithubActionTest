@@ -61,7 +61,6 @@ jobs:
          restore-keys: |
           ${{ runner.os }}-deriveddata-
 
-
       - name: Install CocoaPods
         run: |
           rm -rf ios/Pods ios/Podfile.lock
@@ -123,16 +122,7 @@ jobs:
          echo "Profile Name: $NAME"
          echo "Profile App ID: $BUNDLE"
        
-      - name: Debug Provisioning Profile
-        run: |
-           security cms -D -i com.gnkbros.app.mobileprovision > profile.plist
-           /usr/libexec/PlistBuddy -c "Print :Name" profile.plist
-           /usr/libexec/PlistBuddy -c "Print :UUID" profile.plist
-           /usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" profile.plist
-           /usr/libexec/PlistBuddy -c "Print :TeamIdentifier:0" profile.plist
-           
-      
-     
+       
       - name: Setup .env file
         run: |
           cat <<EOF > .env
@@ -218,6 +208,14 @@ jobs:
 
       - name: Build IPA (raw log) manual
         run: |
+         PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(
+            security cms -D -i com.gnkbros.app.mobileprovision
+         )")
+
+         BUNDLE=$(/usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" /dev/stdin <<< "$(security cms -D -i com.gnkbros.app.mobileprovision)")
+
+         echo "Profile UUID: $PROFILE_UUID"
+
          echo "Installed provisioning profiles:"
          ls ~/Library/MobileDevice/Provisioning\ Profiles
          echo "UUID used: $PROFILE_UUID"
