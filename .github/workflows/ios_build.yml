@@ -107,29 +107,20 @@ jobs:
         
          echo "$PROV_PRO_APPStore_GNK" | base64 --decode > com.gnkbros.app.mobileprovision         
         
-         PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(
-            security cms -D -i com.gnkbros.app.mobileprovision
-         )")
-         echo "Profile UUID: $PROFILE_UUID"
+         PROFILE_UUID=$(security cms -D -i com.gnkbros.app.mobileprovision | /usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin)
+         echo "PROFILE_UUID=$PROFILE_UUID" >> $GITHUB_ENV
+
 
          NAME=$(/usr/libexec/PlistBuddy -c "Print :Name" /dev/stdin <<< "$(security cms -D -i com.gnkbros.app.mobileprovision)")
          BUNDLE=$(/usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" /dev/stdin <<< "$(security cms -D -i com.gnkbros.app.mobileprovision)")
 
-         echo PROFILE_UUID
-         echo "PROFILE_UUID=$PROFILE_UUID" >> $GITHUB_ENV
          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-         cp com.gnkbros.app.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
-
-         security cms -D -i com.gnkbros.app.mobileprovision > profile.plist
-         /usr/libexec/PlistBuddy -c "Print :UUID" profile.plist
-
-
-         echo "Profile UUID: $PROFILE_UUID"
-         echo "Profile Name: $NAME"
-         echo "Profile App ID: $BUNDLE"
-
+         cp com.gnkbros.app.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.mobileprovision
          echo "BUNDLE=$BUNDLE" >> $GITHUB_ENV
-       
+         echo "Installed provisioning profile:"
+         ls -l ~/Library/MobileDevice/Provisioning\ Profiles
+         echo "PROFILE_UUID=$PROFILE_UUID"
+         echo "BUNDLE=$BUNDLE"
        
       - name: Setup .env file
         run: |
