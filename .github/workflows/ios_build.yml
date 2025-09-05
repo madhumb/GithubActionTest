@@ -96,13 +96,17 @@ jobs:
       #      echo "✅ Secret length: ${#PROV_PRO_APPStore_GNK}"
       #     fi
        
-
+#  PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(security cms -D -i com.gnkbros.app.mobileprovision)")
       # Install provisioning profile
       - name: Install provisioning profile
         run: |
         
          echo "$PROV_PRO_APPStore_GNK" | base64 --decode > com.gnkbros.app.mobileprovision         
-         PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(security cms -D -i com.gnkbros.app.mobileprovision)")
+        
+         PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(
+            security cms -D -i com.gnkbros.app.mobileprovision
+         )")
+
          NAME=$(/usr/libexec/PlistBuddy -c "Print :Name" /dev/stdin <<< "$(security cms -D -i com.gnkbros.app.mobileprovision)")
          BUNDLE=$(/usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" /dev/stdin <<< "$(security cms -D -i com.gnkbros.app.mobileprovision)")
 
