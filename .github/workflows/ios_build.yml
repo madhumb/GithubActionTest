@@ -122,6 +122,8 @@ jobs:
          echo "Profile UUID: $PROFILE_UUID"
          echo "Profile Name: $NAME"
          echo "Profile App ID: $BUNDLE"
+
+         echo "BUNDLE=$BUNDLE" >> $GITHUB_ENV
        
        
       - name: Setup .env file
