@@ -72,7 +72,8 @@ jobs:
         
        # 5️⃣ Prebuild Flutter frameworks
       - name: Prebuild Flutter frameworks
-        run: flutter build ios-framework --output=ios/Flutter/Flutter.xcframework
+        run: flutter build ios-framework --output=ios/Flutter/Flutter.xcframework -t lib/main_star.dart
+
 
       - name: Decode and verify certificate
         run: |
