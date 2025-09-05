@@ -73,9 +73,6 @@ jobs:
   
           cd ios
           pod install --verbose --no-repo-update
-          flutter clean
-          pod repo update
-          pod install --project-directory=ios
         
 
       - name: Decode and verify certificate
