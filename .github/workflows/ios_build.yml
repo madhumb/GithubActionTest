@@ -69,10 +69,11 @@ jobs:
 
       - name: Install CocoaPods
         run: |
+          rm -rf ios/Pods ios/Podfile.lock
+  
           cd ios
           pod install --verbose --no-repo-update
           flutter clean
-          rm -rf ios/Pods ios/Podfile.lock
           pod repo update
           pod install --project-directory=ios
         
@@ -203,7 +204,7 @@ jobs:
           rm -rf ~/Library/Developer/Xcode/DerivedData/*
           flutter clean
           flutter pub get
-          echo 'PROFILE_UUID $PROFILE_UUID'
+          echo $PROFILE_UUID
           xcodebuild -workspace ios/Runner.xcworkspace \
             -scheme "star" \
             -configuration "star Release" \
