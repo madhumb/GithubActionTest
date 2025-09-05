@@ -224,7 +224,7 @@ jobs:
           CODE_SIGN_STYLE=Manual \
          -configuration "star Release" \
          PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
-            PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
+            PRODUCT_BUNDLE_IDENTIFIER=ZCEY7L7MT7.com.gnkbros.app -allowProvisioningUpdates
           -archivePath build/Runner.xcarchive \
          archive | tee xcodebuild.log
          grep "error:" -A 5 -B 5 xcodebuild.log || true
