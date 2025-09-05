@@ -121,6 +121,15 @@ jobs:
          echo "Profile UUID: $PROFILE_UUID"
          echo "Profile Name: $NAME"
          echo "Profile App ID: $BUNDLE"
+       
+      - name: Debug Provisioning Profile
+        run: |
+           security cms -D -i com.gnkbros.app.mobileprovision > profile.plist
+           /usr/libexec/PlistBuddy -c "Print :Name" profile.plist
+           /usr/libexec/PlistBuddy -c "Print :UUID" profile.plist
+           /usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" profile.plist
+           /usr/libexec/PlistBuddy -c "Print :TeamIdentifier:0" profile.plist
+           
       
      
       - name: Setup .env file
@@ -205,19 +214,34 @@ jobs:
       #       CODE_SIGN_STYLE=Automatic \
       #       -destination 'generic/platform=iOS' \
 
-      - name: Archive app manual
+
+      - name: Build IPA (raw log) manual
         run: |
-          
-          echo $PROFILE_UUID
-          xcodebuild -workspace ios/Runner.xcworkspace \
-            -scheme "star" \
-            -configuration "star Release" \
-            -archivePath build/Runner.xcarchive \
-            archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
-            CODE_SIGN_STYLE=Manual \
-            -destination 'generic/platform=iOS' \
-            PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
+         set -o pipefail
+         xcodebuild -workspace ios/Runner.xcworkspace \
+         -scheme star \
+         archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
+          CODE_SIGN_STYLE=Manual \
+         -configuration "star Release" \
+         PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
             PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
+          -archivePath build/Runner.xcarchive \
+         archive | tee xcodebuild.log
+         grep "error:" -A 5 -B 5 xcodebuild.log || true
+
+      # - name: Archive app manual
+      #   run: |
+          
+      #     echo $PROFILE_UUID
+      #     xcodebuild -workspace ios/Runner.xcworkspace \
+      #       -scheme "star" \
+      #       -configuration "star Release" \
+      #       -archivePath build/Runner.xcarchive \
+      #       archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
+      #       CODE_SIGN_STYLE=Manual \
+      #       -destination 'generic/platform=iOS' \
+      #       PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
+      #       PRODUCT_BUNDLE_IDENTIFIER=com.gnkbros.app -allowProvisioningUpdates
 
       # Export IPA
      
