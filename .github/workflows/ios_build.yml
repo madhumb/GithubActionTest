@@ -179,12 +179,7 @@ jobs:
       # - name: List IPA files
       #   run: ls -lh build/ios/ipa      
 
-      # - name: Export IPA
-      #   run: |
-      #       xcodebuild -exportArchive \
-      #       -archivePath build/ios/archive/Runner.xcarchive \
-      #       -exportOptionsPlist ExportOptions.plist \
-      #       -exportPath build/
+     
             
       # - name: upload from fastlane
       #   run: |
@@ -215,19 +210,29 @@ jobs:
 
       - name: Build IPA (raw log) manual
         run: |
-
-
          xcodebuild -workspace ios/Runner.xcworkspace \
          -scheme "star" \
          archive DEVELOPMENT_TEAM="ZCEY7L7MT7" \
-          CODE_SIGN_STYLE=Manual -destination "generic/platform=iOS" \
+         CODE_SIGN_STYLE=Manual -destination "generic/platform=iOS" \
          -configuration "star Release" \
          PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
-            PRODUCT_BUNDLE_IDENTIFIER="com.gnkbros.app" \
-          -archivePath build/Runner.xcarchive \
-          archive -verbose | tee xcodebuild.log
+         PRODUCT_BUNDLE_IDENTIFIER="com.gnkbros.app" \
+         -archivePath build/Runner.xcarchive \
+         archive -verbose | tee xcodebuild.log
 
-      # - name: Archive app manual
+          # Highlight errors
+         grep "error:" -A 5 -B 5 xcodebuild.log || true
+
+      - name: Export IPA
+        run: |
+            xcodebuild -exportArchive \
+            -archivePath build/ios/archive/Runner.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath build/  
+      
+      
+        
+            # - name: Archive app manual
       #   run: |
           
       #     echo $PROFILE_UUID
