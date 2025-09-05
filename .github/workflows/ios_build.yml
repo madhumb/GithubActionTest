@@ -199,7 +199,6 @@ jobs:
           rm -rf ~/Library/Developer/Xcode/DerivedData/*
           flutter clean
           flutter pub get
-          flutter build ipa --flavor star -t lib/main_star.dart --release
           echo 'PROFILE_UUID $PROFILE_UUID'
           xcodebuild -workspace ios/Runner.xcworkspace \
             -scheme "star" \
