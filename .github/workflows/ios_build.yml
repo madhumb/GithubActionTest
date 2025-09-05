@@ -70,6 +70,9 @@ jobs:
           cd ios
           pod install --verbose --no-repo-update
         
+       # 5️⃣ Prebuild Flutter frameworks
+      - name: Prebuild Flutter frameworks
+        run: flutter build ios-framework --output=ios/Flutter/Flutter.xcframework
 
       - name: Decode and verify certificate
         run: |
