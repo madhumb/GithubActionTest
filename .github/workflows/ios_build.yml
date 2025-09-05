@@ -217,7 +217,7 @@ jobs:
          -configuration "star Release" \
          PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
          PRODUCT_BUNDLE_IDENTIFIER="com.gnkbros.app" \
-         -archivePath build/Runner.xcarchive \
+         -archivePath build/ios/archive/Runner.xcarchive \
          archive -verbose | tee xcodebuild.log
 
           # Highlight errors
