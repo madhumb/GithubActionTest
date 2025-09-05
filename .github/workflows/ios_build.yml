@@ -73,7 +73,7 @@ jobs:
         
        # 5️⃣ Prebuild Flutter frameworks
       - name: Prebuild Flutter frameworks
-        run: flutter build ios-framework --output=ios/Flutter/Flutter.xcframework -t lib/main_star.dart
+        run: flutter build ios-framework --output=ios/Flutter/Flutter.xcframework -t lib/main_star.dart --profile
 
 
       - name: Decode and verify certificate
@@ -223,8 +223,9 @@ jobs:
          PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
          PRODUCT_BUNDLE_IDENTIFIER="com.gnkbros.app" \
          -archivePath build/ios/archive/Runner.xcarchive \
-         archive -verbose | tee xcodebuild.log
+         archive | xcpretty
 
+         tail -n 50 build/ios/archive/xcodebuild.log
          grep "error:" -A 5 -B 5 xcodebuild.log || true
 
       - name: Export IPA
