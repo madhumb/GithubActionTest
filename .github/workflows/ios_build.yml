@@ -223,7 +223,6 @@ jobs:
          -archivePath build/ios/archive/Runner.xcarchive \
          archive -verbose | tee xcodebuild.log
 
-          # Highlight errors
          grep "error:" -A 5 -B 5 xcodebuild.log || true
 
       - name: Export IPA
