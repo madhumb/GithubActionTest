@@ -223,13 +223,14 @@ jobs:
          echo "UUID used: $PROFILE_UUID"
          echo "$PROFILE_UUID"
          set -o pipefail
+         
          xcodebuild -workspace ios/Runner.xcworkspace \
          -scheme star \
          archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
           CODE_SIGN_STYLE=Manual \
          -configuration "star Release" \
          PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
-            PRODUCT_BUNDLE_IDENTIFIER=$BUNDLE 
+            PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE" \
           -archivePath build/Runner.xcarchive \
          archive | tee xcodebuild.log
          grep "error:" -A 5 -B 5 xcodebuild.log || true
