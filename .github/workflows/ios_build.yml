@@ -212,13 +212,6 @@ jobs:
       - name: Build IPA (raw log) manual
         run: |
 
-         echo "Profile UUID: $PROFILE_UUID"
-
-         echo "Installed provisioning profiles:"
-         ls ~/Library/MobileDevice/Provisioning\ Profiles
-         echo "UUID used: $PROFILE_UUID"
-         echo "BUNDLE used  : $BUNDLE"
-         set -o pipefail
 
          xcodebuild -workspace ios/Runner.xcworkspace \
          -scheme star \
@@ -227,9 +220,7 @@ jobs:
          -configuration "star Release" \
          PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
             PRODUCT_BUNDLE_IDENTIFIER="com.gnkbros.app" \
-          -archivePath build/Runner.xcarchive \
-         archive | tee xcodebuild.log
-         grep "error:" -A 5 -B 5 xcodebuild.log || true
+          -archivePath build/Runner.xcarchive 
 
       # - name: Archive app manual
       #   run: |
