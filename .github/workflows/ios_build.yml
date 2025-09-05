@@ -248,9 +248,9 @@ jobs:
       # Export IPA
      
 
-      # # Upload artifact (IPA)
-      # - name: Upload IPA
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: iOS-IPA
-      #     path: build/*.ipa
+      # Upload artifact (IPA)
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS-IPA
+          path: build/*.ipa
