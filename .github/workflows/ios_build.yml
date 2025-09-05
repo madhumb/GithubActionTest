@@ -217,7 +217,7 @@ jobs:
 
       - name: Build IPA (raw log) manual
         run: |
-        echo "$PROFILE_UUID"
+         echo "$PROFILE_UUID"
          set -o pipefail
          xcodebuild -workspace ios/Runner.xcworkspace \
          -scheme star \
