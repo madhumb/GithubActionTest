@@ -234,7 +234,7 @@ jobs:
       
       
         
-            # - name: Archive app manual
+      # - name: Archive app manual
       #   run: |
           
       #     echo $PROFILE_UUID
