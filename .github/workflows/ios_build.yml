@@ -221,7 +221,7 @@ jobs:
          echo "Installed provisioning profiles:"
          ls ~/Library/MobileDevice/Provisioning\ Profiles
          echo "UUID used: $PROFILE_UUID"
-         echo "$PROFILE_UUID"
+         echo "BUNDLE used  : $BUNDLE"
          set -o pipefail
 
          xcodebuild -workspace ios/Runner.xcworkspace \
