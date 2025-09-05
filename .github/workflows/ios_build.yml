@@ -109,7 +109,7 @@ jobs:
         
          echo "$PROV_PRO_APPStore_GNK" | base64 --decode > com.gnkbros.app.mobileprovision         
          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(security cms -D -i com.gnkbros.app.mobileprovision)")
-
+         echo PROFILE_UUID
          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
          cp com.gnkbros.app.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
 
