@@ -217,13 +217,14 @@ jobs:
 
       - name: Build IPA (raw log) manual
         run: |
+        echo "$PROFILE_UUID"
          set -o pipefail
          xcodebuild -workspace ios/Runner.xcworkspace \
          -scheme star \
          archive DEVELOPMENT_TEAM=ZCEY7L7MT7 \
           CODE_SIGN_STYLE=Manual \
          -configuration "star Release" \
-         PROVISIONING_PROFILE_SPECIFIER=$PROFILE_UUID \
+         PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
             PRODUCT_BUNDLE_IDENTIFIER=$BUNDLE -allowProvisioningUpdates
           -archivePath build/Runner.xcarchive \
          archive | tee xcodebuild.log
