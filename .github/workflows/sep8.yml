@@ -1,4 +1,4 @@
-name: iOS Release Build
+name: iOS Release Build - create Archive - sign manually
 
 on:
   workflow_dispatch: # manually trigger
@@ -194,7 +194,15 @@ jobs:
             -t lib/main_star.dart --no-codesign \
             --export-options-plist=ExportOptions.plist
 
-      # Upload IPA as artifact (optional)
+     
+      - name: Upload xcarchive
+        uses: actions/upload-artifact@v4
+        with:
+              name: iOS-xcarchive
+              path: build/ios/archive/Runner.xcarchive
+
+     
+            # Upload IPA as artifact (optional)
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
