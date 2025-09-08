@@ -73,7 +73,6 @@ jobs:
           flutter build ipa \
             --release --flavor star \
             -t lib/main_star.dart \
-            --no-codesign \
             --export-options-plist=ExportOptions.plist
 
       # Upload IPA as artifact (optional)
