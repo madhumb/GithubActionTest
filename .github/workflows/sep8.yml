@@ -141,7 +141,21 @@ jobs:
             echo "Bundle ID Entitlement:"
             /usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" /dev/stdin <<< "$(security cms -D -i "$PROFILE")" | cut -d'.' -f2-
                 
-    # Build IPA
+  
+      - name: Setup .env file
+        run: |
+            cat <<EOF > .env
+            SECRET_KEY="$(echo $SECRET_KEY_BASE64 | base64 --decode | tr -d '\r')"
+            BASE_URL="$(echo $BASE_URL_BASE64 | base64 --decode | tr -d '\r')"
+            EOF
+            # |
+            # echo "SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode)" >> .env
+            # echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
+            echo "" >> .env
+            file .env
+            flutter pub run build_runner build --delete-conflicting-outputs
+ 
+       # Build IPA
       - name: Build iOS IPA
         run: |
           flutter build ipa \
