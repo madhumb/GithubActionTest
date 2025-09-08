@@ -63,13 +63,11 @@ jobs:
 
       - name: Install CocoaPods
         run: |
-          rm -rf ios/Pods ios/Podfile.lock
-          rm -rf ~/Library/Developer/Xcode/DerivedData/*
           flutter clean
           flutter pub get
           cd ios
           pod install --verbose --no-repo-update
-          cd ..
+          
         
       #  # 5️⃣ Prebuild Flutter frameworks
       # - name: Prebuild Flutter frameworks
