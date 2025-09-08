@@ -9,6 +9,16 @@ on:
 jobs:
   build-ios:
     runs-on: macos-latest
+    env:
+        KEYCHAIN_PASSWORD: "github"       # arbitrary, only for CI keychain
+        CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}   # your .p12 export password
+        IOS_CERT_BASE64: ${{ secrets.IOS_CERT_BASE64 }}
+        PROV_PRO_APPStore_GNK: ${{ secrets.PROV_PRO_APPStore_GNK }}
+        SECRET_KEY_BASE64: ${{ secrets.SECRET_KEY_BASE64 }}
+        BASE_URL_BASE64: ${{ secrets.BASE_URL_BASE64 }}
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        # FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+
 
     steps:
       # Checkout source
@@ -20,6 +30,8 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.0' # set your Flutter version
+          channel: 'stable'
+          cache: true # set your Flutter version
 
       # Install dependencies
       - name: Flutter pub get
