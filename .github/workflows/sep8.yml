@@ -117,30 +117,8 @@ jobs:
 
             echo "BUNDLE=$BUNDLE" >> $GITHUB_ENV
       
-      
+    # Install CocoaPods
 
-    # Decode certificate and provisioning profile
-    
-
-    #   - name: Set up signing
-    #     run: |
-    #       # Create keychain
-    #       security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
-    #       security set-keychain-settings -lut 21600 build.keychain
-    #       security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
-
-    #       # Decode certificate
-    #       echo "$IOS_CERT_BASE64" | base64 --decode > cert.p12
-    #       security import cert.p12 -k build.keychain -P "$CERT_PASSWORD" -T /usr/bin/codesign
-
-    #       # Allow codesign to use the keychain
-    #       security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
-
-    #       # Decode provisioning profile
-    #       mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-    #       echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/com.gnkbros.app_AppStore.mobileprovision
-
-      # iOS dependencies
       - name: Install CocoaPods
         run: |
           flutter clean
@@ -148,7 +126,7 @@ jobs:
           cd ios
           pod install --repo-update
 
-      
+    # Debug provisioning profile  
       - name: Debug provisioning profile
         run: |
             echo "Listing installed profiles..."
@@ -172,7 +150,7 @@ jobs:
             echo "Bundle ID Entitlement:"
             /usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" /dev/stdin <<< "$(security cms -D -i "$PROFILE")" | cut -d'.' -f2-
                 
-  
+  # Setup .env file
       - name: Setup .env file
         run: |
             cat <<EOF > .env
