@@ -37,7 +37,10 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
-      # Decode certificate and provisioning profile
+      - name: Cache CocoaPods
+        uses: actions/cache@v3   
+      
+        # Decode certificate and provisioning profile
       - name: Set up signing
         run: |
           # Create keychain
@@ -59,6 +62,8 @@ jobs:
       # iOS dependencies
       - name: Install CocoaPods
         run: |
+          flutter clean
+          flutter pub get
           cd ios
           pod install --repo-update
 
