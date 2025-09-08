@@ -1,0 +1,66 @@
+name: iOS Release Build
+
+on:
+  workflow_dispatch: # manually trigger
+  push:
+    branches:
+      - main
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      # Checkout source
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Setup Flutter
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0' # set your Flutter version
+
+      # Install dependencies
+      - name: Flutter pub get
+        run: flutter pub get
+
+      # Decode certificate and provisioning profile
+      - name: Set up signing
+        run: |
+          # Create keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+
+          # Decode certificate
+          echo "$IOS_CERT_BASE64" | base64 --decode > cert.p12
+          security import cert.p12 -k build.keychain -P "$CERT_PASSWORD" -T /usr/bin/codesign
+
+          # Allow codesign to use the keychain
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+
+          # Decode provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/app.mobileprovision
+
+      # iOS dependencies
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install --repo-update
+
+      # Build IPA
+      - name: Build iOS IPA
+        run: |
+          flutter build ipa \
+            --release \
+            --no-codesign \
+            --export-options-plist=ios/ExportOptions.plist
+
+      # Upload IPA as artifact (optional)
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build
+          path: build/ios/ipa/*.ipa
