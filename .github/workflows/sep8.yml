@@ -33,6 +33,37 @@ jobs:
           channel: 'stable'
           cache: false # set your Flutter version
 
+
+     # Cache Flutter SDK & pub packages
+      - name: Cache Flutter
+        uses: actions/cache@v4
+        with:
+            path: |
+                ~/.pub-cache
+                ${{ env.FLUTTER_ROOT }}
+            key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
+            restore-keys: |
+                ${{ runner.os }}-flutter-
+
+    # Cache CocoaPods
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+            path: ios/Pods
+            key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+            restore-keys: |
+                ${{ runner.os }}-pods-
+
+   # Cache DerivedData
+      - name: Cache Xcode DerivedData
+        uses: actions/cache@v4
+        with:
+            path: ~/Library/Developer/Xcode/DerivedData
+            key: ${{ runner.os }}-deriveddata-${{ github.sha }}
+            restore-keys: |
+                ${{ runner.os }}-deriveddata-
+
+
       # Install dependencies
       - name: Flutter pub get
         run: flutter pub get
