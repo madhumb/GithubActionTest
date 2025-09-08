@@ -72,7 +72,19 @@ jobs:
           cd ios
           pod install --repo-update
 
-      # Build IPA
+      
+      
+      - name: Debug provisioning profile
+        run: |
+            ls -lh ~/Library/MobileDevice/Provisioning\ Profiles
+            PROFILE=~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision
+            /usr/libexec/PlistBuddy -c "Print :Name" $PROFILE
+            /usr/libexec/PlistBuddy -c "Print :UUID" $PROFILE
+            /usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" $PROFILE
+
+            
+
+    # Build IPA
       - name: Build iOS IPA
         run: |
           flutter build ipa \
