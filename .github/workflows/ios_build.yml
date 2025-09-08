@@ -205,8 +205,8 @@ jobs:
      
      
       # 6️⃣ Clean DerivedData (optional, prevents hangs)
-      - name: Clean Xcode DerivedData
-        run: rm -rf ~/Library/Developer/Xcode/DerivedData
+      # - name: Clean Xcode DerivedData
+      #   run: rm -rf ~/Library/Developer/Xcode/DerivedData
 
       - name: Build IPA (raw log) manual
         run: |
@@ -217,18 +217,18 @@ jobs:
          -configuration "star Release" \
          PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
          PRODUCT_BUNDLE_IDENTIFIER="com.gnkbros.app" \
-         -archivePath build/ios/archive/Runner.xcarchive \
-         archive | xcpretty
+         -archivePath build/ios/archive/Runner.xcarchive
+         
 
-         tail -n 50 build/ios/archive/xcodebuild.log
-         grep "error:" -A 5 -B 5 xcodebuild.log || true
+        #  tail -n 50 build/ios/archive/xcodebuild.log
+        #  grep "error:" -A 5 -B 5 xcodebuild.log || true
 
-      - name: Export IPA
-        run: |
-            xcodebuild -exportArchive \
-            -archivePath build/ios/archive/Runner.xcarchive \
-            -exportOptionsPlist ExportOptions.plist \
-            -exportPath build/  
+      # - name: Export IPA
+      #   run: |
+      #       xcodebuild -exportArchive \
+      #       -archivePath build/ios/archive/Runner.xcarchive \
+      #       -exportOptionsPlist ExportOptions.plist \
+      #       -exportPath build/  
       
       
         
@@ -250,8 +250,8 @@ jobs:
      
 
       # Upload artifact (IPA)
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
-        with:
-          name: iOS-IPA
-          path: build/*.ipa
+      # - name: Upload IPA
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: iOS-IPA
+      #     path: build/*.ipa
