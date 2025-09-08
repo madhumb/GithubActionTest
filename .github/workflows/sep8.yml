@@ -62,7 +62,7 @@ jobs:
 
           # Decode provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/app.mobileprovision
+          echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/com.gnkbros.app_AppStore.mobileprovision
 
       # iOS dependencies
       - name: Install CocoaPods
@@ -73,14 +73,28 @@ jobs:
           pod install --repo-update
 
       
-    #   - name: Debug provisioning profile
-    #     run: |
-    #         ls -lh ~/Library/MobileDevice/Provisioning\ Profiles
-    #         PROFILE=~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision
-    #         /usr/libexec/PlistBuddy -c "Print :Name" $PROFILE
-    #         /usr/libexec/PlistBuddy -c "Print :UUID" $PROFILE
-    #         /usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" $PROFILE            
-
+      - name: Debug provisioning profile
+        run: |
+            echo "Listing installed profiles..."
+            ls -lh ~/Library/MobileDevice/Provisioning\ Profiles
+        
+            PROFILE=~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision
+        
+            echo "Profile Name:"
+            /usr/libexec/PlistBuddy -c "Print :Name" $PROFILE
+        
+            echo "Profile UUID:"
+            /usr/libexec/PlistBuddy -c "Print :UUID" $PROFILE
+        
+            echo "Team Identifier:"
+            /usr/libexec/PlistBuddy -c "Print :Entitlements:com.apple.developer.team-identifier" $PROFILE || echo "No team ID field"
+        
+            echo "Application Identifier:"
+            /usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" $PROFILE
+        
+            echo "Bundle ID Entitlement:"
+            /usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" $PROFILE | cut -d'.' -f2-
+        
     # Build IPA
       - name: Build iOS IPA
         run: |
