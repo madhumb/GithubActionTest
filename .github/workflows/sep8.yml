@@ -54,9 +54,10 @@ jobs:
       - name: Build iOS IPA
         run: |
           flutter build ipa \
-            --release \
+            --release --flavor star \
+            -t lib/main_star.dart \
             --no-codesign \
-            --export-options-plist=ios/ExportOptions.plist
+            --export-options-plist=ExportOptions.plist
 
       # Upload IPA as artifact (optional)
       - name: Upload IPA
