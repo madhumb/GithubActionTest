@@ -44,6 +44,23 @@ jobs:
             key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
             restore-keys: |
               ${{ runner.os }}-pods-  
+
+
+      - name: Decode and verify certificate
+        run: |
+            echo "$IOS_CERT_BASE64" | base64 --decode > certificate.p12
+            file certificate.p12
+            openssl pkcs12 -in certificate.p12 -nokeys -passin pass:"$CERT_PASSWORD"
+      
+    # Decode and install signing certificate
+      - name: Install signing 
+        run: |
+            echo "$IOS_CERT_BASE64" | base64 --decode > certificate.p12
+            security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+            security import certificate.p12 -k ~/Library/Keychains/build.keychain -P "$CERT_PASSWORD" -T /usr/bin/codesign -A
+            security list-keychains -s ~/Library/Keychains/build.keychain
+            security unlock-keychain -p "$KEYCHAIN_PASSWORD" ~/Library/Keychains/build.keychain
+            rm certificate.p12         
       
      # Install provisioning profile
       - name: Install provisioning profile
