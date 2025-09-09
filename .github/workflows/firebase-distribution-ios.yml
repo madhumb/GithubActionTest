@@ -117,17 +117,19 @@ jobs:
       #     EOF
       #     echo "" >> .env
       #     flutter pub run build_runner build --delete-conflicting-outputs
-      
       - name: Setup .env file
         run: |
+            SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode | perl -pe 's/\r//g' | iconv -f UTF-8 -t UTF-8//IGNORE)
+            BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode | perl -pe 's/\r//g' | iconv -f UTF-8 -t UTF-8//IGNORE)
+        
             cat <<EOF > .env
-            SECRET_KEY="$(echo $SECRET_KEY_BASE64 | base64 --decode | LC_ALL=C tr -d '\r')"
-            BASE_URL="$(echo $BASE_URL_BASE64 | base64 --decode | LC_ALL=C tr -d '\r')"
+            SECRET_KEY="$SECRET_KEY"
+            BASE_URL="$BASE_URL"
             EOF
         
-            echo "" >> .env
             cat .env  # debug
             flutter pub run build_runner build --delete-conflicting-outputs
+        
              
 
       - name: Build iOS (no codesign)
