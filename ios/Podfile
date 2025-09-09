@@ -46,7 +46,6 @@ target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
   # Per flavor configuration
-  flutter_application_path = '../'
   target 'Runner' do
     config = ENV['FLAVOR'] || 'moon'
     xcconfig = File.join(flutter_application_path, "ios/Flutter/Release.xcconfig")
