@@ -102,14 +102,26 @@ jobs:
           cd ios
           pod install --repo-update
 
+      # - name: Setup .env file
+      #   run: |
+      #     cat <<EOF > .env
+      #     SECRET_KEY="$(echo $SECRET_KEY_BASE64 | base64 --decode | tr -d '\r')"
+      #     BASE_URL="$(echo $BASE_URL_BASE64 | base64 --decode | tr -d '\r')"
+      #     EOF
+      #     echo "" >> .env
+      #     flutter pub run build_runner build --delete-conflicting-outputs
+      
       - name: Setup .env file
         run: |
-          cat <<EOF > .env
-          SECRET_KEY="$(echo $SECRET_KEY_BASE64 | base64 --decode | tr -d '\r')"
-          BASE_URL="$(echo $BASE_URL_BASE64 | base64 --decode | tr -d '\r')"
-          EOF
-          echo "" >> .env
-          flutter pub run build_runner build --delete-conflicting-outputs
+            cat <<EOF > .env
+            SECRET_KEY="$(echo $SECRET_KEY_BASE64 | base64 --decode | LC_ALL=C tr -d '\r')"
+            BASE_URL="$(echo $BASE_URL_BASE64 | base64 --decode | LC_ALL=C tr -d '\r')"
+            EOF
+        
+            echo "" >> .env
+            cat .env  # debug
+            flutter pub run build_runner build --delete-conflicting-outputs
+             
 
       - name: Build iOS IPA (${{ matrix.flavor }})
         run: |
@@ -124,7 +136,7 @@ jobs:
           xcodebuild -exportArchive \
           -archivePath build/ios/archive/Runner.xcarchive \
           -exportPath build/ios/ipa \
-          -exportOptionsPlist ExportOptions.plist
+          -exportOptionsPlist ios/ExportOptions_${{ matrix.flavor }}.plist
     
                   
 
