@@ -17,10 +17,10 @@ jobs:
             firebase_app: FIREBASE_APP_ID_STAR
             bundle_id: com.gnkbros.star
 
-          - flavor: moon
-            profile_secret: PROV_PRO_APPStore_MOON
-            firebase_app: FIREBASE_APP_ID_MOON
-            bundle_id: com.recode.bookmark
+          # - flavor: moon
+          #   profile_secret: PROV_PRO_APPStore_MOON
+          #   firebase_app: FIREBASE_APP_ID_MOON
+          #   bundle_id: com.recode.bookmark
           
     env:
       KEYCHAIN_PASSWORD: "github"
