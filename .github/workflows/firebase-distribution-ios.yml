@@ -143,7 +143,17 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp moon.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
           PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(security cms -D -i moon.mobileprovision)")
-      
+          echo "Profile UUID: $PROFILE_UUID"  
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(
+           security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/moon.mobileprovision
+          )")
+          echo "Profile UUID: $PROFILE_UUID"
+
+          APP_ID=$(/usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" /dev/stdin <<< "$(
+            security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/moon.mobileprovision
+          )")
+          echo "App ID in profile: $APP_ID"
+
 
       - name: Build iOS (no codesign)
         run: |
