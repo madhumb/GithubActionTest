@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>922586843536-arrdhd5af4gncnev0eo6fee5rltv0s0j.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBmzGji5Gq6R5ydyLYVifYH3j8CYMY1eTM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>922586843536</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.recode.bookmark</string>
+	<key>PROJECT_ID</key>
+	<string>bookmark-my-benefits</string>
+	<key>STORAGE_BUCKET</key>
+	<string>bookmark-my-benefits.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:922586843536:ios:adc5925c6b755b74134b15</string>
+</dict>
+</plist>
