@@ -119,19 +119,16 @@ jobs:
       #     flutter pub run build_runner build --delete-conflicting-outputs
       - name: Setup .env file
         run: |
-            SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode | perl -pe 's/[^[:print:]\n]//g')
-            BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode | perl -pe 's/[^[:print:]\n]//g')
-
-            cat <<EOF > .env
-            SECRET_KEY="$SECRET_KEY"
-            BASE_URL="$BASE_URL"
-            EOF
-
-            cat .env  # debug
-            flutter pub run build_runner build --delete-conflicting-outputs
-
-        
-             
+          cat <<EOF > .env
+          SECRET_KEY="$(echo $SECRET_KEY_BASE64 | base64 --decode | tr -d '\r')"
+          BASE_URL="$(echo $BASE_URL_BASE64 | base64 --decode | tr -d '\r')"
+          EOF
+          # |
+          # echo "SECRET_KEY=$(echo $SECRET_KEY_BASE64 | base64 --decode)" >> .env
+          # echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
+          echo "" >> .env
+          file .env
+          flutter pub run build_runner build --delete-conflicting-outputs             
 
       - name: Build iOS (no codesign)
         run: |
@@ -158,7 +155,6 @@ jobs:
     
       - name: Export IPA (manual signing)
         run: |
-                # Set variables
                 FLAVOR=${{ matrix.flavor }}
                 IPA_DIR=build/ios/ipa
                 mkdir -p $IPA_DIR
