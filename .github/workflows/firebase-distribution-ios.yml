@@ -109,6 +109,10 @@ jobs:
           pod install --repo-update
           cd ..
 
+
+      - name: list Profiles
+        run: |
+          ls -lh ~/Library/MobileDevice/Provisioning\ Profiles/
       # - name: Setup .env file
       #   run: |
       #     cat <<EOF > .env
