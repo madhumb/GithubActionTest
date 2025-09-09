@@ -17,10 +17,10 @@ jobs:
             firebase_app: FIREBASE_APP_ID_STAR
             bundle_id: com.gnkbros.star
 
-          # - flavor: moon
-          #   profile_secret: PROV_PRO_APPStore_MOON
-          #   firebase_app: FIREBASE_APP_ID_MOON
-          #   bundle_id: com.recode.bookmark
+          - flavor: moon
+            profile_secret: PROV_PRO_APPStore_MOON
+            firebase_app: FIREBASE_APP_ID_MOON
+            bundle_id: com.recode.bookmark
           
     env:
       KEYCHAIN_PASSWORD: "github"
@@ -138,18 +138,18 @@ jobs:
             flutter build ipa \
               --release \
               --flavor ${{ matrix.flavor }} \
-              -t lib/main_${{ matrix.flavor }}.dart \
-              --no-codesign
+              -t lib/main_${{ matrix.flavor }}.dart 
+              
           
               echo "XCARCHIVE_PATH=build/ios/archive/Runner.xcarchive" >> $GITHUB_ENV
               ls -lh build/ios/archive
 
              
-      - name: code sign manually
-        run: |       
-            codesign -f -s "iPhone Distribution: Your Team" \
-            --entitlements ios/Runner/Runner.entitlements \ 
-            build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app
+      # - name: code sign manually
+      #   run: |       
+      #       codesign -f -s "iPhone Distribution: Your Team" \
+      #       --entitlements ios/Runner/Runner.entitlements \ 
+      #       build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app
           
     
       - name: Export IPA (manual signing)
@@ -187,7 +187,6 @@ jobs:
                   -archivePath $XCARCHIVE_PATH \
                   -exportPath $IPA_DIR DEVELOPMENT_TEAM=ZCEY7L7MT7 CODE_SIGN_IDENTITY="iPhone Distribution: Your Team" \
                   -exportOptionsPlist ios/ExportOptions_${FLAVOR}.plist \
-                  -allowProvisioningUpdates \
                   -verbose
             
                 # Rename IPA so it includes flavor
