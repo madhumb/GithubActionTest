@@ -138,19 +138,23 @@ jobs:
             flutter build ipa \
               --release \
               --flavor ${{ matrix.flavor }} \
-              -t lib/main_${{ matrix.flavor }}.dart 
+              -t lib/main_${{ matrix.flavor }}.dart --no-codesign 
               
           
               echo "XCARCHIVE_PATH=build/ios/archive/Runner.xcarchive" >> $GITHUB_ENV
               ls -lh build/ios/archive
 
              
-      # - name: code sign manually
-      #   run: |       
-      #       codesign -f -s "iPhone Distribution: Your Team" \
-      #       --entitlements ios/Runner/Runner.entitlements \ 
-      #       build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app
-          
+      - name: code sign manually
+        run: |       
+            # Pick the correct distribution identity automatically
+            CODESIGN_IDENTITY=$(security find-identity -v -p codesigning ~/Library/Keychains/build.keychain \
+            | grep "iPhone Distribution" \
+            | awk -F'"' '{print $2}' \
+            | head -n 1)
+
+            echo "Using certificate: $CODESIGN_IDENTITY"
+
     
       - name: Export IPA (manual signing)
         run: |
