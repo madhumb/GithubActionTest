@@ -162,7 +162,7 @@ jobs:
                 <plist version="1.0">
                 <dict>
                     <key>method</key>
-                    <string>app-store</string>
+                    <string>app-store-connect</string>
                     <key>signingStyle</key>
                     <string>manual</string>
                     <key>teamID</key>
@@ -182,7 +182,9 @@ jobs:
                 xcodebuild -exportArchive \
                   -archivePath $XCARCHIVE_PATH \
                   -exportPath $IPA_DIR \
-                  -exportOptionsPlist ios/ExportOptions_${FLAVOR}.plist
+                  -exportOptionsPlist ios/ExportOptions_${FLAVOR}.plist \
+                  -allowProvisioningUpdates \
+                  -verbose
             
                 # Rename IPA so it includes flavor
                 mv $IPA_DIR/Runner.ipa $IPA_DIR/Runner-${FLAVOR}.ipa
