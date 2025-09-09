@@ -123,11 +123,17 @@ jobs:
             flutter pub run build_runner build --delete-conflicting-outputs
              
 
-      - name: Build iOS IPA (${{ matrix.flavor }})
+      - name: Build iOS (no codesign)
         run: |
-          flutter build ipa \
-            --release --flavor ${{ matrix.flavor }} \
-            -t lib/main_${{ matrix.flavor }}.dart --no-codesign
+            flutter build ipa \
+              --release \
+              --flavor ${{ matrix.flavor }} \
+              -t lib/main_${{ matrix.flavor }}.dart \
+              --no-codesign
+          
+              echo "Archive generated at:"
+              ls -lh build/ios/archive
+          
     
 
       - name: Export IPA with Xcode
