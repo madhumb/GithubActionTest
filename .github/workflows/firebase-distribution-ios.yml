@@ -152,7 +152,7 @@ jobs:
           xcodebuild -exportArchive \
           -archivePath $XCARCHIVE_PATH \
           -exportPath build/ios/ipa \
-          -exportOptionsPlist ios/ExportOptions_${{ matrix.flavor }}.plist
+          -exportOptionsPlist ExportOptions_${{ matrix.flavor }}.plist
           mv build/ios/ipa/Runner.ipa build/ios/ipa/Runner-${{ matrix.flavor }}.ipa
           echo "IPA_PATH=build/ios/ipa/Runner-${{ matrix.flavor }}.ipa" >> $GITHUB_ENV
 
