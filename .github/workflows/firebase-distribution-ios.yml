@@ -128,7 +128,18 @@ jobs:
           # echo "BASE_URL=$(echo $BASE_URL_BASE64 | base64 --decode)" >> .env
           echo "" >> .env
           file .env
-          flutter pub run build_runner build --delete-conflicting-outputs             
+          flutter pub run build_runner build --delete-conflicting-outputs    
+          
+          
+
+      - name: ensure profile matches flavour
+        run: |
+
+          echo "${{ secrets.PROV_PRO_APPSTORE_MOON }}" | base64 --decode > moon.mobileprovision
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp moon.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(security cms -D -i moon.mobileprovision)")
+      
 
       - name: Build iOS (no codesign)
         run: |
