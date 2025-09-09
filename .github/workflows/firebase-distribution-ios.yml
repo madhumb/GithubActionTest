@@ -154,30 +154,34 @@ jobs:
           
       - name: Create export option plist file
         run: |
-              mkdir -p ios
-               # Generate ExportOptions.plist dynamically
-                cat <<EOF > ios/ExportOptions_${FLAVOR}.plist
-                <?xml version="1.0" encoding="UTF-8"?>
-                <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-                <plist version="1.0">
-                <dict>
-                    <key>method</key>
-                    <string>app-store-connect</string>
-                    <key>signingStyle</key>
-                    <string>manual</string>
-                    <key>teamID</key>
-                    <string>ZCEY7L7MT7</string>
-                    <key>provisioningProfiles</key>
-                    <dict>
-                        <key>${{ matrix.bundle_id }}</key>
-                        <string>"$PROFILE_UUID"</string>
-                    </dict>
-                </dict>
-                </plist>
-                EOF
-            
-                echo "ExportOptions plist for $FLAVOR created."
-            
+              FLAVOR=${{ matrix.flavor }}
+
+                PLIST_PATH="ios/ExportOptions_${FLAVOR}.plist"
+
+                  mkdir -p ios
+
+                  cat <<EOF > $PLIST_PATH
+                  <?xml version="1.0" encoding="UTF-8"?>
+                  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+                  <plist version="1.0">
+                  <dict>
+                      <key>method</key>
+                      <string>app-store-connect</string>
+                      <key>signingStyle</key>
+                      <string>manual</string>
+                      <key>teamID</key>
+                      <string>ZCEY7L7MT7</string>
+                      <key>provisioningProfiles</key>
+                      <dict>
+                          <key>${{ matrix.bundle_id }}</key>
+                          <string>$PROFILE_UUID</string>
+                      </dict>
+                  </dict>
+                  </plist>
+                  EOF
+
+                  echo "ExportOptions plist $FLAVOR  created at $PLIST_PATH"
+                  ls -lh $PLIST_PATH            
       
       - name: Build iOS (no codesign)
         run: |
