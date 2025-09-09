@@ -113,7 +113,7 @@ jobs:
             )")
             echo "App ID in profile: $APP_ID"
             echo "APP_ID=$APP_ID" >> $GITHUB_ENV
-          shell: bash
+          
         
 
       - name: Install CocoaPods
