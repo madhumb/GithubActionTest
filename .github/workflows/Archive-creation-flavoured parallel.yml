@@ -1,0 +1,133 @@
+name: iOS Release Build - create Archive - sign manually
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - flavor: star
+            profile_secret: PROV_PRO_APPStore_GNK
+          - flavor: moon
+            profile_secret: PROV_PRO_APPStore_MOON
+          - flavor: sun
+            profile_secret: PROV_PRO_APPStore_SUN
+
+          
+    env:
+      KEYCHAIN_PASSWORD: "github"
+      CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+      IOS_CERT_BASE64: ${{ secrets.IOS_CERT_BASE64 }}
+      SECRET_KEY_BASE64: ${{ secrets.SECRET_KEY_BASE64 }}
+      BASE_URL_BASE64: ${{ secrets.BASE_URL_BASE64 }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: false
+
+      - name: Cache Flutter
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            ${{ env.FLUTTER_ROOT }}
+          key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: Cache Xcode DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-deriveddata-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Decode and verify certificate
+        run: |
+          echo "$IOS_CERT_BASE64" | base64 --decode > certificate.p12
+          file certificate.p12
+          openssl pkcs12 -in certificate.p12 -nokeys -passin pass:"$CERT_PASSWORD"
+
+      - name: Install signing
+        run: |
+          echo "$IOS_CERT_BASE64" | base64 --decode > certificate.p12
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security import certificate.p12 -k ~/Library/Keychains/build.keychain -P "$CERT_PASSWORD" -T /usr/bin/codesign -A
+          security list-keychains -s ~/Library/Keychains/build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" ~/Library/Keychains/build.keychain
+          rm certificate.p12         
+
+      - name: Install provisioning profile (${{ matrix.flavor }})
+        run: |
+          echo "${{ secrets[matrix.profile_secret] }}" | base64 --decode > "${{ matrix.flavor }}.mobileprovision"
+
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(
+              security cms -D -i "${{ matrix.flavor }}.mobileprovision"
+          )")
+          echo "PROFILE_UUID=$PROFILE_UUID" >> $GITHUB_ENV
+
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp "${{ matrix.flavor }}.mobileprovision" ~/Library/MobileDevice/Provisioning\ Profiles/
+
+          
+      - name: Install CocoaPods
+        run: |
+          flutter clean
+          flutter pub get
+          cd ios
+          pod install --repo-update
+
+      - name: Setup .env file
+        run: |
+          cat <<EOF > .env
+          SECRET_KEY="$(echo $SECRET_KEY_BASE64 | base64 --decode | tr -d '\r')"
+          BASE_URL="$(echo $BASE_URL_BASE64 | base64 --decode | tr -d '\r')"
+          EOF
+          echo "" >> .env
+          flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: Build iOS IPA (${{ matrix.flavor }})
+        run: |
+          flutter build ipa \
+            --release --flavor ${{ matrix.flavor }} \
+            -t lib/main_${{ matrix.flavor }}.dart \
+            --no-codesign \
+            --export-options-plist=ExportOptions.plist
+
+      - name: Upload xcarchive (${{ matrix.flavor }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS-xcarchive-${{ matrix.flavor }}
+          path: build/ios/archive/Runner.xcarchive
+
+      - name: Upload IPA (${{ matrix.flavor }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build-${{ matrix.flavor }}
+          path: build/ios/ipa/*.ipa
