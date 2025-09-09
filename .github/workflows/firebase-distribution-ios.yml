@@ -16,11 +16,13 @@ jobs:
             profile_secret: PROV_PRO_APPStore_GNK
             firebase_app: FIREBASE_APP_ID_STAR
             bundle_id: com.gnkbros.star
+            entrypoint: lib/main_star.dart
 
           - flavor: moon
             profile_secret: PROV_PRO_APPStore_MOON
             firebase_app: FIREBASE_APP_ID_MOON
             bundle_id: com.recode.bookmark
+            entrypoint: lib/main_moon.dart
           
     env:
       KEYCHAIN_PASSWORD: "github"
@@ -149,43 +151,14 @@ jobs:
           file .env
           flutter pub run build_runner build --delete-conflicting-outputs    
           
-          
-
-
-      - name: Ensure provisioning profile matches flavor
-        run: |
-          # Decode the provisioning profile for the current flavor
-          echo "${{ secrets[matrix.profile_secret] }}" | base64 --decode > "${{ matrix.flavor }}.mobileprovision"
       
-          # Copy to system profiles folder
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp "${{ matrix.flavor }}.mobileprovision" ~/Library/MobileDevice/Provisioning\ Profiles/
-      
-          # Extract UUID from profile
-          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(
-            security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/${{ matrix.flavor }}.mobileprovision
-          )")
-          echo "Profile UUID: $PROFILE_UUID"
-          echo "PROFILE_UUID=$PROFILE_UUID" >> $GITHUB_ENV
-      
-          # Extract App ID from profile
-          APP_ID=$(/usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" /dev/stdin <<< "$(
-            security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/${{ matrix.flavor }}.mobileprovision
-          )")
-          echo "App ID in profile: $APP_ID"
-          echo "APP_ID=$APP_ID" >> $GITHUB_ENV
-        shell: bash
-      
-
-
       - name: Build iOS (no codesign)
         run: |
             flutter build ipa \
               --release \
               --flavor ${{ matrix.flavor }} \
-              -t lib/main_${{ matrix.flavor }}.dart --no-codesign 
+               -t ${{ matrix.entrypoint }} --no-codesign 
               
-          
               echo "XCARCHIVE_PATH=build/ios/archive/Runner.xcarchive" >> $GITHUB_ENV
               ls -lh build/ios/archive
 
@@ -230,7 +203,7 @@ jobs:
                 # Export IPA
                 xcodebuild -exportArchive \
                   -archivePath $XCARCHIVE_PATH \
-                  -exportPath $IPA_DIR DEVELOPMENT_TEAM=ZCEY7L7MT7 CODE_SIGN_IDENTITY="iPhone Distribution: Your Team" \
+                  -exportPath $IPA_DIR DEVELOPMENT_TEAM="ZCEY7L7MT7" \
                   -exportOptionsPlist ios/ExportOptions_${FLAVOR}.plist \
                   -verbose
             
