@@ -116,7 +116,6 @@ jobs:
           flutter build ipa \
             --release --flavor ${{ matrix.flavor }} \
             -t lib/main_${{ matrix.flavor }}.dart \
-            --no-codesign \
             --export-options-plist=ExportOptions.plist
 
       - name: Upload xcarchive (${{ matrix.flavor }})
