@@ -87,7 +87,9 @@ jobs:
           security import certificate.p12 -k ~/Library/Keychains/build.keychain -P "$CERT_PASSWORD" -T /usr/bin/codesign -A
           security list-keychains -s ~/Library/Keychains/build.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" ~/Library/Keychains/build.keychain
-          rm certificate.p12         
+          rm certificate.p12
+          security find-identity -v -p codesigning
+         
 
       - name: Install provisioning profile (${{ matrix.flavor }})
         run: |
@@ -169,14 +171,11 @@ jobs:
              
       - name: code sign manually
         run: |       
-            # Pick the correct distribution identity automatically
-            CODESIGN_IDENTITY=$(security find-identity -v -p codesigning ~/Library/Keychains/build.keychain \
-            | grep "iPhone Distribution" \
-            | awk -F'"' '{print $2}' \
-            | head -n 1)
+         CODESIGN_IDENTITY=$(security find-identity -v -p codesigning | grep "iPhone Distribution" | awk -F'"' '{print $2}' | head -n 1)
 
-            echo "Using certificate: $CODESIGN_IDENTITY"
-
+         codesign -f -s "$CODESIGN_IDENTITY" \
+          --entitlements ios/Runner/Runner.entitlements \
+          build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app
     
       - name: Export IPA (manual signing)
         run: |
