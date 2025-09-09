@@ -115,8 +115,18 @@ jobs:
         run: |
           flutter build ipa \
             --release --flavor ${{ matrix.flavor }} \
-            -t lib/main_${{ matrix.flavor }}.dart \
-            --export-options-plist=ExportOptions.plist
+            -t lib/main_${{ matrix.flavor }}.dart --no-codesign
+    
+
+      - name: Export IPA with Xcode
+        run: |
+          mkdir -p build/ios/ipa
+          xcodebuild -exportArchive \
+          -archivePath build/ios/archive/Runner.xcarchive \
+          -exportPath build/ios/ipa \
+          -exportOptionsPlist ExportOptions.plist
+    
+                  
 
       - name: Upload xcarchive (${{ matrix.flavor }})
         uses: actions/upload-artifact@v4
