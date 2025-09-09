@@ -15,9 +15,12 @@ jobs:
           - flavor: star
             profile_secret: PROV_PRO_APPStore_GNK
             firebase_app: FIREBASE_APP_ID_STAR
+            bundle_id: com.gnkbros.star
+
           - flavor: moon
             profile_secret: PROV_PRO_APPStore_MOON
             firebase_app: FIREBASE_APP_ID_MOON
+            bundle_id: com.recode.bookmark
           
     env:
       KEYCHAIN_PASSWORD: "github"
@@ -27,6 +30,9 @@ jobs:
       BASE_URL_BASE64: ${{ secrets.BASE_URL_BASE64 }}
       APPLE_ID: ${{ secrets.APPLE_ID }}
       FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      FLUTTER_ROOT: /Users/runner/hostedtoolcache/flutter/stable-3.24.5-arm64
+      PUB_CACHE: /Users/runner/.pub-cache
+
 
     steps:
       - name: Checkout repository
@@ -101,6 +107,7 @@ jobs:
           flutter pub get
           cd ios
           pod install --repo-update
+          cd ..
 
       # - name: Setup .env file
       #   run: |
@@ -131,7 +138,7 @@ jobs:
               -t lib/main_${{ matrix.flavor }}.dart \
               --no-codesign
           
-              echo "Archive generated at:"
+              echo "XCARCHIVE_PATH=build/ios/archive/Runner.xcarchive" >> $GITHUB_ENV
               ls -lh build/ios/archive
           
     
@@ -140,9 +147,12 @@ jobs:
         run: |
           mkdir -p build/ios/ipa
           xcodebuild -exportArchive \
-          -archivePath build/ios/archive/Runner.xcarchive \
+          -archivePath $XCARCHIVE_PATH \
           -exportPath build/ios/ipa \
           -exportOptionsPlist ios/ExportOptions_${{ matrix.flavor }}.plist
+          mv build/ios/ipa/Runner.ipa build/ios/ipa/Runner-${{ matrix.flavor }}.ipa
+          echo "IPA_PATH=build/ios/ipa/Runner-${{ matrix.flavor }}.ipa" >> $GITHUB_ENV
+
     
                   
 
