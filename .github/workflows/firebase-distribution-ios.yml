@@ -138,23 +138,31 @@ jobs:
           
           
 
-      - name: ensure profile matches flavour
-        run: |
 
-          echo "${{ secrets.PROV_PRO_APPSTORE_MOON }}" | base64 --decode > moon.mobileprovision
+      - name: Ensure provisioning profile matches flavor
+        run: |
+          # Decode the provisioning profile for the current flavor
+          echo "${{ secrets[matrix.profile_secret] }}" | base64 --decode > "${{ matrix.flavor }}.mobileprovision"
+      
+          # Copy to system profiles folder
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp moon.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
-          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(security cms -D -i moon.mobileprovision)")
-          echo "Profile UUID: $PROFILE_UUID"  
+          cp "${{ matrix.flavor }}.mobileprovision" ~/Library/MobileDevice/Provisioning\ Profiles/
+      
+          # Extract UUID from profile
           PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin <<< "$(
-           security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/moon.mobileprovision
+            security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/${{ matrix.flavor }}.mobileprovision
           )")
           echo "Profile UUID: $PROFILE_UUID"
-
+          echo "PROFILE_UUID=$PROFILE_UUID" >> $GITHUB_ENV
+      
+          # Extract App ID from profile
           APP_ID=$(/usr/libexec/PlistBuddy -c "Print :Entitlements:application-identifier" /dev/stdin <<< "$(
-            security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/moon.mobileprovision
+            security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/${{ matrix.flavor }}.mobileprovision
           )")
           echo "App ID in profile: $APP_ID"
+          echo "APP_ID=$APP_ID" >> $GITHUB_ENV
+        shell: bash
+      
 
 
       - name: Build iOS (no codesign)
