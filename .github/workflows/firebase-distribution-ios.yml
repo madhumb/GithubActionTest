@@ -1,10 +1,10 @@
-name: Flavoured -iOS Release Build - create Archive - sign manually
+name: iOS Release Build - Archive, Sign, Distribute
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
 
 jobs:
   build-ios:
@@ -13,11 +13,11 @@ jobs:
       matrix:
         include:
           - flavor: star
-            profile_secret: PROV_PRO_APPStore_GNK
+            profile_secret: PROV_PRO_APPStore_STAR
+            firebase_app: FIREBASE_APP_ID_STAR
           - flavor: moon
             profile_secret: PROV_PRO_APPStore_MOON
-
-
+            firebase_app: FIREBASE_APP_ID_MOON
           
     env:
       KEYCHAIN_PASSWORD: "github"
@@ -26,6 +26,7 @@ jobs:
       SECRET_KEY_BASE64: ${{ secrets.SECRET_KEY_BASE64 }}
       BASE_URL_BASE64: ${{ secrets.BASE_URL_BASE64 }}
       APPLE_ID: ${{ secrets.APPLE_ID }}
+      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -94,7 +95,6 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp "${{ matrix.flavor }}.mobileprovision" ~/Library/MobileDevice/Provisioning\ Profiles/
 
-          
       - name: Install CocoaPods
         run: |
           flutter clean
@@ -130,3 +130,11 @@ jobs:
         with:
           name: ios-build-${{ matrix.flavor }}
           path: build/ios/ipa/*.ipa
+
+      - name: Distribute to Firebase App Distribution (${{ matrix.flavor }})
+        run: |
+          IPA_PATH=$(ls build/ios/ipa/*.ipa | head -n 1)
+          firebase appdistribution:distribute "$IPA_PATH" \
+            --app ${{ secrets[matrix.firebase_app] }} \
+            --token ${{ secrets.FIREBASE_TOKEN }} \
+            --groups "qa-testers"
