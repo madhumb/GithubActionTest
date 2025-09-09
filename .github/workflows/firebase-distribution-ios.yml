@@ -181,6 +181,7 @@ jobs:
                   EOF
 
                   echo "ExportOptions plist $FLAVOR  created at $PLIST_PATH"
+                  cat $PLIST_PATH
                   ls -lh $PLIST_PATH            
       
       - name: Build iOS (no codesign)
