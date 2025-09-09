@@ -13,7 +13,7 @@ jobs:
       matrix:
         include:
           - flavor: star
-            profile_secret: PROV_PRO_APPStore_STAR
+            profile_secret: PROV_PRO_APPStore_GNK
             firebase_app: FIREBASE_APP_ID_STAR
           - flavor: moon
             profile_secret: PROV_PRO_APPStore_MOON
