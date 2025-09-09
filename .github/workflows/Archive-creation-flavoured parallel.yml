@@ -16,8 +16,7 @@ jobs:
             profile_secret: PROV_PRO_APPStore_GNK
           - flavor: moon
             profile_secret: PROV_PRO_APPStore_MOON
-          - flavor: sun
-            profile_secret: PROV_PRO_APPStore_SUN
+
 
           
     env:
