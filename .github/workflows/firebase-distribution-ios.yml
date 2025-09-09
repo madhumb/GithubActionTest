@@ -143,10 +143,14 @@ jobs:
           
               echo "XCARCHIVE_PATH=build/ios/archive/Runner.xcarchive" >> $GITHUB_ENV
               ls -lh build/ios/archive
+
+             
+      - name: code sign manually
+        run: |       
+            codesign -f -s "iPhone Distribution: Your Team" \
+            --entitlements ios/Runner/Runner.entitlements \ 
+            build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app
           
-    
-
-
     
       - name: Export IPA (manual signing)
         run: |
@@ -181,7 +185,7 @@ jobs:
                 # Export IPA
                 xcodebuild -exportArchive \
                   -archivePath $XCARCHIVE_PATH \
-                  -exportPath $IPA_DIR \
+                  -exportPath $IPA_DIR DEVELOPMENT_TEAM=ZCEY7L7MT7 CODE_SIGN_IDENTITY="iPhone Distribution: Your Team" \
                   -exportOptionsPlist ios/ExportOptions_${FLAVOR}.plist \
                   -allowProvisioningUpdates \
                   -verbose
