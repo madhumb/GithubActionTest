@@ -39,29 +39,34 @@ flutter_ios_podfile_setup
 #    inherit! :search_paths
 #  end
 #end
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
-  # Per flavor configuration
-  target 'Runner' do
-    config = ENV['FLAVOR'] || 'moon'
-    xcconfig = File.join(flutter_application_path, "ios/Flutter/Release.xcconfig")
-    if config == 'moon'
-      xcconfig = File.join(flutter_application_path, "ios/Flutter/moonrelease.xcconfig")
-    elsif config == 'star'
-      xcconfig = File.join(flutter_application_path, "ios/Flutter/starrelease.xcconfig")
-    end
-    # Apply the xcconfig
-    $pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.base_configuration_reference = xcconfig
-      end
+  # Determine flavor
+  config_name = ENV['FLAVOR'] || 'moon'
+
+  # Pick xcconfig based on flavor
+  base_xcconfig = case config_name
+                  when 'moon'
+                    'Flutter/moonrelease.xcconfig'
+                  when 'star'
+                    'Flutter/starrelease.xcconfig'
+                  else
+                    'Flutter/Release.xcconfig'
+                  end
+
+  # Apply base configuration for each build configuration
+  project.targets.each do |t|
+    t.build_configurations.each do |c|
+      c.base_configuration_reference = File.join(__dir__, base_xcconfig)
     end
   end
 end
+
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
