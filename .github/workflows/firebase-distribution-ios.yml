@@ -185,8 +185,9 @@ jobs:
                   ls -lh $PLIST_PATH            
       
       - name: Build iOS (no codesign)
+        timeout-minutes: 40
         run: |
-           timeout 40m flutter build ipa \
+            flutter build ipa \
             --release \
             --flavor ${{ matrix.flavor }} --no-codesign \
             -t lib/main_${{ matrix.flavor }}.dart 
