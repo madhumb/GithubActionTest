@@ -193,35 +193,35 @@ jobs:
             -t lib/main_${{ matrix.flavor }}.dart 
 
               
-            echo "XCARCHIVE_PATH=build/ios/archive/Runner.xcarchive" >> $GITHUB_ENV
-            ls -lh build/ios/archive
+        # echo "XCARCHIVE_PATH=build/ios/archive/Runner.xcarchive" >> $GITHUB_ENV
+        # ls -lh build/ios/archive
 
              
-      - name: code sign manually
-        run: |       
-         CODESIGN_IDENTITY=$(security find-identity -v -p codesigning | grep "iPhone Distribution" | awk -F'"' '{print $2}' | head -n 1)
+    # - name: code sign manually
+    #   run: |       
+    #     CODESIGN_IDENTITY=$(security find-identity -v -p codesigning | grep "iPhone Distribution" | awk -F'"' '{print $2}' | head -n 1)
 
-         codesign -f -s "$CODESIGN_IDENTITY" \
-          --entitlements ios/Runner/Runner.entitlements \
-          build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app
-    
-      - name: Export IPA (manual signing)
-        run: |
-                FLAVOR=${{ matrix.flavor }}
-                IPA_DIR=build/ios/ipa
-                mkdir -p $IPA_DIR
-               
-                # Export IPA
-                xcodebuild -exportArchive \
-                  -archivePath $XCARCHIVE_PATH \
-                  -exportPath $IPA_DIR DEVELOPMENT_TEAM="ZCEY7L7MT7" \
-                  -exportOptionsPlist ios/ExportOptions_${FLAVOR}.plist \
-                  -verbose
-            
-                # Rename IPA so it includes flavor
-                mv $IPA_DIR/Runner.ipa $IPA_DIR/Runner-${FLAVOR}.ipa
-                echo "IPA_PATH=$IPA_DIR/Runner-${FLAVOR}.ipa" >> $GITHUB_ENV
-                echo "✅ IPA for $FLAVOR exported: $IPA_DIR/Runner-${FLAVOR}.ipa"
+    #     codesign -f -s "$CODESIGN_IDENTITY" \
+    #     --entitlements ios/Runner/Runner.entitlements \
+    #     build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app
+  
+    # - name: Export IPA (manual signing)
+    #   run: |
+    #           FLAVOR=${{ matrix.flavor }}
+    #           IPA_DIR=build/ios/ipa
+    #           mkdir -p $IPA_DIR
+              
+    #           # Export IPA
+    #           xcodebuild -exportArchive \
+    #             -archivePath $XCARCHIVE_PATH \
+    #             -exportPath $IPA_DIR DEVELOPMENT_TEAM="ZCEY7L7MT7" \
+    #             -exportOptionsPlist ios/ExportOptions_${FLAVOR}.plist \
+    #             -verbose
+          
+    #           # Rename IPA so it includes flavor
+    #           mv $IPA_DIR/Runner.ipa $IPA_DIR/Runner-${FLAVOR}.ipa
+    #           echo "IPA_PATH=$IPA_DIR/Runner-${FLAVOR}.ipa" >> $GITHUB_ENV
+    #           echo "✅ IPA for $FLAVOR exported: $IPA_DIR/Runner-${FLAVOR}.ipa"
 
                 
       # - name: Export IPA with Xcode
