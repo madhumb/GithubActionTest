@@ -123,7 +123,7 @@ jobs:
           flutter clean
           flutter pub get
           cd ios
-          pod install --repo-update --verbose
+          pod install --repo-update
           cd ..
 
 

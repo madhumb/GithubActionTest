@@ -17,3 +17,6 @@ samples, guidance on mobile development, and a full API reference.
 
 
 flutter build ipa --release --flavor star --no-codesign -t lib/main_star.dart 
+flutter build ios --flavor star -t lib/main_star.dart --no-codesign --dart-define=FLUTTER_FLAVOR=star
+
+flutter build ios --flavor star -t lib/main_star.dart --dart-define=FLUTTER_FLAVOR=star
