@@ -1,0 +1,34 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "star",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_star.dart",
+            "args": [
+                "-t",
+                "lib/main_star.dart",
+                "--flavor",
+                "star"
+            ]
+        },
+        {
+            "name": "moon",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_moon.dart",
+            "args": [
+                "-t",
+                "lib/main_moon.dart",
+                "--flavor",
+                "moon"
+            ]
+        },
+       
+       
+    ]
+}
