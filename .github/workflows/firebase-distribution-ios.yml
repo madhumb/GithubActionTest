@@ -186,14 +186,14 @@ jobs:
       
       - name: Build iOS (no codesign)
         run: |
-           flutter build ipa \
+           timeout 40m flutter build ipa \
             --release \
             --flavor ${{ matrix.flavor }} --no-codesign \
             -t lib/main_${{ matrix.flavor }}.dart 
 
               
-              echo "XCARCHIVE_PATH=build/ios/archive/Runner.xcarchive" >> $GITHUB_ENV
-              ls -lh build/ios/archive
+            echo "XCARCHIVE_PATH=build/ios/archive/Runner.xcarchive" >> $GITHUB_ENV
+            ls -lh build/ios/archive
 
              
       - name: code sign manually
