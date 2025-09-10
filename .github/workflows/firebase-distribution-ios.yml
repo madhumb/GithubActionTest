@@ -123,7 +123,6 @@ jobs:
           flutter clean
           flutter pub get
           cd ios
-          pod repo remove cocoapods
           pod install
           cd ..
 
