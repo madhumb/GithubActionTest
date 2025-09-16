@@ -20,3 +20,5 @@ flutter build ipa --release --flavor star --no-codesign -t lib/main_star.dart
 flutter build ios --flavor star -t lib/main_star.dart --no-codesign --dart-define=FLUTTER_FLAVOR=star
 
 flutter build ios --flavor star -t lib/main_star.dart --dart-define=FLUTTER_FLAVOR=star
+
+flutter build ipa --flavor star -t lib/main_star.dart --release --export-method app-store

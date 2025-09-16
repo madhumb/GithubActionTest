@@ -25,7 +25,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  trunk:
     - Firebase
     - FirebaseCore
     - FirebaseCoreInternal
@@ -45,6 +45,6 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
 
-PODFILE CHECKSUM: bb16ac6464a6b4fe0c1b427c5c7e0ff535d05a76
+PODFILE CHECKSUM: b8f898368184bf66e433397f0c4f0bfc314ede19
 
 COCOAPODS: 1.16.2

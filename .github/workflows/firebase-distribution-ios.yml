@@ -185,12 +185,22 @@ jobs:
                   ls -lh $PLIST_PATH            
       
       - name: Build iOS (no codesign)
-        timeout-minutes: 40
+        # timeout-minutes: 40
         run: |
-            flutter build ipa \
-            --release \
-            --flavor ${{ matrix.flavor }} --no-codesign \
-            -t lib/main_${{ matrix.flavor }}.dart 
+
+          xcodebuild \
+          -workspace ios/Runner.xcworkspace \
+          -scheme ${{ matrix.flavor }} \
+          -configuration Release \
+          -sdk iphoneos \
+          -archivePath build/${{ matrix.flavor }}.xcarchive \
+          clean archive
+
+
+      # flutter build ipa \
+      # --release \
+      # --flavor ${{ matrix.flavor }} --no-codesign \
+      # -t lib/main_${{ matrix.flavor }}.dart 
 
               
         # echo "XCARCHIVE_PATH=build/ios/archive/Runner.xcarchive" >> $GITHUB_ENV
