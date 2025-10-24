@@ -1,0 +1,48 @@
+name: Deploy iOS Flavors
+
+on:
+  workflow_dispatch: # manual trigger
+#   push:
+#     tags:
+#       - "v*" # optional: trigger only on version tags
+
+jobs:
+  deploy:
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        environment: [strivenew, psf, prosper]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: Setup App Store Connect API Key
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey.p8
+        env:
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+
+      - name: Deploy to store - ${{ matrix.environment }}
+        run: |
+            bundle exec fastlane ios build_ipa env:"${{ matrix.environment }}"
+
+            bundle exec fastlane ios release env:"${{ matrix.environment }}"
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}

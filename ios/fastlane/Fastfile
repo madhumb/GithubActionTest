@@ -13,24 +13,119 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
+# default_platform(:ios)
+
+# platform :ios do
+#   desc "Push a new beta build to TestFlight"
+#   lane :beta do |options|
+#     flavor = options[:flavor] || "star"
+#     bundle_id = options[:bundle_id] || "com.gnkbros.app"
+
+#     ENV["FLAVOR"] = flavor
+#     ENV["BUNDLE_ID"] = bundle_id
+#     sh("flutter build ipa --flavor #{flavor} -t lib/main_#{flavor}.dart --release --codesign --export-options-plist ios/ExportOptions.plist")
+
+
+#     # increment_build_number(xcodeproj: "Runner.xcodeproj")
+#     # build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+#     upload_to_testflight(
+#       skip_waiting_for_build_processing: false,
+#       app_identifier: bundle_id
+#     )
+#   end
+# end
 default_platform(:ios)
 
 platform :ios do
-  desc "Push a new beta build to TestFlight"
-  lane :beta do |options|
-    flavor = options[:flavor] || "star"
-    bundle_id = options[:bundle_id] || "com.gnkbros.app"
+  desc "Build and upload iOS app for a specific environment"
 
-    ENV["FLAVOR"] = flavor
-    ENV["BUNDLE_ID"] = bundle_id
-    sh("flutter build ipa --flavor #{flavor} -t lib/main_#{flavor}.dart --release --codesign --export-options-plist ios/ExportOptions.plist")
+  lane :build_ipa do |options|
+    env = options[:env] || "strivenew"
 
+    # Map each environment to a scheme and bundle ID
+    config = {
+      "prosper" => {
+        scheme: "prosper",
+        bundle_id: "com.recode.propser"
+      },
+      "psf" => {
+        scheme: "psf",
+        bundle_id: "com.recode.psf"
+      },
+      "strivenew" => {
+        scheme: "strivenew",
+        bundle_id: "com.health.strivehealth"
+      }
+    }
 
-    # increment_build_number(xcodeproj: "Runner.xcodeproj")
-    # build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
-    upload_to_testflight(
-      skip_waiting_for_build_processing: false,
+    unless config.key?(env)
+      UI.user_error!("Unknown environment: #{env}. Must be one of: #{config.keys.join(', ')}")
+    end
+
+    scheme = config[env][:scheme]
+    bundle_id = config[env][:bundle_id]
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
+      issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
+      key_content: ENV['APP_STORE_CONNECT_API_KEY'],
+      in_house: false
+    )
+
+    # 🔐 Code signing (optional if already signed manually)
+    match(
+      type: "appstore",
+      readonly: true,
       app_identifier: bundle_id
+      api_key: api_key
+    )
+
+    # 🏗️ Build the IPA
+    build_app(
+      scheme: scheme,
+      export_method: "app-store",
+      output_name: "MyApp-#{env}.ipa",
+      output_directory: "./builds/#{env}"
+    )
+
+    UI.success("✅ IPA built: ./builds/#{env}/MyApp-#{env}.ipa")
+
+
+
+  lane :release do |options|
+    # Get the environment (flavor)
+    env = options[:env] || "strivenew"
+
+    # Map each environment to a scheme and bundle ID
+    config = {
+      "prosper" => {
+        scheme: "prosper",
+        bundle_id: "com.recode.propser"
+      },
+      "psf" => {
+        scheme: "psf",
+        bundle_id: "com.recode.psf"
+      },
+      "strivenew" => {
+        scheme: "strivenew",
+        bundle_id: "com.health.strivehealth"
+      }
+    }
+
+    unless config.key?(env)
+      UI.user_error!("Unknown environment: #{env}. Must be one of: #{config.keys.join(', ')}")
+    end
+
+    scheme = config[env][:scheme]
+    bundle_id = config[env][:bundle_id]
+
+    deliver(
+      ipa: "./builds/#{env}/MyApp-#{env}.ipa",
+      submit_for_review: true,
+      automatic_release: true, # Optional: set to false if you want manual release
+      skip_screenshots: true,
+      skip_metadata: true
     )
   end
 end
+    
