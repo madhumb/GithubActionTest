@@ -46,6 +46,9 @@ flutter pub get
 # -----------------------------
 cd "$IOS_DIR"
 gem install bundler
+rm -rf Pods Podfile.lock
+pod repo update
+pod install --repo-update
 
 bundle install
 echo "🔹 Verifying Xcode path..."
