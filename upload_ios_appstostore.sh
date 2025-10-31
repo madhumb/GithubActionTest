@@ -54,8 +54,7 @@ pod install
 
 bundle install
 echo "🔹 Verifying Xcode path..."
-sudo xcode-select -s /Applications/Xcode.app
-xcode-select -p
+
 
 # -----------------------------
 # STEP 3: Build each flavor
