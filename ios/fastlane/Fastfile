@@ -62,7 +62,7 @@ platform :ios do
   desc "Push a new release build to the App Store"
   lane :release do |options|
     scheme = options[:scheme] || "Runner"
- 
+    match(type: "appstore") 
     build_app(
       scheme: scheme,
       output_directory: "./build",

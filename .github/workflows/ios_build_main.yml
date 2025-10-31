@@ -19,6 +19,7 @@ jobs:
             profile_secret: PROV_PRO_APPStore_MOON
 
     env:
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       KEYCHAIN_PASSWORD: "github"
       CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
       IOS_CERT_BASE64: ${{ secrets.IOS_CERT_BASE64 }}
