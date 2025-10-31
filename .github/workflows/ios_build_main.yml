@@ -16,90 +16,45 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2. Install Flutter
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.5'
           channel: 'stable'
           cache: false   
-  
+
+      # 3. Setup App Store Connect key
       - name: Setup App Store Connect API Key
         run: |
-            flutter clean
-            flutter pub get
-            mkdir -p ~/.appstoreconnect/private_keys
-            echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey.p8
+          flutter clean
+          flutter pub get
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey.p8
         env:
-            APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
 
-      # - name: Verify key presence
-      #   run: |
-      #       ls -la ~/.appstoreconnect/private_keys/
-      #       head -n 3 ~/.appstoreconnect/private_keys/AuthKey.p8       
-            
-
-
-      # - name: Deploy to App Store / TestFlight
-      #   run: bundle exec fastlane ios release
-      #   env:
-      #       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      #       APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-      #       APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-      #       FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}      
-           
-      # - name: Cache CocoaPods
-      #   uses: actions/cache@v4
-      #   with:
-      #         path: ios/Pods
-      #         key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
-      #         restore-keys: |
-      #           ${{ runner.os }}-pods-
-    
-      # - name: Cache Xcode DerivedData
-      #   uses: actions/cache@v4
-      #   with:
-      #         path: ~/Library/Developer/Xcode/DerivedData
-      #         key: ${{ runner.os }}-deriveddata-${{ github.sha }}
-      #         restore-keys: |
-      #           ${{ runner.os }}-deriveddata-
-    
-      # - name: Flutter pub get
-      #   run: flutter pub get  
-      #   working-directory: ./strive_health  
-
-          
-      # 2. Setup Ruby (needed for Fastlane)
-      # - name: Setup Ruby
-      #   uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 3.3.4  # or your Ruby version
-      #     bundler-cache: true
-
-      # 3. Install dependencies
-      # - name: Install dependencies
-      #   run: |
-      #     gem install bundler
-      #     bundle install || gem install fastlane
-      #   working-directory: ./strive_health/ios   
-
-
-      # 4. Setup Xcode (optional)
+      # 4. Select correct Xcode version
       - name: Setup Xcode
         run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
-      # - name: Update version and build number for all apps
-      #   run: bash update_ios_versions.sh
-      #   working-directory: ./strive_health
-      
+      # 5. Run your build shell script (calls Fastlane inside)
       - name: Run build script
         run: bash upload_ios_appstostore.sh
-        
 
-      # 5. Run Fastlane
-    #   - name: Run Fastlane
-    #     run: bundle exec fastlane ios build
-    #     # OR: run: fastlane ios your_lane_name
-    #     env:
-    #       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-    #       APP_STORE_CONNECT_API_KEY_PATH: ${{ secrets.APP_STORE_CONNECT_API_KEY_PATH }}
-    #       # add any other Fastlane secrets here
+      # 6. Show last 50 lines of Fastlane/Xcode log (for quick debugging)
+      - name: Show last lines of Fastlane log
+        if: failure()
+        run: |
+          echo "🧾 Showing last 50 lines of Runner-star.log (if available)..."
+          tail -n 50 /Users/runner/Library/Logs/gym/Runner-star.log || echo "⚠️ No Fastlane log file found."
+
+      # 7. Upload full logs as artifact (downloadable)
+      - name: Upload Xcode/Fastlane Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcode-fastlane-logs
+          path: |
+            /Users/runner/Library/Logs/gym/
+            ~/Library/Logs/scan/
