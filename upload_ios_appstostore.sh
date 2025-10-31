@@ -41,8 +41,9 @@ ruby -v
 # -----------------------------
 # STEP 2: Install Bundler & Gems
 # -----------------------------
-gem install bundler
 cd "$IOS_DIR"
+gem install bundler
+
 bundle install
 
 # -----------------------------
