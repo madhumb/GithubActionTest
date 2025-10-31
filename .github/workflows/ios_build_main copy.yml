@@ -1,0 +1,139 @@
+name: iOS Build & Deploy Main
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    name: Build iOS with Fastlane
+    runs-on: macos-latest
+
+    steps:
+      # 1. Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: false   
+  
+      - name: Setup App Store Connect API Key
+        run: |
+            mkdir -p ~/.appstoreconnect/private_keys
+            echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey.p8
+        env:
+            APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+
+      # - name: Verify key presence
+      #   run: |
+      #       ls -la ~/.appstoreconnect/private_keys/
+      #       head -n 3 ~/.appstoreconnect/private_keys/AuthKey.p8       
+            
+
+
+      # - name: Deploy to App Store / TestFlight
+      #   run: bundle exec fastlane ios release
+      #   env:
+      #       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      #       APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+      #       APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      #       FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}      
+           
+      # - name: Cache CocoaPods
+      #   uses: actions/cache@v4
+      #   with:
+      #         path: ios/Pods
+      #         key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+      #         restore-keys: |
+      #           ${{ runner.os }}-pods-
+    
+      # - name: Cache Xcode DerivedData
+      #   uses: actions/cache@v4
+      #   with:
+      #         path: ~/Library/Developer/Xcode/DerivedData
+      #         key: ${{ runner.os }}-deriveddata-${{ github.sha }}
+      #         restore-keys: |
+      #           ${{ runner.os }}-deriveddata-
+    
+      # - name: Flutter pub get
+      #   run: flutter pub get  
+      #   working-directory: ./strive_health  
+
+          
+      # 2. Setup Ruby (needed for Fastlane)
+      # - name: Setup Ruby
+      #   uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: 3.3.4  # or your Ruby version
+      #     bundler-cache: true
+
+      # 3. Install dependencies
+      # - name: Install dependencies
+      #   run: |
+      #     gem install bundler
+      #     bundle install || gem install fastlane
+      #   working-directory: ./strive_health/ios   
+
+
+      - name: Decrypt config.json
+        env:
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
+        run: |
+          openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -d -salt -in config.json.enc -out config.json -base64 -pass pass:"$ENCRYPTION_KEY"
+
+
+        working-directory: ./strive_health  
+   
+      - name: Setup environment variables
+        run: |
+          PROD_BASE_URL=$(jq -r '.common.env.PROD_BASE_URL' config.json)
+          PROD_OLD_BASE_URL=$(jq -r '.common.env.PROD_OLD_BASE_URL' config.json)
+          PROD_PUBLIC_LOG_EVENT=$(jq -r '.common.env.PROD_PUBLIC_LOG_EVENT' config.json)
+          SECRET_IV=$(jq -r '.common.env.SECRET_IV' config.json)
+          SECRET_KEY=$(jq -r '.common.env.SECRET_KEY' config.json)
+          STAGE_BASE_URL=$(jq -r '.common.env.STAGE_BASE_URL' config.json)
+          STAGE_OLD_BASE_URL=$(jq -r '.common.env.STAGE_OLD_BASE_URL' config.json)
+          STAGE_PUBLIC_LOG_EVENT=$(jq -r '.common.env.STAGE_PUBLIC_LOG_EVENT' config.json)
+          TENOR_API_KEY=$(jq -r '.common.env.TENOR_API_KEY' config.json)
+          echo "PROD_BASE_URL=${PROD_BASE_URL}" >> .env
+          echo "PROD_OLD_BASE_URL=${PROD_OLD_BASE_URL}" >> .env
+          echo "PROD_PUBLIC_LOG_EVENT=${PROD_PUBLIC_LOG_EVENT}" >> .env
+          echo "SECRET_IV=${SECRET_IV}" >> .env
+          echo "SECRET_KEY=${SECRET_KEY}" >> .env
+          echo "STAGE_BASE_URL=${STAGE_BASE_URL}" >> .env
+          echo "STAGE_OLD_BASE_URL=${STAGE_OLD_BASE_URL}" >> .env
+          echo "STAGE_PUBLIC_LOG_EVENT=${STAGE_PUBLIC_LOG_EVENT}" >> .env
+          echo "TENOR_API_KEY=${TENOR_API_KEY}" >> .env
+        working-directory: ./strive_health    
+  
+      - name: Generate env.g.dart
+        run: dart run build_runner build --delete-conflicting-outputs
+        working-directory: ./strive_health 
+
+
+      # 4. Setup Xcode (optional)
+      - name: Setup Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+
+      # - name: Update version and build number for all apps
+      #   run: bash update_ios_versions.sh
+      #   working-directory: ./strive_health
+      
+      - name: Run build script
+        run: bash upload_ios_appstostore.sh
+        working-directory: ./strive_health
+
+      # 5. Run Fastlane
+    #   - name: Run Fastlane
+    #     run: bundle exec fastlane ios build
+    #     # OR: run: fastlane ios your_lane_name
+    #     env:
+    #       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+    #       APP_STORE_CONNECT_API_KEY_PATH: ${{ secrets.APP_STORE_CONNECT_API_KEY_PATH }}
+    #       # add any other Fastlane secrets here
