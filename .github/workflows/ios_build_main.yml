@@ -110,11 +110,11 @@ jobs:
           echo "STAGE_OLD_BASE_URL=${STAGE_OLD_BASE_URL}" >> .env
           echo "STAGE_PUBLIC_LOG_EVENT=${STAGE_PUBLIC_LOG_EVENT}" >> .env
           echo "TENOR_API_KEY=${TENOR_API_KEY}" >> .env
-        working-directory: ./strive_health    
+         
   
       - name: Generate env.g.dart
         run: dart run build_runner build --delete-conflicting-outputs
-        working-directory: ./strive_health 
+        
 
 
       # 4. Setup Xcode (optional)
@@ -127,7 +127,7 @@ jobs:
       
       - name: Run build script
         run: bash upload_ios_appstostore.sh
-        working-directory: ./strive_health
+        
 
       # 5. Run Fastlane
     #   - name: Run Fastlane
