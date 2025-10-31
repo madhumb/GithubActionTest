@@ -11,6 +11,15 @@ jobs:
     name: Build iOS with Fastlane
     runs-on: macos-latest
 
+    env:
+      KEYCHAIN_PASSWORD: "github"
+      CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+      IOS_CERT_BASE64: ${{ secrets.IOS_CERT_BASE64 }}
+      SECRET_KEY_BASE64: ${{ secrets.SECRET_KEY_BASE64 }}
+      BASE_URL_BASE64: ${{ secrets.BASE_URL_BASE64 }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+
+      
     steps:
       # 1. Checkout the code
       - name: Checkout code
