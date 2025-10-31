@@ -27,6 +27,8 @@ platform :ios do
       export_method: "app-store", # Still use 'app-store' for TestFlight uploads
       export_options: {
         provisioningProfiles: {
+          "com.recode.bookmark" => "Bookmark Apprstore profile",
+          "com.gnkbros.app" =>"com.gnkbros.app appstore",
           "com.recode.benni" => "Benni Appstore",
           "com.recode.mybenefitplace" => "My Benefit Place AppStore",
           "com.health.strivehealth" => "StriveHealth_Appstore",
