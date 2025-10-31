@@ -37,6 +37,9 @@ fi
 # Set local Ruby version for this script
 rbenv local "$RUBY_VERSION"
 ruby -v
+echo "🔹 Cleaning Flutter project..."
+flutter clean
+flutter pub get
 
 # -----------------------------
 # STEP 2: Install Bundler & Gems
@@ -45,6 +48,9 @@ cd "$IOS_DIR"
 gem install bundler
 
 bundle install
+echo "🔹 Verifying Xcode path..."
+sudo xcode-select -s /Applications/Xcode.app
+xcode-select -p
 
 # -----------------------------
 # STEP 3: Build each flavor
