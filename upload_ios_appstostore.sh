@@ -50,12 +50,19 @@ cd "$IOS_DIR"
 gem install bundler
 # rm -rf Pods Podfile.lock
 # pod repo update
-pod install
+pod install --repo-update
+
+echo "🔑 Setting up signing certificates using Fastlane Match..."
+if [ -z "$MATCH_GIT_URL" ] || [ -z "$MATCH_PASSWORD" ]; then
+  echo "❌ MATCH_GIT_URL or MATCH_PASSWORD not set. Please configure them as environment variables."
+  exit 1
+fi
 
 bundle install
 echo "🔹 Verifying Xcode path..."
 
-
+# Fetch certificates (read-only for CI)
+bundle exec fastlane match appstore --readonly
 # -----------------------------
 # STEP 3: Build each flavor
 # -----------------------------

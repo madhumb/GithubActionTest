@@ -62,7 +62,13 @@ platform :ios do
   desc "Push a new release build to the App Store"
   lane :release do |options|
     scheme = options[:scheme] || "Runner"
-    match(type: "appstore") 
+    match(
+      type: "appstore",
+      app_identifier: ["com.gnkbros.app"],  # <-- replace with yours
+      username: "madhu@strivebenefits.com",
+      git_url: ENV["MATCH_GIT_URL"],
+    )
+
     build_app(
       scheme: scheme,
       output_directory: "./build",
