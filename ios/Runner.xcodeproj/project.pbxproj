@@ -326,7 +326,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -z \"$FLUTTER_ROOT\" ]; then\n  export FLUTTER_ROOT=\"$(flutter sdk-path)\"\nfi\n\necho \"Using FLUTTER_ROOT: $FLUTTER_ROOT\"\n\n\n/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
+			shellScript = "if [ -z \"$FLUTTER_ROOT\" ]; then\n  export FLUTTER_ROOT=\"$(flutter sdk-path)\"\nfi\n\necho \"Using FLUTTER_ROOT: $FLUTTER_ROOT\"\n\n\n/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
