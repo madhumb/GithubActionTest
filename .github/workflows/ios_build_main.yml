@@ -81,39 +81,6 @@ jobs:
       #   working-directory: ./strive_health/ios   
 
 
-      - name: Decrypt config.json
-        env:
-          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
-        run: |
-          openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -d -salt -in config.json.enc -out config.json -base64 -pass pass:"$ENCRYPTION_KEY"
-   
-      - name: Setup environment variables
-        run: |
-          PROD_BASE_URL=$(jq -r '.common.env.PROD_BASE_URL' config.json)
-          PROD_OLD_BASE_URL=$(jq -r '.common.env.PROD_OLD_BASE_URL' config.json)
-          PROD_PUBLIC_LOG_EVENT=$(jq -r '.common.env.PROD_PUBLIC_LOG_EVENT' config.json)
-          SECRET_IV=$(jq -r '.common.env.SECRET_IV' config.json)
-          SECRET_KEY=$(jq -r '.common.env.SECRET_KEY' config.json)
-          STAGE_BASE_URL=$(jq -r '.common.env.STAGE_BASE_URL' config.json)
-          STAGE_OLD_BASE_URL=$(jq -r '.common.env.STAGE_OLD_BASE_URL' config.json)
-          STAGE_PUBLIC_LOG_EVENT=$(jq -r '.common.env.STAGE_PUBLIC_LOG_EVENT' config.json)
-          TENOR_API_KEY=$(jq -r '.common.env.TENOR_API_KEY' config.json)
-          echo "PROD_BASE_URL=${PROD_BASE_URL}" >> .env
-          echo "PROD_OLD_BASE_URL=${PROD_OLD_BASE_URL}" >> .env
-          echo "PROD_PUBLIC_LOG_EVENT=${PROD_PUBLIC_LOG_EVENT}" >> .env
-          echo "SECRET_IV=${SECRET_IV}" >> .env
-          echo "SECRET_KEY=${SECRET_KEY}" >> .env
-          echo "STAGE_BASE_URL=${STAGE_BASE_URL}" >> .env
-          echo "STAGE_OLD_BASE_URL=${STAGE_OLD_BASE_URL}" >> .env
-          echo "STAGE_PUBLIC_LOG_EVENT=${STAGE_PUBLIC_LOG_EVENT}" >> .env
-          echo "TENOR_API_KEY=${TENOR_API_KEY}" >> .env
-         
-  
-      - name: Generate env.g.dart
-        run: dart run build_runner build --delete-conflicting-outputs
-        
-
-
       # 4. Setup Xcode (optional)
       - name: Setup Xcode
         run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
