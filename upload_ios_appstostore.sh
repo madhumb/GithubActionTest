@@ -5,7 +5,7 @@ set -e  # exit on first error
 # CONFIG
 # -----------------------------
 # List all your build flavors/schemes here
-FLAVORS=( star moon )
+FLAVORS=(  star moon )
 
 # Path to your iOS folder containing Gemfile
 IOS_DIR="ios"
@@ -40,15 +40,17 @@ ruby -v
 echo "🔹 Cleaning Flutter project..."
 flutter clean
 flutter pub get
+flutter precache
+
 
 # -----------------------------
 # STEP 2: Install Bundler & Gems
 # -----------------------------
 cd "$IOS_DIR"
 gem install bundler
-rm -rf Pods Podfile.lock
-pod repo update
-pod install --repo-update
+# rm -rf Pods Podfile.lock
+# pod repo update
+pod install
 
 bundle install
 echo "🔹 Verifying Xcode path..."

@@ -29,6 +29,9 @@ jobs:
         run: |
           flutter clean
           flutter pub get
+          cd ios
+          pod install --verbose --no-repo-update
+
           mkdir -p ~/.appstoreconnect/private_keys
           echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey.p8
         env:

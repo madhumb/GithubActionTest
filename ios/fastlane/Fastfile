@@ -19,7 +19,6 @@ platform :ios do
   
   lane :beta do |options|
     scheme = options[:scheme] || "Runner"
-  
     build_app(
       scheme: scheme,
       output_directory: "./build",
