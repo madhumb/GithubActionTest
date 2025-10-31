@@ -28,34 +28,7 @@ platform :ios do
       export_options: {
         provisioningProfiles: {
           "com.recode.bookmark" => "Bookmark Apprstore profile",
-          "com.gnkbros.app" =>"com.gnkbros.app appstore",
-          "com.recode.benni" => "Benni Appstore",
-          "com.recode.mybenefitplace" => "My Benefit Place AppStore",
-          "com.health.strivehealth" => "StriveHealth_Appstore",
-          "com.recode.pregis" => "Pregis Appstore profile",
-          "com.recode.foundationwell" => "FoundationWell Appstore",
-          "com.recode.byersindustrial" => "Appstore Byers Industrial",
-          "com.recode.aerodyneapex" => "Aerodyne APEX Appstore",
-          "com.recode.magis" => "Magis appstore profile",
-          "com.recode.geotekconnect" => "GeoTek Connect Appstore",
-          "com.recode.innofiberconnect" => "Innofiber Connect Appstore",
-          "com.recode.pyramidhub" => "PyramidHub Appstore profile",
-          "com.recode.fcccares" => "Appstore Fcc Cares",
-          "com.recode.morrison" => "Morrison Appstore",
-          "com.recode.harborfoods" => "Harbor appstore profile",
-          "com.recode.saintfancistotalrewards" => "Saint Appstore Profile",
-          "com.recode.gtrbenefits" => "GTR Appstore",
-          "com.recode.bradford" => "Appstore Bradford",
-          "com.recode.rollwell" => "Appstore RollWell",
-          "com.recode.rbha" => "RBHA Appstore",
-          "com.recode.imahealth" => "IMA_Appstore",
-          "com.health.psf" => "Psf_Appstore",
-          "com.recode.tustin" => "Tustin group Appstore",
-          "com.recode.ahbenefits" => "AHBenefits Appstore",
-          "com.recode.mcrriffjourney" => "McGriff Journey Appstore",
-          "com.strive.quipthomemedical" => "quipthomemedical appstore profile",
-          "com.recode.prosper" => "Prosper Appstore Profile",
-          "com.recode.acrisure" => "Acrisure Appstore profile",
+          "com.gnkbros.app" =>"com.gnkbros.app appstore"
         }
       }
     )
@@ -98,33 +71,9 @@ platform :ios do
       export_method: "app-store",
       export_options: {
       provisioningProfiles: {
-        "com.recode.benni" => "Benni Appstore",
-        "com.recode.mybenefitplace" => "My Benefit Place AppStore",
-        "com.health.strivehealth" => "StriveHealth_Appstore",
-        "com.recode.pregis" => "Pregis Appstore profile",
-        "com.recode.foundationwell" =>"FoundationWell Appstore",
-        "com.recode.byersindustrial" => "Appstore Byers Industrial",
-        "com.recode.aerodyneapex" => "Aerodyne APEX Appstore",
-        "com.recode.magis" => "Magis appstore profile",
-        "com.recode.geotekconnect" => "GeoTek Connect Appstore",
-        "com.recode.innofiberconnect" =>"Innofiber Connect Appstore",
-        "com.recode.pyramidhub" => "PyramidHub Appstore profile",
-        "com.recode.fcccares" => "Appstore Fcc Cares",
-        "com.recode.morrison" =>  "Morrison Appstore",
-        "com.recode.harborfoods" => "Harbor appstore profile",
-        "com.recode.saintfancistotalrewards" => "Saint Appstore Profile",
-        "com.recode.gtrbenefits" => "GTR Appstore",
-        "com.recode.bradford" => "Appstore Bradford",
-        "com.recode.rollwell" => "Appstore RollWell",
-        "com.recode.rbha" => "RBHA Appstore",
-        "com.recode.imahealth" => "IMA_Appstore",
-        "com.health.psf" => "Psf_Appstore",
-        "com.recode.tustin" => "Tustin group Appstore",
-        "com.recode.ahbenefits" =>  "AHBenefits Appstore",
-        "com.recode.mcrriffjourney" => "McGriff Journey Appstore",
-        "com.strive.quipthomemedical" => "quipthomemedical appstore profile",
-        "com.recode.prosper" => "Prosper Appstore Profile",
-        "com.recode.acrisure" => "Acrisure Appstore profile",
+        "com.recode.bookmark" => "Bookmark Apprstore profile",
+        "com.gnkbros.app" =>"com.gnkbros.app appstore"
+
       }
     }
     )

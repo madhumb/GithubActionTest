@@ -5,7 +5,7 @@ set -e  # exit on first error
 # CONFIG
 # -----------------------------
 # List all your build flavors/schemes here
-FLAVORS=( star moon)
+FLAVORS=( star moon )
 
 # Path to your iOS folder containing Gemfile
 IOS_DIR="ios"
