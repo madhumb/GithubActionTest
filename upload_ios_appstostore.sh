@@ -1,5 +1,7 @@
 #!/bin/bash
 set -e  # exit on first error
+export MATCH_GIT_URL="https://github.com/madhumb/ios-certificates.git"
+export MATCH_PASSWORD="Harder@123Git"
 
 # -----------------------------
 # CONFIG
