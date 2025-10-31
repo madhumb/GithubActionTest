@@ -13,119 +13,144 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
-# default_platform(:ios)
-
-# platform :ios do
-#   desc "Push a new beta build to TestFlight"
-#   lane :beta do |options|
-#     flavor = options[:flavor] || "star"
-#     bundle_id = options[:bundle_id] || "com.gnkbros.app"
-
-#     ENV["FLAVOR"] = flavor
-#     ENV["BUNDLE_ID"] = bundle_id
-#     sh("flutter build ipa --flavor #{flavor} -t lib/main_#{flavor}.dart --release --codesign --export-options-plist ios/ExportOptions.plist")
-
-
-#     # increment_build_number(xcodeproj: "Runner.xcodeproj")
-#     # build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
-#     upload_to_testflight(
-#       skip_waiting_for_build_processing: false,
-#       app_identifier: bundle_id
-#     )
-#   end
-# end
 default_platform(:ios)
 
 platform :ios do
-  desc "Build and upload iOS app for a specific environment"
-
-  lane :build_ipa do |options|
-    env = options[:env] || "strivenew"
-
-    # Map each environment to a scheme and bundle ID
-    config = {
-      "prosper" => {
-        scheme: "prosper",
-        bundle_id: "com.recode.propser"
-      },
-      "psf" => {
-        scheme: "psf",
-        bundle_id: "com.recode.psf"
-      },
-      "strivenew" => {
-        scheme: "strivenew",
-        bundle_id: "com.health.strivehealth"
-      }
-    }
-
-    unless config.key?(env)
-      UI.user_error!("Unknown environment: #{env}. Must be one of: #{config.keys.join(', ')}")
-    end
-
-    scheme = config[env][:scheme]
-    bundle_id = config[env][:bundle_id]
-
-    api_key = app_store_connect_api_key(
-      key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
-      issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
-      key_content: ENV['APP_STORE_CONNECT_API_KEY'],
-      in_house: false
-    )
-
-    # 🔐 Code signing (optional if already signed manually)
-    match(
-      type: "appstore",
-      readonly: true,
-      app_identifier: bundle_id
-      api_key: api_key
-    )
-
-    # 🏗️ Build the IPA
+  
+  lane :beta do |options|
+    scheme = options[:scheme] || "Runner"
+  
     build_app(
       scheme: scheme,
-      export_method: "app-store",
-      output_name: "MyApp-#{env}.ipa",
-      output_directory: "./builds/#{env}"
+      output_directory: "./build",
+      output_name: "#{scheme}.ipa",
+      export_method: "app-store", # Still use 'app-store' for TestFlight uploads
+      export_options: {
+        provisioningProfiles: {
+          "com.recode.benni" => "Benni Appstore",
+          "com.recode.mybenefitplace" => "My Benefit Place AppStore",
+          "com.health.strivehealth" => "StriveHealth_Appstore",
+          "com.recode.pregis" => "Pregis Appstore profile",
+          "com.recode.foundationwell" => "FoundationWell Appstore",
+          "com.recode.byersindustrial" => "Appstore Byers Industrial",
+          "com.recode.aerodyneapex" => "Aerodyne APEX Appstore",
+          "com.recode.magis" => "Magis appstore profile",
+          "com.recode.geotekconnect" => "GeoTek Connect Appstore",
+          "com.recode.innofiberconnect" => "Innofiber Connect Appstore",
+          "com.recode.pyramidhub" => "PyramidHub Appstore profile",
+          "com.recode.fcccares" => "Appstore Fcc Cares",
+          "com.recode.morrison" => "Morrison Appstore",
+          "com.recode.harborfoods" => "Harbor appstore profile",
+          "com.recode.saintfancistotalrewards" => "Saint Appstore Profile",
+          "com.recode.gtrbenefits" => "GTR Appstore",
+          "com.recode.bradford" => "Appstore Bradford",
+          "com.recode.rollwell" => "Appstore RollWell",
+          "com.recode.rbha" => "RBHA Appstore",
+          "com.recode.imahealth" => "IMA_Appstore",
+          "com.health.psf" => "Psf_Appstore",
+          "com.recode.tustin" => "Tustin group Appstore",
+          "com.recode.ahbenefits" => "AHBenefits Appstore",
+          "com.recode.mcrriffjourney" => "McGriff Journey Appstore",
+          "com.strive.quipthomemedical" => "quipthomemedical appstore profile",
+          "com.recode.prosper" => "Prosper Appstore Profile",
+          "com.recode.acrisure" => "Acrisure Appstore profile",
+        }
+      }
     )
+  
+    # Upload dSYMs to Firebase Crashlytics
+    plist_path = "./config/#{scheme}/GoogleService-Info.plist"
+    dsyms_path = "./build/#{scheme}.app.dSYM.zip"
+  
+    upload_symbols_to_crashlytics(
+      gsp_path: plist_path,
+      dsym_path: dsyms_path
+    )
+  
+    # Upload to TestFlight
+    ipa_path = "./build/#{scheme}.ipa"
+  
+    upload_to_testflight(
+      ipa: ipa_path,
+      skip_waiting_for_build_processing: false,
+      distribute_external: false, # change to true if you want to invite external testers
+      api_key: app_store_connect_api_key(
+        key_id: "4M2F6PDL8N",
+        issuer_id: "69a6de85-d828-47e3-e053-5b8c7c11a4d1",
+        key_filepath: "/Users/madhubhilawadi/private_keys/AuthKey.p8",
+        in_house: false
+      )
+    )
+  end
 
-    UI.success("✅ IPA built: ./builds/#{env}/MyApp-#{env}.ipa")
+  
 
-
-
+  desc "Push a new release build to the App Store"
   lane :release do |options|
-    # Get the environment (flavor)
-    env = options[:env] || "strivenew"
-
-    # Map each environment to a scheme and bundle ID
-    config = {
-      "prosper" => {
-        scheme: "prosper",
-        bundle_id: "com.recode.propser"
-      },
-      "psf" => {
-        scheme: "psf",
-        bundle_id: "com.recode.psf"
-      },
-      "strivenew" => {
-        scheme: "strivenew",
-        bundle_id: "com.health.strivehealth"
+    scheme = options[:scheme] || "Runner"
+ 
+    build_app(
+      scheme: scheme,
+      output_directory: "./build",
+      output_name: "#{scheme}.ipa",
+      export_method: "app-store",
+      export_options: {
+      provisioningProfiles: {
+        "com.recode.benni" => "Benni Appstore",
+        "com.recode.mybenefitplace" => "My Benefit Place AppStore",
+        "com.health.strivehealth" => "StriveHealth_Appstore",
+        "com.recode.pregis" => "Pregis Appstore profile",
+        "com.recode.foundationwell" =>"FoundationWell Appstore",
+        "com.recode.byersindustrial" => "Appstore Byers Industrial",
+        "com.recode.aerodyneapex" => "Aerodyne APEX Appstore",
+        "com.recode.magis" => "Magis appstore profile",
+        "com.recode.geotekconnect" => "GeoTek Connect Appstore",
+        "com.recode.innofiberconnect" =>"Innofiber Connect Appstore",
+        "com.recode.pyramidhub" => "PyramidHub Appstore profile",
+        "com.recode.fcccares" => "Appstore Fcc Cares",
+        "com.recode.morrison" =>  "Morrison Appstore",
+        "com.recode.harborfoods" => "Harbor appstore profile",
+        "com.recode.saintfancistotalrewards" => "Saint Appstore Profile",
+        "com.recode.gtrbenefits" => "GTR Appstore",
+        "com.recode.bradford" => "Appstore Bradford",
+        "com.recode.rollwell" => "Appstore RollWell",
+        "com.recode.rbha" => "RBHA Appstore",
+        "com.recode.imahealth" => "IMA_Appstore",
+        "com.health.psf" => "Psf_Appstore",
+        "com.recode.tustin" => "Tustin group Appstore",
+        "com.recode.ahbenefits" =>  "AHBenefits Appstore",
+        "com.recode.mcrriffjourney" => "McGriff Journey Appstore",
+        "com.strive.quipthomemedical" => "quipthomemedical appstore profile",
+        "com.recode.prosper" => "Prosper Appstore Profile",
+        "com.recode.acrisure" => "Acrisure Appstore profile",
       }
     }
+    )
 
-    unless config.key?(env)
-      UI.user_error!("Unknown environment: #{env}. Must be one of: #{config.keys.join(', ')}")
-    end
+    plist_path = "./config/#{scheme}/GoogleService-Info.plist"
 
-    scheme = config[env][:scheme]
-    bundle_id = config[env][:bundle_id]
+    # Path to the dSYMs directory (Fastlane finds them automatically if built)
+    dsyms_path = "./build/#{scheme}.app.dSYM.zip"
 
-    deliver(
-      ipa: "./builds/#{env}/MyApp-#{env}.ipa",
-      submit_for_review: true,
-      automatic_release: true, # Optional: set to false if you want manual release
+    # Upload to Firebase Crashlytics
+    upload_symbols_to_crashlytics(
+      gsp_path: plist_path,
+      dsym_path: dsyms_path
+    )
+    
+    ipa_path = "./build/#{scheme}.ipa",
+
+    upload_to_app_store(
+      ipa: ipa_path,
+      skip_metadata: true,
+      precheck_include_in_app_purchases: false,
       skip_screenshots: true,
-      skip_metadata: true
+      api_key: app_store_connect_api_key(
+        key_id: "4M2F6PDL8N",
+        issuer_id: "69a6de85-d828-47e3-e053-5b8c7c11a4d1",
+        key_filepath: "/Users/madhubhilawadi/private_keys/AuthKey.p8",
+        in_house: false
+      )
     )
   end
 end
-    
