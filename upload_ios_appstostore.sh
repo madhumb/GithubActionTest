@@ -14,7 +14,7 @@ IOS_DIR="ios"
 FASTFILE="$IOS_DIR/fastlane/Fastfile"
 
 # Desired Ruby version (Fastlane compatible)
-RUBY_VERSION="3.3.10"
+RUBY_VERSION="3.3.4"
 
 # -----------------------------
 # STEP 1: Install rbenv and Ruby
