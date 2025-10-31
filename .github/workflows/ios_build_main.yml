@@ -86,9 +86,6 @@ jobs:
           ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
         run: |
           openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -d -salt -in config.json.enc -out config.json -base64 -pass pass:"$ENCRYPTION_KEY"
-
-
-        working-directory: ./strive_health  
    
       - name: Setup environment variables
         run: |
