@@ -173,6 +173,8 @@ platform :ios do
       issuer_id: ENV['APPSTORE_CONNECT_ISSUER_ID'],
       key_filepath: File.expand_path(ENV["APP_STORE_CONNECT_API_KEY_PATH"])
     )
+    puts "🔍 api_key: #{api_key.inspect}"
+
     match(type: "appstore", app_identifier: bundle_id,api_key: api_key)
 
     gym(
