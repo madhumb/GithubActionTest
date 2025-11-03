@@ -52,7 +52,7 @@ jobs:
       - name: Decode API key file
         run: |
           mkdir -p ios/fastlane
-          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_JSON }}" > ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
         shell: bash
 
       ##############################################################
