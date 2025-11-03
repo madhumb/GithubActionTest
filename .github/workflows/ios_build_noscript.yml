@@ -84,6 +84,8 @@ jobs:
           echo "🚀 Running lane: ${LANE}_${{ matrix.flavor }}"
           echo "🔍 Checking for API key at: fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8"
           ls -l fastlane || true
+          git config --global url."https://${{ secrets.IOS_CERT_PAT }}@github.com/".insteadOf "https://github.com/"
+
           file fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8 || true
           bundle exec fastlane "${LANE}_${{ matrix.flavor }}"
          
@@ -165,6 +167,8 @@ jobs:
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: |
           echo "🚀 Running lane: ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}"
+          git config --global url."https://${{ secrets.IOS_CERT_PAT }}@github.com/".insteadOf "https://github.com/"
+
           bundle exec fastlane ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}
 
       # 📤 Upload built IPA
