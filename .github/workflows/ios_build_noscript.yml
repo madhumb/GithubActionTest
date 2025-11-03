@@ -33,62 +33,44 @@ jobs:
       fail-fast: false
       matrix:
         flavor: [
-          "star",
-          "moon"
+          "star", "moon"
         ]
 
     steps:
       - name: 🧾 Checkout repository
         uses: actions/checkout@v4
 
-      # ⚡ Cache Ruby gems (Fastlane + deps)
       - name: 💎 Cache Ruby gems
         uses: actions/cache@v4
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+          path: ~/.gem
+          key: ${{ runner.os }}-rubygems-${{ hashFiles('**/*.rb') }}
+          restore-keys: |
+            ${{ runner.os }}-rubygems-
 
-      # ⚡ Cache Flutter dependencies
-      - name: 🦋 Cache Flutter deps
-        uses: actions/cache@v4
+      - name: 🪄 Setup Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
-          restore-keys: ${{ runner.os }}-flutter-
+          ruby-version: 3.3.4
 
-      - name: 🧰 Setup Flutter
+      - name: 🚀 Install Fastlane
+        run: gem install fastlane
+
+      - name: 💙 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.24.5"
 
-      - name: 📦 Flutter pub get
+      - name: 📦 Get Flutter dependencies
         run: flutter pub get
 
-      - name: 💎 Setup Ruby & Bundler
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3.4
-          bundler-cache: false
-
-      - name: Install Fastlane
-        run: gem install fastlane
-
-    #   - name: Set up Ruby and install gems
-    #     working-directory: ios/fastlane
-    #     run: |
-    #         gem install bundler:2.5.11
-    #         bundle config set path 'vendor/bundle'
-    #         bundle install --jobs 4 --retry 3
-        
-
-      - name: 🔑 Decode API key file
+      - name: 🔑 Decode App Store API key
         run: |
           mkdir -p ios/fastlane
           echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
         shell: bash
 
-      - name: 🚀 Run Fastlane lane for ${{ matrix.flavor }}
+      - name: 🏗️ Build and Upload ${{ matrix.flavor }}
         working-directory: ios
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
@@ -116,49 +98,37 @@ jobs:
       - name: 🧾 Checkout repository
         uses: actions/checkout@v4
 
-      # ⚡ Cache Ruby gems (Fastlane + deps)
       - name: 💎 Cache Ruby gems
         uses: actions/cache@v4
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+          path: ~/.gem
+          key: ${{ runner.os }}-rubygems-${{ hashFiles('**/*.rb') }}
+          restore-keys: |
+            ${{ runner.os }}-rubygems-
 
-      # ⚡ Cache Flutter dependencies
-      - name: 🦋 Cache Flutter deps
-        uses: actions/cache@v4
+      - name: 🪄 Setup Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
-          restore-keys: ${{ runner.os }}-flutter-
+          ruby-version: 3.3.4
 
-      - name: 🧰 Setup Flutter
+      - name: 🚀 Install Fastlane
+        run: gem install fastlane
+
+      - name: 💙 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.24.5"
 
-      - name: 📦 Flutter pub get
+      - name: 📦 Get Flutter dependencies
         run: flutter pub get
 
-      - name: 💎 Setup Ruby & Bundler
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3.4
-          bundler-cache: false
-
-      - name: 📦 Install gems via Bundler
-        run: |
-          gem install bundler:2.5.11
-          bundle config set path 'vendor/bundle'
-          bundle install --jobs 4 --retry 3
-
-      - name: 🔑 Decode API key file
+      - name: 🔑 Decode App Store API key
         run: |
           mkdir -p ios/fastlane
           echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
         shell: bash
 
-      - name: 🚀 Run Fastlane for selected flavor
+      - name: 🏗️ Build and Upload selected flavor
         working-directory: ios
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
