@@ -32,30 +32,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flavor: [
-          "star", "moon"
-        ]
+        flavor: [ "star", "moon" ] # 🔁 Add your other flavors here
 
     steps:
       - name: 🧾 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 💎 Cache Ruby gems
-        uses: actions/cache@v4
-        with:
-          path: ~/.gem
-          key: ${{ runner.os }}-rubygems-${{ hashFiles('**/*.rb') }}
-          restore-keys: |
-            ${{ runner.os }}-rubygems-
-
+      # 💎 Setup Ruby with Bundler caching
       - name: 🪄 Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.4
+          bundler-cache: true
+          working-directory: ios
 
-      - name: 🚀 Install Fastlane
-        run: gem install fastlane
-
+      # 💙 Setup Flutter
       - name: 💙 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -64,12 +55,14 @@ jobs:
       - name: 📦 Get Flutter dependencies
         run: flutter pub get
 
+      # 🔑 Prepare App Store API key
       - name: 🔑 Decode App Store API key
         run: |
           mkdir -p ios/fastlane
           echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
         shell: bash
 
+      # 🏗️ Build & Upload current flavor
       - name: 🏗️ Build and Upload ${{ matrix.flavor }}
         working-directory: ios
         env:
@@ -78,14 +71,15 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: |
-            fastlane ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}
+          echo "🚀 Running lane: ${{ github.event.inputs.lane }}_${{ matrix.flavor }}"
+          bundle exec fastlane ${{ github.event.inputs.lane }}_${{ matrix.flavor }}
 
-
+      # 📤 Upload built IPA
       - name: 📤 Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.flavor }}-ipa
-          path: ios/build/ios/${{ matrix.flavor }}.ipa
+          path: ios/build/ios/**/*.ipa
 
   ##############################################################
   # 🧩 Option 2: Build a SINGLE selected flavor
@@ -99,22 +93,15 @@ jobs:
       - name: 🧾 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 💎 Cache Ruby gems
-        uses: actions/cache@v4
-        with:
-          path: ~/.gem
-          key: ${{ runner.os }}-rubygems-${{ hashFiles('**/*.rb') }}
-          restore-keys: |
-            ${{ runner.os }}-rubygems-
-
+      # 💎 Setup Ruby with Bundler caching
       - name: 🪄 Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.4
+          bundler-cache: true
+          working-directory: ios
 
-      - name: 🚀 Install Fastlane
-        run: gem install fastlane
-
+      # 💙 Setup Flutter
       - name: 💙 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -123,12 +110,14 @@ jobs:
       - name: 📦 Get Flutter dependencies
         run: flutter pub get
 
+      # 🔑 Prepare App Store API key
       - name: 🔑 Decode App Store API key
         run: |
           mkdir -p ios/fastlane
           echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
         shell: bash
 
+      # 🏗️ Build & Upload the selected flavor
       - name: 🏗️ Build and Upload selected flavor
         working-directory: ios
         env:
@@ -137,10 +126,12 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: |
+          echo "🚀 Running lane: ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}"
           bundle exec fastlane ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}
 
+      # 📤 Upload built IPA
       - name: 📤 Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.inputs.flavor }}-ipa
-          path: ios/build/ios/${{ github.event.inputs.flavor }}.ipa
+          path: ios/build/ios/**/*.ipa
