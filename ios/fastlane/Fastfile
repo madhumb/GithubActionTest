@@ -127,6 +127,8 @@ platform :ios do
         issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
         key_filepath: ENV["APP_STORE_CONNECT_API_KEY"]
       )
+      sh("echo '🔍 Checking API key file:' && ls -l #{ENV['APP_STORE_CONNECT_API_KEY']}")
+
       ENV["APP_STORE_CONNECT_API_KEY"] = api_key
     end
   end
