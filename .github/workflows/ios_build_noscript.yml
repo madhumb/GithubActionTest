@@ -118,17 +118,17 @@ jobs:
 
       # 🔑 Prepare App Store API key
       - name: 🔑 Write App Store Connect API Key (.p8)
-       run: |
-        mkdir -p ios/fastlane
-        echo "Creating API key file..."
-        printf "%s" "${APP_STORE_CONNECT_API_KEY}" > ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
-        echo "File created:"
-        ls -l ios/fastlane/
-        echo "File preview (first 3 lines):"
-        head -n 3 ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
-       shell: bash
-       env:
-        APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: |
+            mkdir -p ios/fastlane
+            echo "Creating API key file..."
+            printf "%s" "${APP_STORE_CONNECT_API_KEY}" > ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+            echo "File created:"
+            ls -l ios/fastlane/
+            echo "File preview (first 3 lines):"
+            head -n 3 ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+        shell: bash
+        env:
+            APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
         
 
       # 🏗️ Build & Upload the selected flavor
