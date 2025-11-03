@@ -173,7 +173,7 @@ platform :ios do
       issuer_id: ENV['APPSTORE_CONNECT_ISSUER_ID'],
       key_filepath: api_key_path
     )
-    match(type: "appstore", app_identifier: bundle_id)
+    match(type: "appstore", app_identifier: bundle_id,api_key: api_key)
 
     gym(
       workspace: "Runner.xcworkspace",
