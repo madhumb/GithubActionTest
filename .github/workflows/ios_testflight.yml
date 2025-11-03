@@ -44,8 +44,8 @@ jobs:
       # 7️⃣ Upload IPA to TestFlight
       - name: Upload to TestFlight
         env:
-          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
+          APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
+          APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
           FASTLANE_APPLE_APPLICATION_IDENTIFIER: ${{ env.BUNDLE_ID }}
           FASTLANE_USER: your_apple_id@example.com
         run: |
