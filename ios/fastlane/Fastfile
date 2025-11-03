@@ -150,6 +150,22 @@ platform :ios do
   # 🧱 Helper Method — Builds a Flavor
   ##############################################################
   def build_flavor(flavor, bundle_id)
+    UI.message("=== 🔍 Debugging App Store Connect ENV ===")
+    UI.message("APP_STORE_CONNECT_API_KEY_PATH: #{ENV['APP_STORE_CONNECT_API_KEY_PATH']}")
+    UI.message("APPSTORE_CONNECT_API_KEY_ID: #{ENV['APPSTORE_CONNECT_API_KEY_ID']}")
+    UI.message("APPSTORE_CONNECT_ISSUER_ID: #{ENV['APPSTORE_CONNECT_ISSUER_ID']}")
+    UI.message("Current working dir: #{Dir.pwd}")
+  
+    api_key_path = ENV['APP_STORE_CONNECT_API_KEY_PATH']
+    if api_key_path.nil? || api_key_path.empty?
+      UI.user_error!("❌ APP_STORE_CONNECT_API_KEY_PATH not set!")
+    end
+  
+    api_key = Spaceship::ConnectAPI::Token.create(
+      key_id: ENV['APPSTORE_CONNECT_API_KEY_ID'],
+      issuer_id: ENV['APPSTORE_CONNECT_ISSUER_ID'],
+      key_filepath: api_key_path
+    )
     match(type: "appstore", app_identifier: bundle_id)
 
     gym(
