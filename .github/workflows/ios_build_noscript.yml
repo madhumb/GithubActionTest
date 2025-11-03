@@ -19,9 +19,7 @@ on:
         description: "Choose Fastlane lane (beta for TestFlight / release for App Store)"
         required: true
         default: "beta"
-  push:
-    branches:
-        - main        
+       
 
 jobs:
   ##############################################################
