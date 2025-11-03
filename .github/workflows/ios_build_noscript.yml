@@ -71,11 +71,16 @@ jobs:
           ruby-version: 3.3.4
           bundler-cache: false
 
-      - name: 📦 Install gems via Bundler
-        run: |
-          gem install bundler:2.5.11
-          bundle config set path 'vendor/bundle'
-          bundle install --jobs 4 --retry 3
+      - name: Install Fastlane
+        run: gem install fastlane
+
+    #   - name: Set up Ruby and install gems
+    #     working-directory: ios/fastlane
+    #     run: |
+    #         gem install bundler:2.5.11
+    #         bundle config set path 'vendor/bundle'
+    #         bundle install --jobs 4 --retry 3
+        
 
       - name: 🔑 Decode API key file
         run: |
