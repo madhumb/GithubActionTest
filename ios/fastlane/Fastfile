@@ -156,7 +156,13 @@ platform :ios do
     UI.message("APPSTORE_CONNECT_ISSUER_ID: #{ENV['APPSTORE_CONNECT_ISSUER_ID']}")
     UI.message("Current working dir: #{Dir.pwd}")
   
-    api_key_path = ENV['APP_STORE_CONNECT_API_KEY_PATH']
+    
+    api_key_path = ENV["APP_STORE_CONNECT_API_KEY_PATH"] || "AuthKey_#{ENV['APPSTORE_CONNECT_API_KEY_ID']}.p8"
+    puts "🔍 Using API key path: #{api_key_path}"
+
+    unless File.exist?(api_key_path)
+      UI.user_error!("❌ API key file not found at path: #{api_key_path}")
+    end
     if api_key_path.nil? || api_key_path.empty?
       UI.user_error!("❌ APP_STORE_CONNECT_API_KEY_PATH not set!")
     end
