@@ -148,6 +148,7 @@ jobs:
             echo "Creating API key file...${APPSTORE_CONNECT_API_KEY_ID}"
             printf "%s" "${APP_STORE_CONNECT_API_KEY}" > ios/fastlane/AuthKey_${APPSTORE_CONNECT_API_KEY_ID}.p8
             
+            
             echo "File created:"
             ls -l ios/fastlane/
             echo "File preview (first 3 lines):"
