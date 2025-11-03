@@ -78,7 +78,8 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: |
-          bundle exec fastlane ${{ github.event.inputs.lane }}_${{ matrix.flavor }}
+            fastlane ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}
+
 
       - name: 📤 Upload IPA artifact
         uses: actions/upload-artifact@v4
