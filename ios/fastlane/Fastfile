@@ -129,12 +129,16 @@ platform :ios do
     sh("ls -l ios/fastlane || true")
     UI.message("=========================================")
 
+    api_key_path = ENV["APP_STORE_CONNECT_API_KEY_PATH"] || "AuthKey_#{ENV['APPSTORE_CONNECT_API_KEY_ID']}.p8"
+    unless File.exist?(api_key_path)
+      UI.user_error!("❌ API key file not found at path: #{api_key_path}")
+    end
     # API key for App Store Connect (recommended)
     if ENV["APP_STORE_CONNECT_API_KEY"]
       api_key = app_store_connect_api_key(
         key_id: ENV["APPSTORE_CONNECT_API_KEY_ID"],
         issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
-        key_filepath: ENV["APP_STORE_CONNECT_API_KEY_PATH"]
+        key_filepath: api_key_path
       )
       sh("echo '🔍 Checking API key file:' && ls -l #{ENV['APP_STORE_CONNECT_API_KEY']}")
 
@@ -166,7 +170,8 @@ platform :ios do
     pilot(
       ipa: "./build/ios/#{flavor}.ipa",
       app_identifier: bundle_id,
-      skip_waiting_for_build_processing: true
+      skip_waiting_for_build_processing: true,
+      api_key: ENV["APP_STORE_CONNECT_API_KEY"]
     )
   end
 
@@ -180,6 +185,7 @@ platform :ios do
       skip_metadata: true,
       skip_screenshots: true,
       submit_for_review: false
+      api_key: ENV["APP_STORE_CONNECT_API_KEY"]
     )
   end
 

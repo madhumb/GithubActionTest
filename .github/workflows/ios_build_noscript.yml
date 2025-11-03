@@ -1,6 +1,9 @@
 name: 🚀 iOS Flavored Upload
 
 on:
+  push:
+    branches:
+        - main  
   workflow_dispatch:
     inputs:
       mode:
@@ -26,7 +29,7 @@ jobs:
   # 🧩 Option 1: Build ALL flavors (parallel matrix)
   ##############################################################
   all-flavors:
-    if: ${{ github.event.inputs.mode == 'all' }}
+    if: ${{ github.event.inputs.mode == 'all' || github.event_name == 'push'}}
     name: Build & Upload (All Flavors)
     runs-on: macos-latest
 
@@ -55,6 +58,17 @@ jobs:
 
       - name: 📦 Get Flutter dependencies
         run: flutter pub get
+
+      - name: 🔑 Create API key file
+        run: |
+          mkdir -p ios/fastlane
+          echo "Creating API key file...${APPSTORE_CONNECT_API_KEY_ID}"
+          printf "%s" "${APP_STORE_CONNECT_API_KEY}" > ios/fastlane/AuthKey_${APPSTORE_CONNECT_API_KEY_ID}.p8
+          ls -l ios/fastlane/
+        env:
+          APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+    
 
       # 🏗️ Build & Upload current flavor
       - name: 🏗️ Build and Upload ${{ matrix.flavor }}
@@ -122,12 +136,8 @@ jobs:
             ls -l ios/fastlane/
             echo "File preview (first 3 lines):"
             head -n 3 ios/fastlane/AuthKey_${APPSTORE_CONNECT_API_KEY_ID}.p8
-
         env:
-            MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-            APP_STORE_CONNECT_API_KEY_PATH: ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
             APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-            APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
             APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }} 
                 
       - name: Set API key path env
@@ -139,7 +149,7 @@ jobs:
         working-directory: ios
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          APP_STORE_CONNECT_API_KEY: ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
+          APP_STORE_CONNECT_API_KEY_PATH: ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: |
