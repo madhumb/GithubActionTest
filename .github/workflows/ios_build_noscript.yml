@@ -130,7 +130,10 @@ jobs:
             APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
             APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }} 
                 
-    
+      - name: Set API key path env
+        run: echo "APP_STORE_CONNECT_API_KEY_PATH=ios/fastlane/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8" >> $GITHUB_ENV
+
+            
       # 🏗️ Build & Upload the selected flavor
       - name: 🏗️ Build and Upload selected flavor
         working-directory: ios
