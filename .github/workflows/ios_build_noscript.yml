@@ -12,9 +12,9 @@ on:
           - all
           - single
       flavor:
-        description: "If single mode, specify flavor (e.g. ahbenefits)"
+        description: "If single mode, specify flavor (e.g. star)"
         required: false
-        default: "ahbenefits"
+        default: "star"
       lane:
         description: "Choose Fastlane lane (beta for TestFlight / release for App Store)"
         required: true
