@@ -80,7 +80,6 @@ jobs:
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: |
-          bundle update fastlane
           LANE="${{ github.event.inputs.lane || 'beta' }}"
           echo "🚀 Running lane: ${LANE}_${{ matrix.flavor }}"
           echo "🔍 Checking for API key at: fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8"
@@ -173,8 +172,6 @@ jobs:
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: |
-          bundle update fastlane
-
           echo "🚀 Running lane: ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}"
           bundle exec fastlane ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}
 
