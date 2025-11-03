@@ -131,16 +131,7 @@ jobs:
       - name: 📦 Get Flutter dependencies
         run: flutter pub get
 
-      - name: 🔍 Verify AuthKey contents
-        working-directory: ios/fastlane
-        run: |
-          echo "🔍 Checking AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8 content:"
-          head -n 5 AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-          echo "..."
-          tail -n 3 AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-          echo "✅ File size (bytes):"
-          wc -c AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-         
+          
       # 🔑 Prepare App Store API key
       - name: Create API key file
         run: |
@@ -148,7 +139,7 @@ jobs:
             echo "Creating API key file...${APPSTORE_CONNECT_API_KEY_ID}"
             printf "%s" "${APP_STORE_CONNECT_API_KEY}" > ios/fastlane/AuthKey_${APPSTORE_CONNECT_API_KEY_ID}.p8
             
-            
+
             echo "File created:"
             ls -l ios/fastlane/
             echo "File preview (first 3 lines):"
