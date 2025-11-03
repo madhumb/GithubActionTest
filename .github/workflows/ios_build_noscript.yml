@@ -1,32 +1,46 @@
-name: 🚀 iOS App Upload (Flavored)
+name: 🚀 iOS Flavored Upload
 
 on:
   workflow_dispatch:
     inputs:
-      flavor:
-        description: "Which flavor to build (e.g. ahbenefits, pecoconnect, etc)"
+      mode:
+        description: "Choose build mode: all flavors or single flavor"
         required: true
-        default: "star"
+        default: "single"
+        type: choice
+        options:
+          - all
+          - single
+      flavor:
+        description: "If single mode, specify flavor (e.g. ahbenefits)"
+        required: false
+        default: "ahbenefits"
       lane:
         description: "Choose Fastlane lane (beta for TestFlight / release for App Store)"
         required: true
         default: "beta"
 
 jobs:
-  build-and-upload:
-    name: Build & Upload ${{ github.event.inputs.flavor }} (${{ github.event.inputs.lane }})
+  ##############################################################
+  # 🧩 Option 1: Build ALL flavors (parallel matrix)
+  ##############################################################
+  all-flavors:
+    if: ${{ github.event.inputs.mode == 'all' }}
+    name: Build & Upload (All Flavors)
     runs-on: macos-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        flavor: [
+            "star","moon",
+        
+        ]
+
     steps:
-      ##############################################################
-      # 🧱 Checkout Repository
-      ##############################################################
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      ##############################################################
-      # 🐦 Setup Flutter
-      ##############################################################
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -35,9 +49,6 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
-      ##############################################################
-      # 💎 Setup Ruby & Fastlane
-      ##############################################################
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -46,31 +57,72 @@ jobs:
       - name: Install Fastlane
         run: gem install fastlane
 
-      ##############################################################
-      # 🔐 Setup App Store Connect API Key
-      ##############################################################
       - name: Decode API key file
         run: |
           mkdir -p ios/fastlane
           echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
         shell: bash
 
-      ##############################################################
-      # 🍏 Build & Upload with Fastlane
-      ##############################################################
+      - name: Run Fastlane lane for ${{ matrix.flavor }}
+        working-directory: ios
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_API_KEY_PATH: ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          bundle exec fastlane ${{ github.event.inputs.lane }}_${{ matrix.flavor }}
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.flavor }}-ipa
+          path: ios/build/ios/${{ matrix.flavor }}.ipa
+
+  ##############################################################
+  # 🧩 Option 2: Build a SINGLE selected flavor
+  ##############################################################
+  single-flavor:
+    if: ${{ github.event.inputs.mode == 'single' }}
+    name: Build & Upload (${{ github.event.inputs.flavor }})
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.4
+
+      - name: Install Fastlane
+        run: gem install fastlane
+
+      - name: Decode API key file
+        run: |
+          mkdir -p ios/fastlane
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+        shell: bash
+
       - name: Run Fastlane for selected flavor
         working-directory: ios
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          APP_STORE_CONNECT_API_KEY: ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+          APP_STORE_CONNECT_API_KEY_PATH: ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         run: |
           bundle exec fastlane ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}
 
-      ##############################################################
-      # 🧾 Optional: Upload logs or artifacts
-      ##############################################################
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
