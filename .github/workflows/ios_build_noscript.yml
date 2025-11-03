@@ -124,7 +124,8 @@ jobs:
         run: |
             mkdir -p ios/fastlane
             echo "Creating API key file..."
-            printf "%s" "${APP_STORE_CONNECT_API_KEY}" > ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+            printf "%s" "${APP_STORE_CONNECT_API_KEY}" > ios/fastlane/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+
             echo "File created:"
             ls -l ios/fastlane/
             echo "File preview (first 3 lines):"
