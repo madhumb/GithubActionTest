@@ -157,7 +157,7 @@ platform :ios do
     UI.message("Current working dir: #{Dir.pwd}")
   
     
-    api_key_path = File.expand_path(ENV["APP_STORE_CONNECT_API_KEY_PATH"] || "fastlane/AuthKey_#{ENV['APPSTORE_CONNECT_API_KEY_ID']}.p8", __dir__)
+    api_key_path = ENV["APP_STORE_CONNECT_API_KEY_PATH"] || "AuthKey_#{ENV['APPSTORE_CONNECT_API_KEY_ID']}.p8"
 
     puts "🔍 Using API key path: #{api_key_path}"
 
