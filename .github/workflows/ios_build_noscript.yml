@@ -75,11 +75,12 @@ jobs:
         working-directory: ios
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          APP_STORE_CONNECT_API_KEY_PATH: AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
+          APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
 
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: |
+          bundle update fastlane
           LANE="${{ github.event.inputs.lane || 'beta' }}"
           echo "🚀 Running lane: ${LANE}_${{ matrix.flavor }}"
           echo "🔍 Checking for API key at: fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8"
@@ -104,7 +105,7 @@ jobs:
     runs-on: macos-latest
     env:
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        APP_STORE_CONNECT_API_KEY_PATH: ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
+        APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
         APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
         APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }} 
@@ -172,6 +173,8 @@ jobs:
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: |
+          bundle update fastlane
+
           echo "🚀 Running lane: ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}"
           bundle exec fastlane ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}
 

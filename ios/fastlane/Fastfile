@@ -174,7 +174,24 @@ platform :ios do
     )
         puts "🔍 api_key: #{api_key.inspect}"
 
-    match(type: "appstore", app_identifier: bundle_id,api_key: api_key)
+
+        require 'json'
+        json_key_path = File.join(Dir.tmpdir, "fastlane_api_key.json")
+        File.write(json_key_path, {
+          key_id: ENV['APPSTORE_CONNECT_API_KEY_ID'],
+          issuer_id: ENV['APPSTORE_CONNECT_ISSUER_ID'],
+          key: File.read(File.expand_path(api_key_path))
+        }.to_json)
+
+        UI.message("✅ Created API key JSON for match: #{json_key_path}")
+
+        match(
+          type: "appstore",
+          app_identifier: bundle_id,
+          api_key_path: json_key_path
+        )
+
+    # match(type: "appstore", app_identifier: bundle_id,api_key: api_key)
 
     gym(
       workspace: "Runner.xcworkspace",
