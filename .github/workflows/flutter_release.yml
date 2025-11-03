@@ -66,4 +66,4 @@ jobs:
         with:
           lane: "ios deploy_${{ matrix.flavour }}"
         env:
-          APP_STORE_CONNECT_API_KEY_PATH: ${{ secrets.APP_STORE_CONNECT_API_KEY_PATH }}
+          APP_STORE_CONNECT_API_KEY_PATH: ${{ secrets.APP_STORE_CONNECT_API_KEY }}

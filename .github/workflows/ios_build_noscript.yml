@@ -1,0 +1,40 @@
+name: 🚀 iOS App Upload (Flavored)
+
+on:
+  workflow_dispatch:
+    inputs:
+      flavor:
+        description: "Which flavor to build (e.g. ahbenefits, pecoconnect, etc)"
+        required: true
+        default: "star"
+      lane:
+        description: "Choose Fastlane lane (beta for TestFlight / release for App Store)"
+        required: true
+        default: "beta"
+
+jobs:
+  build-and-upload:
+    name: Build & Upload ${{ github.event.inputs.flavor }} (${{ github.event.inputs.lane }})
+    runs-on: macos-latest
+
+    steps:
+      ##############################################################
+      # 🧱 Checkout Repository
+      ##############################################################
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      ##############################################################
+      # 🐦 Setup Flutter
+      ##############################################################
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      ##############################################################
+      # 💎 Setup Ruby & Fastlane
+      #############################################################

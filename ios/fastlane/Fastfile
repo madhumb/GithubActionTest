@@ -1,112 +1,212 @@
-# This file contains the fastlane.tools configuration
-# You can find the documentation at https://docs.fastlane.tools
-#
-# For a list of all available actions, check out
-#
-#     https://docs.fastlane.tools/actions
-#
-# For a list of all available plugins, check out
-#
-#     https://docs.fastlane.tools/plugins/available-plugins
-#
+# # This file contains the fastlane.tools configuration
+# # You can find the documentation at https://docs.fastlane.tools
+# #
+# # For a list of all available actions, check out
+# #
+# #     https://docs.fastlane.tools/actions
+# #
+# # For a list of all available plugins, check out
+# #
+# #     https://docs.fastlane.tools/plugins/available-plugins
+# #
 
-# Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
+# # Uncomment the line if you want fastlane to automatically update itself
+# # update_fastlane
+
+# default_platform(:ios)
+
+# platform :ios do
+  
+#   lane :beta do |options|
+#     scheme = options[:scheme] || "Runner"
+#     build_app(
+#       scheme: scheme,
+#       output_directory: "./build",
+#       output_name: "#{scheme}.ipa",
+#       export_method: "app-store", # Still use 'app-store' for TestFlight uploads
+#       export_options: {
+#         provisioningProfiles: {
+#           "com.recode.bookmark" => "Bookmark Apprstore profile",
+#           "com.gnkbros.app" =>"com.gnkbros.app appstore"
+#         }
+#       }
+#     )
+  
+#     # Upload dSYMs to Firebase Crashlytics
+#     plist_path = "./config/#{scheme}/GoogleService-Info.plist"
+#     dsyms_path = "./build/#{scheme}.app.dSYM.zip"
+  
+#     upload_symbols_to_crashlytics(
+#       gsp_path: plist_path,
+#       dsym_path: dsyms_path
+#     )
+  
+#     # Upload to TestFlight
+#     ipa_path = "./build/#{scheme}.ipa"
+  
+#     upload_to_testflight(
+#       ipa: ipa_path,
+#       skip_waiting_for_build_processing: false,
+#       distribute_external: false, # change to true if you want to invite external testers
+#       api_key: app_store_connect_api_key(
+#         key_id: "4M2F6PDL8N",
+#         issuer_id: "69a6de85-d828-47e3-e053-5b8c7c11a4d1",
+#         key_filepath: "/Users/madhubhilawadi/private_keys/AuthKey.p8",
+#         in_house: false
+#       )
+#     )
+#   end
+
+  
+
+#   desc "Push a new release build to the App Store"
+#   lane :release do |options|
+#     scheme = options[:scheme] || "Runner"
+#     match(
+#       type: "appstore",
+#       app_identifier: ["com.gnkbros.app"],  # <-- replace with yours
+#       username: "madhu@strivebenefits.com",
+#       git_url: ENV["MATCH_GIT_URL"],
+#     )
+
+#     build_app(
+#       scheme: scheme,
+#       output_directory: "./build",
+#       output_name: "#{scheme}.ipa",
+#       export_method: "app-store",
+#       export_options: {
+#       provisioningProfiles: {
+#         "com.recode.bookmark" => "Bookmark Apprstore profile",
+#         "com.gnkbros.app" =>"com.gnkbros.app appstore"
+
+#       }
+#     }
+#     )
+
+#     plist_path = "./config/#{scheme}/GoogleService-Info.plist"
+
+#     # Path to the dSYMs directory (Fastlane finds them automatically if built)
+#     dsyms_path = "./build/#{scheme}.app.dSYM.zip"
+
+#     # Upload to Firebase Crashlytics
+#     upload_symbols_to_crashlytics(
+#       gsp_path: plist_path,
+#       dsym_path: dsyms_path
+#     )
+    
+#     ipa_path = "./build/#{scheme}.ipa",
+
+#     upload_to_app_store(
+#       ipa: ipa_path,
+#       skip_metadata: true,
+#       precheck_include_in_app_purchases: false,
+#       skip_screenshots: true,
+#       api_key: app_store_connect_api_key(
+#         key_id: "4M2F6PDL8N",
+#         issuer_id: "69a6de85-d828-47e3-e053-5b8c7c11a4d1",
+#         key_filepath: "/Users/madhubhilawadi/private_keys/AuthKey.p8",
+#         in_house: false
+#       )
+#     )
+#   end
+# end
+
 
 default_platform(:ios)
 
 platform :ios do
-  
-  lane :beta do |options|
-    scheme = options[:scheme] || "Runner"
-    build_app(
-      scheme: scheme,
-      output_directory: "./build",
-      output_name: "#{scheme}.ipa",
-      export_method: "app-store", # Still use 'app-store' for TestFlight uploads
-      export_options: {
-        provisioningProfiles: {
-          "com.recode.bookmark" => "Bookmark Apprstore profile",
-          "com.gnkbros.app" =>"com.gnkbros.app appstore"
-        }
-      }
-    )
-  
-    # Upload dSYMs to Firebase Crashlytics
-    plist_path = "./config/#{scheme}/GoogleService-Info.plist"
-    dsyms_path = "./build/#{scheme}.app.dSYM.zip"
-  
-    upload_symbols_to_crashlytics(
-      gsp_path: plist_path,
-      dsym_path: dsyms_path
-    )
-  
-    # Upload to TestFlight
-    ipa_path = "./build/#{scheme}.ipa"
-  
-    upload_to_testflight(
-      ipa: ipa_path,
-      skip_waiting_for_build_processing: false,
-      distribute_external: false, # change to true if you want to invite external testers
-      api_key: app_store_connect_api_key(
-        key_id: "4M2F6PDL8N",
-        issuer_id: "69a6de85-d828-47e3-e053-5b8c7c11a4d1",
-        key_filepath: "/Users/madhubhilawadi/private_keys/AuthKey.p8",
-        in_house: false
+  ##############################################################
+  # 🔐 Shared Config
+  ##############################################################
+  before_all do
+    ENV["MATCH_PASSWORD"] = ENV["MATCH_PASSWORD"] || "Harder@123Git"
+    # API key for App Store Connect (recommended)
+    if ENV["APP_STORE_CONNECT_API_KEY"]
+      api_key = app_store_connect_api_key(
+        key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+        issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+        key_filepath: ENV["APP_STORE_CONNECT_API_KEY"]
       )
+      ENV["APP_STORE_CONNECT_API_KEY"] = api_key
+    end
+  end
+
+  ##############################################################
+  # 🧱 Helper Method — Builds a Flavor
+  ##############################################################
+  def build_flavor(flavor, bundle_id)
+    match(type: "appstore", app_identifier: bundle_id)
+
+    gym(
+      workspace: "Runner.xcworkspace",
+      scheme: flavor,
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build/ios",
+      output_name: "#{flavor}.ipa",
+      clean: true
     )
   end
 
-  
-
-  desc "Push a new release build to the App Store"
-  lane :release do |options|
-    scheme = options[:scheme] || "Runner"
-    match(
-      type: "appstore",
-      app_identifier: ["com.gnkbros.app"],  # <-- replace with yours
-      username: "madhu@strivebenefits.com",
-      git_url: ENV["MATCH_GIT_URL"],
+  ##############################################################
+  # 🧪 Helper — Upload to TestFlight
+  ##############################################################
+  def upload_testflight(flavor, bundle_id)
+    pilot(
+      ipa: "./build/ios/#{flavor}.ipa",
+      app_identifier: bundle_id,
+      skip_waiting_for_build_processing: true
     )
+  end
 
-    build_app(
-      scheme: scheme,
-      output_directory: "./build",
-      output_name: "#{scheme}.ipa",
-      export_method: "app-store",
-      export_options: {
-      provisioningProfiles: {
-        "com.recode.bookmark" => "Bookmark Apprstore profile",
-        "com.gnkbros.app" =>"com.gnkbros.app appstore"
-
-      }
-    }
-    )
-
-    plist_path = "./config/#{scheme}/GoogleService-Info.plist"
-
-    # Path to the dSYMs directory (Fastlane finds them automatically if built)
-    dsyms_path = "./build/#{scheme}.app.dSYM.zip"
-
-    # Upload to Firebase Crashlytics
-    upload_symbols_to_crashlytics(
-      gsp_path: plist_path,
-      dsym_path: dsyms_path
-    )
-    
-    ipa_path = "./build/#{scheme}.ipa",
-
-    upload_to_app_store(
-      ipa: ipa_path,
+  ##############################################################
+  # 🚢 Helper — Upload to App Store (for manual release)
+  ##############################################################
+  def upload_appstore(flavor, bundle_id)
+    deliver(
+      ipa: "./build/ios/#{flavor}.ipa",
+      app_identifier: bundle_id,
       skip_metadata: true,
-      precheck_include_in_app_purchases: false,
       skip_screenshots: true,
-      api_key: app_store_connect_api_key(
-        key_id: "4M2F6PDL8N",
-        issuer_id: "69a6de85-d828-47e3-e053-5b8c7c11a4d1",
-        key_filepath: "/Users/madhubhilawadi/private_keys/AuthKey.p8",
-        in_house: false
-      )
+      submit_for_review: false
     )
+  end
+
+  ##############################################################
+  # ✨ Define your flavors here
+  ##############################################################
+  flavors = {
+    "moon" => "com.recode.bookmark",
+    "star" => "com.gnkbros.app",
+    
+  }
+
+  ##############################################################
+  # 🧩 Dynamically Create Lanes for Each Flavor
+  ##############################################################
+  flavors.each do |flavor, bundle_id|
+    desc "Build #{flavor} and upload to TestFlight"
+    lane :"beta_#{flavor}" do
+      build_flavor(flavor, bundle_id)
+      upload_testflight(flavor, bundle_id)
+    end
+
+    desc "Build #{flavor} and upload to App Store (manual release)"
+    lane :"release_#{flavor}" do
+      build_flavor(flavor, bundle_id)
+      upload_appstore(flavor, bundle_id)
+    end
+  end
+
+  ##############################################################
+  # 🧹 Cleanup
+  ##############################################################
+  after_all do |lane|
+    puts "✅ Finished lane: #{lane}"
+  end
+
+  error do |lane, exception|
+    puts "❌ Lane failed: #{lane}"
+    puts exception.message
   end
 end
