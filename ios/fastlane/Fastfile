@@ -161,7 +161,7 @@ platform :ios do
 
     puts "🔍 Using API key path: #{api_key_path}"
   
-    api_key_full_path = File.expand_path(File.join(__dir__, ENV["APP_STORE_CONNECT_API_KEY_PATH"]))
+    api_key_full_path = File.absolute_path(api_key_path)
     UI.message("🔍 Resolved API key absolute path: #{api_key_full_path}")
     
     if !File.exist?(api_key_full_path)
