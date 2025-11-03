@@ -138,7 +138,7 @@ platform :ios do
       api_key = app_store_connect_api_key(
         key_id: ENV["APPSTORE_CONNECT_API_KEY_ID"],
         issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
-        key_filepath: api_key_path
+        key_filepath: File.expand_path(ENV["APP_STORE_CONNECT_API_KEY_PATH"])
       )
       sh("echo '🔍 Checking API key file:' && ls -l #{ENV['APP_STORE_CONNECT_API_KEY']}")
 
@@ -171,7 +171,7 @@ platform :ios do
     api_key = app_store_connect_api_key(
       key_id: ENV['APPSTORE_CONNECT_API_KEY_ID'],
       issuer_id: ENV['APPSTORE_CONNECT_ISSUER_ID'],
-      key_filepath: api_key_path
+      key_filepath: File.expand_path(ENV["APP_STORE_CONNECT_API_KEY_PATH"])
     )
     match(type: "appstore", app_identifier: bundle_id,api_key: api_key)
 
