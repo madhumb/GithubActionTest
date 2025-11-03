@@ -2,7 +2,6 @@ name: 🚀 iOS App Upload (Flavored)
 
 on:
   workflow_dispatch:
-   
     inputs:
       flavor:
         description: "Which flavor to build (e.g. ahbenefits, pecoconnect, etc)"
@@ -12,8 +11,6 @@ on:
         description: "Choose Fastlane lane (beta for TestFlight / release for App Store)"
         required: true
         default: "beta"
-
-  
 
 jobs:
   build-and-upload:
@@ -40,4 +37,42 @@ jobs:
 
       ##############################################################
       # 💎 Setup Ruby & Fastlane
-      #############################################################
+      ##############################################################
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.4
+
+      - name: Install Fastlane
+        run: gem install fastlane
+
+      ##############################################################
+      # 🔐 Setup App Store Connect API Key
+      ##############################################################
+      - name: Decode API key file
+        run: |
+          mkdir -p ios/fastlane
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_JSON }}" > ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+        shell: bash
+
+      ##############################################################
+      # 🍏 Build & Upload with Fastlane
+      ##############################################################
+      - name: Run Fastlane for selected flavor
+        working-directory: ios
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_API_KEY: ios/fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          bundle exec fastlane ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}
+
+      ##############################################################
+      # 🧾 Optional: Upload logs or artifacts
+      ##############################################################
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.inputs.flavor }}-ipa
+          path: ios/build/ios/${{ github.event.inputs.flavor }}.ipa
