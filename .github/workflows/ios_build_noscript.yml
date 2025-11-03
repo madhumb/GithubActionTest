@@ -62,8 +62,8 @@ jobs:
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APP_STORE_CONNECT_API_KEY_PATH: ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
+          APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
+          APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: |
           echo "🚀 Running lane: ${{ github.event.inputs.lane }}_${{ matrix.flavor }}"
           bundle exec fastlane ${{ github.event.inputs.lane }}_${{ matrix.flavor }}
@@ -85,8 +85,8 @@ jobs:
     env:
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
         APP_STORE_CONNECT_API_KEY_PATH: ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-        APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-        APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
+        APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
+        APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }} 
 
 
@@ -115,23 +115,23 @@ jobs:
       - name: Create API key file
         run: |
             mkdir -p ios/fastlane
-            echo "Creating API key file...${APP_STORE_CONNECT_API_KEY_ID}"
-            printf "%s" "${APP_STORE_CONNECT_API_KEY}" > ios/fastlane/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+            echo "Creating API key file...${APPSTORE_CONNECT_API_KEY_ID}"
+            printf "%s" "${APP_STORE_CONNECT_API_KEY}" > ios/fastlane/AuthKey_${APPSTORE_CONNECT_API_KEY_ID}.p8
             
             echo "File created:"
             ls -l ios/fastlane/
             echo "File preview (first 3 lines):"
-            head -n 3 ios/fastlane/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+            head -n 3 ios/fastlane/AuthKey_${APPSTORE_CONNECT_API_KEY_ID}.p8
 
         env:
             MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
             APP_STORE_CONNECT_API_KEY_PATH: ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-            APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-            APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
+            APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
+            APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
             APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }} 
                 
       - name: Set API key path env
-        run: echo "APP_STORE_CONNECT_API_KEY_PATH=ios/fastlane/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8" >> $GITHUB_ENV
+        run: echo "APP_STORE_CONNECT_API_KEY_PATH=ios/fastlane/AuthKey_${APPSTORE_CONNECT_API_KEY_ID}.p8" >> $GITHUB_ENV
 
             
       # 🏗️ Build & Upload the selected flavor
@@ -140,8 +140,8 @@ jobs:
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APP_STORE_CONNECT_API_KEY: ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
+          APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
+          APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: |
           echo "🚀 Running lane: ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}"
           bundle exec fastlane ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}

@@ -123,7 +123,7 @@ platform :ios do
 
     UI.message("=== 🔍 Debugging App Store Connect ENV ===")
     UI.message("APP_STORE_CONNECT_API_KEY_PATH: #{ENV['APP_STORE_CONNECT_API_KEY']}")
-    UI.message("APP_STORE_CONNECT_API_KEY_ID: #{ENV['APPSTORE_CONNECT_API_KEY_ID']}")
+    UI.message("APPSTORE_CONNECT_API_KEY_ID: #{ENV['APPSTORE_CONNECT_API_KEY_ID']}")
     UI.message("APP_STORE_CONNECT_ISSUER_ID: #{ENV['APPSTORE_CONNECT_ISSUER_ID']}")
     UI.message("Current working dir: #{Dir.pwd}")
     sh("ls -l ios/fastlane || true")
