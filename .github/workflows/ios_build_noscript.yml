@@ -24,18 +24,19 @@ on:
         default: "beta"
 
 jobs:
-  build:
-    name: Build & Upload
-    runs-on: macos-latest
+ build:
+  name: Build & Upload
+  runs-on: macos-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        flavor: ${{ fromJson(github.event_name == 'push' || github.event.inputs.mode == 'all' 
-          && '["star","moon","sun"]' 
-          || format('["{0}"]', github.event.inputs.flavor || 'star')) }}
+  strategy:
+    fail-fast: false
+    matrix:
+      flavor: ${{ fromJson(
+        github.event_name == 'push' && '["star","moon","sun"]' ||
+        github.event.inputs.mode == 'all' && '["star","moon","sun"]' ||
+        format('["{0}"]', github.event.inputs.flavor || 'star')) }}
 
-    steps:
+  steps:
       - name: 🧾 Checkout repository
         uses: actions/checkout@v4
 
