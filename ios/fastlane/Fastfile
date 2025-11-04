@@ -121,7 +121,7 @@ platform :ios do
   before_all do
     ENV["MATCH_PASSWORD"] = ENV["MATCH_PASSWORD"] || "Harder@123Git"
 
-    UI.message("=== 🔍 Debugging App Store Connect ENV ===")
+    UI.message("=== 🔍 Debugging App Store Connect ENV === #{ENV["APP_STORE_CONNECT_API_KEY_PATH"]}")
     UI.message("APP_STORE_CONNECT_API_KEY_PATH: #{ENV['APP_STORE_CONNECT_API_KEY']}")
     UI.message("APPSTORE_CONNECT_API_KEY_ID: #{ENV['APPSTORE_CONNECT_API_KEY_ID']}")
     UI.message("APP_STORE_CONNECT_ISSUER_ID: #{ENV['APPSTORE_CONNECT_ISSUER_ID']}")
