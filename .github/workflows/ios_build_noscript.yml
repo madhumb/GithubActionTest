@@ -80,6 +80,13 @@ jobs:
           APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
     
 
+
+      - name: Debug provisioning profiles
+        run: |
+            echo "Listing downloaded profiles..."
+            ls -l ~/Library/MobileDevice/Provisioning\ Profiles/
+            security find-identity -v -p codesigning
+             
       # 🏗️ Build & Upload current flavor
       
       - name: 🏗️ Build and Upload ${{ matrix.flavor }}

@@ -210,8 +210,7 @@ platform :ios do
       clean: true,
       export_options: {
         provisioningProfiles: {
-          "com.gnkbros.app" => "match AppStore com.gnkbros.app 1762238155",
-          "com.recode.bookmark" => "Bookmark Apprstore profile"
+          bundle_id => "match AppStore #{bundle_id}"
         }
      },
 
