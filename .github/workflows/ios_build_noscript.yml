@@ -86,7 +86,15 @@ jobs:
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
     
-         
+      - name: Install iOS Pods
+        run: |
+            cd ios
+            rm -rf Pods Podfile.lock
+            flutter clean
+            flutter pub get
+            pod repo update
+            pod install
+           
       # 🏗️ Build & Upload current flavor
       
       - name: 🏗️ Build and Upload ${{ matrix.flavor }}
