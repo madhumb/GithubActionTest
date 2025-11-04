@@ -68,6 +68,13 @@ jobs:
       - name: 📦 Get Flutter dependencies
         run: flutter pub get
         
+      - name: Setup Keychain
+        run: |
+          security create-keychain -p "ci_keychain_pass" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          security unlock-keychain -p "ci_keychain_pass" build.keychain
+          security list-keychains -s build.keychain
+
 
       - name: 🔑 Create API key file
         run: |
@@ -92,6 +99,7 @@ jobs:
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.IOS_CERT_PAT_BASE64 }}
           SPACESHIP_CONNECT_API_IN_HOUSE: "false"
+          KEYCHAIN_PASSWORD: "ci_keychain_pass"
 
         run: |
           LANE="${{ github.event.inputs.lane || 'beta' }}"
@@ -105,7 +113,7 @@ jobs:
       
           file fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8 || true
       
-          bundle exec fastlane "${LANE}_${{ matrix.flavor }}"
+          bundle exec fastlane "${LANE}_${{ matrix.flavor }}" keychain_name:"build.keychain" keychain_password:"ci_keychain_pass"
     
          
 

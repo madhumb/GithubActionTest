@@ -152,6 +152,9 @@ platform :ios do
   # 🧱 Helper Method — Builds a Flavor
   ##############################################################
   def build_flavor(flavor, bundle_id, config)
+    keychain_name = lane_context[SharedValues::KEYCHAIN_NAME] || "build.keychain"
+    keychain_password = lane_context[SharedValues::KEYCHAIN_PASSWORD] || ENV["KEYCHAIN_PASSWORD"]
+  
     UI.message("=== 🔍 build_flavor Debugging App Store Connect ENV ===")
     UI.message("APP_STORE_CONNECT_API_KEY_PATH: #{ENV['APP_STORE_CONNECT_API_KEY_PATH']}")
     UI.message("APPSTORE_CONNECT_API_KEY_ID: #{ENV['APPSTORE_CONNECT_API_KEY_ID']}")
@@ -195,7 +198,8 @@ platform :ios do
           git_url: "https://github.com/madhumb/ios-certificates.git",
           git_branch: "main",
           git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"],
-          
+          keychain_name: keychain_name,
+          keychain_password: keychain_password
         )
         # ✅ Debug installation results
       sh("mkdir -p ~/Library/MobileDevice/Provisioning\\ Profiles/")
