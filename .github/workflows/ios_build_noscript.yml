@@ -71,28 +71,32 @@ jobs:
     
 
       # 🏗️ Build & Upload current flavor
+      
       - name: 🏗️ Build and Upload ${{ matrix.flavor }}
         working-directory: ios
         env:
-            
           MATCH_GIT_URL: https://github.com/madhumb/ios-certificates.git
-          MATCH_GIT_BASIC_AUTHORIZATION: Basic ${{ secrets.IOS_CERT_PAT }}
-
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-
-          # APP_STORE_CONNECT_API_KEY_PATH: ./ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.IOS_CERT_PAT }}
+
         run: |
           LANE="${{ github.event.inputs.lane || 'beta' }}"
           echo "🚀 Running lane: ${LANE}_${{ matrix.flavor }}"
           echo "🔍 Checking for API key at: fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8"
-          ls -l fastlane || true
-          git config --global url."https://${{ secrets.IOS_CERT_PAT }}@github.com/".insteadOf "https://github.com/"
+          echo -n "madhumb:${MATCH_GIT_BASIC_AUTHORIZATION}" | base64
 
+          ls -l fastlane || true
+      
+          # ✅ Authenticate all GitHub clones via token
+          git config --global url."https://${{ secrets.IOS_CERT_PAT }}@github.com/".insteadOf "https://github.com/"
+      
           file fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8 || true
+      
           bundle exec fastlane "${LANE}_${{ matrix.flavor }}"
+    
          
 
       # 📤 Upload built IPA
