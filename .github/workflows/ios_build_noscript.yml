@@ -2,8 +2,8 @@ name: 🚀 iOS Flavored Upload
 
 on:
   push:
-    branches:
-        - main  
+    branches: [ main ]
+
   workflow_dispatch:
     inputs:
       mode:
@@ -22,137 +22,24 @@ on:
         description: "Choose Fastlane lane (beta for TestFlight / release for App Store)"
         required: true
         default: "beta"
-       
 
 jobs:
-  ##############################################################
-  # 🧩 Option 1: Build ALL flavors (parallel matrix)
-  ##############################################################
-  all-flavors:
-    if: ${{ github.event.inputs.mode == 'all' || github.event_name == 'push'}}
-    name: Build & Upload (All Flavors)
+  build:
+    name: Build & Upload
     runs-on: macos-latest
 
     strategy:
       fail-fast: false
       matrix:
-        flavor: [ "star" ] # 🔁 Add your other flavors here
+        flavor: ${{ fromJson(github.event_name == 'push' || github.event.inputs.mode == 'all' 
+          && '["star","moon","sun"]' 
+          || format('["{0}"]', github.event.inputs.flavor || 'star')) }}
 
     steps:
       - name: 🧾 Checkout repository
         uses: actions/checkout@v4
 
-      # 💎 Setup Ruby with Bundler caching
-      - name: 🪄 Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3.4
-          bundler-cache: true
-          working-directory: ios
-
-      - name: 💾 Cache Flutter and pub packages
-        uses: actions/cache@v4
-        with:
-            path: |
-              ~/.pub-cache
-              ~/.flutter
-            key: flutter-${{ runner.os }}-${{ hashFiles('pubspec.yaml') }}
-            restore-keys: |
-              flutter-${{ runner.os }}-
-        
-      - name: 💙 Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-            flutter-version: "3.24.5"
-        
-      - name: 📦 Get Flutter dependencies
-        run: flutter pub get
-        
-      - name: Setup Keychain
-        run: |
-          security create-keychain -p "ci_keychain_pass" build.keychain
-          security set-keychain-settings -lut 21600 build.keychain
-          security unlock-keychain -p "ci_keychain_pass" build.keychain
-          security list-keychains -s build.keychain
-
-
-      - name: 🔑 Create API key file
-        run: |
-          mkdir -p ios/fastlane
-          echo "Creating API key file...${APPSTORE_CONNECT_API_KEY_ID}"
-          printf "%s" "${APP_STORE_CONNECT_API_KEY}" > ios/fastlane/AuthKey_${APPSTORE_CONNECT_API_KEY_ID}.p8
-          ls -l ios/fastlane/
-        env:
-          APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-    
-      - name: Install iOS Pods
-        run: |
-            cd ios
-            rm -rf Pods Podfile.lock
-            flutter clean
-            flutter pub get
-            pod repo update
-            pod install
-           
-      # 🏗️ Build & Upload current flavor
-      
-      - name: 🏗️ Build and Upload ${{ matrix.flavor }}
-        working-directory: ios
-        env:
-          MATCH_GIT_URL: https://github.com/madhumb/ios-certificates.git
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-          APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-          APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.IOS_CERT_PAT_BASE64 }}
-          SPACESHIP_CONNECT_API_IN_HOUSE: "false"
-          KEYCHAIN_PASSWORD: "ci_keychain_pass"
-
-        run: |
-          LANE="${{ github.event.inputs.lane || 'beta' }}"
-          echo "🚀 Running lane: ${LANE}_${{ matrix.flavor }}"
-          echo "🔍 Checking for API key at: fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8"
-
-          ls -l fastlane || true
-      
-          # ✅ Authenticate all GitHub clones via token
-          git config --global url."https://github.com/".insteadOf "git@github.com:"
-      
-          file fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8 || true
-      
-          bundle exec fastlane "${LANE}_${{ matrix.flavor }}" keychain_name:"build.keychain" keychain_password:"ci_keychain_pass"
-    
-         
-
-      # 📤 Upload built IPA
-      - name: 📤 Upload IPA artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.flavor }}-ipa
-          path: ios/build/ios/**/*.ipa
-
-  ##############################################################
-  # 🧩 Option 2: Build a SINGLE selected flavor
-  ##############################################################
-  single-flavor:
-    if: ${{ github.event.inputs.mode == 'single' }}
-    name: Build & Upload (${{ github.event.inputs.flavor }})
-    runs-on: macos-latest
-    env:
-        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-        # APP_STORE_CONNECT_API_KEY_PATH: ./ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-        APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-        APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
-        APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }} 
-
-
-    steps:
-      - name: 🧾 Checkout repository
-        uses: actions/checkout@v4
-
-      # 💎 Setup Ruby with Bundler caching
+      # 💎 Setup Ruby
       - name: 🪄 Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -169,51 +56,59 @@ jobs:
       - name: 📦 Get Flutter dependencies
         run: flutter pub get
 
-          
-      # 🔑 Prepare App Store API key
-      - name: Create API key file
+      # 🔐 Setup Keychain
+      - name: 🔐 Setup Keychain
         run: |
-            mkdir -p ios/fastlane
-            echo "Creating API key file...${APPSTORE_CONNECT_API_KEY_ID}"
-            printf "%s" "${APP_STORE_CONNECT_API_KEY}" > ios/fastlane/AuthKey_${APPSTORE_CONNECT_API_KEY_ID}.p8
-            ls -l ios/fastlane/
+          security create-keychain -p "ci_keychain_pass" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          security unlock-keychain -p "ci_keychain_pass" build.keychain
+          security list-keychains -s build.keychain
+
+      # 🔑 Create App Store API key file
+      - name: 🔑 Create API key file
+        run: |
+          mkdir -p ios/fastlane
+          echo "Creating API key file for $APPSTORE_CONNECT_API_KEY_ID"
+          printf "%s" "$APP_STORE_CONNECT_API_KEY" > ios/fastlane/AuthKey_${APPSTORE_CONNECT_API_KEY_ID}.p8
+          ls -l ios/fastlane/
         env:
-            APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-            APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }} 
-                
-    
-      - name: 🔍 Verify AuthKey contents
-        working-directory: ios/fastlane
+          APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+
+      - name: 📦 Install iOS Pods
         run: |
-          echo "🔍 Checking AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8 content:"
-          head -n 5 AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-          echo "..."
-          tail -n 3 AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-          echo "✅ File size (bytes):"
-          wc -c AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-          
-        
-      # 🏗️ Build & Upload the selected flavor
-      - name: 🏗️ Build and Upload selected flavor
+          cd ios
+          rm -rf Pods Podfile.lock
+          flutter clean
+          flutter pub get
+          pod repo update
+          pod install
+
+      # 🏗️ Build & Upload flavor
+      - name: 🏗️ Build & Upload (${{ matrix.flavor }})
         working-directory: ios
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_URL: https://github.com/madhumb/ios-certificates.git
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.IOS_CERT_PAT_BASE64 }}
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
-          MATCH_GIT_URL: https://github.com/madhumb/ios-certificates.git
-
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.IOS_CERT_PAT_BASE64 }}
-
+          KEYCHAIN_PASSWORD: "ci_keychain_pass"
         run: |
-          echo "🚀 Running lane: ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}"
+          LANE="${{ github.event.inputs.lane || 'beta' }}"
+          FLAVOR="${{ matrix.flavor }}"
+          echo "🚀 Running Fastlane: ${LANE}_${FLAVOR}"
+
           git config --global url."https://${{ secrets.IOS_CERT_PAT }}@github.com/".insteadOf "https://github.com/"
 
-          bundle exec fastlane ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}
+          bundle exec fastlane "${LANE}_${FLAVOR}" \
+            keychain_name:"build.keychain" \
+            keychain_password:"ci_keychain_pass"
 
-      # 📤 Upload built IPA
-      - name: 📤 Upload IPA artifact
+      # 📤 Upload IPA artifact
+      - name: 📤 Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.inputs.flavor }}-ipa
+          name: ${{ matrix.flavor }}-ipa
           path: ios/build/ios/**/*.ipa

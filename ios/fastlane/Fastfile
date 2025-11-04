@@ -1,28 +1,47 @@
 default_platform(:ios)
 
 platform :ios do
-  desc "Build and upload iOS app for a specific environment"
+  before_all do |lane, options|
+    # Create or use the CI keychain (idempotent)
+    create_keychain(
+      name: options[:keychain_name] || "build.keychain",
+      password: options[:keychain_password] || "ci_keychain_pass",
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: false
+    )
+  end
 
-lane :beta_star do
+  desc "Build and upload to TestFlight for star flavor"
+  lane :beta_star do |options|
     flavor = "star"
     bundle_id = "com.gnkbros.app"
-  
-    # Fetch signing assets
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APPSTORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
+      key_filepath: options[:api_key_path],
+      is_key_content_base64: false
+    )
+
     match(
       type: "appstore",
+      readonly: false,
       app_identifier: bundle_id,
-      readonly: false
+      keychain_name: options[:keychain_name],
+      keychain_password: options[:keychain_password],
+      api_key: api_key
     )
-  
-    # Build app
+
     gym(
       workspace: "Runner.xcworkspace",
       scheme: flavor,
       export_method: "app-store",
-      configuration: "#{flavor.capitalize}Release"
+      configuration: "#{flavor.capitalize}Release",
+      clean: true
     )
-  
-    # Upload to TestFlight
-    upload_to_testflight
+
+    upload_to_testflight(api_key: api_key)
   end
 end
