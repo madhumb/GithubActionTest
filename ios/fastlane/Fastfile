@@ -21,8 +21,8 @@ platform :ios do
     api_key = app_store_connect_api_key(
       key_id: ENV["APPSTORE_CONNECT_API_KEY_ID"],
       issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
-      key_filepath: options[:api_key_path],
-      is_key_content_base64: false
+      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_PATH"]
+    #   is_key_content_base64: false
     )
 
     match(

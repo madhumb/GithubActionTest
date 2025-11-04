@@ -97,6 +97,8 @@ jobs:
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
           KEYCHAIN_PASSWORD: "ci_keychain_pass"
         run: |
+          ls -l fastlane
+          cat fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8 | head -5
           LANE="${{ github.event.inputs.lane || 'beta' }}"
           FLAVOR="${{ matrix.flavor }}"
           echo "🚀 Running Fastlane: ${LANE}_${FLAVOR}"
