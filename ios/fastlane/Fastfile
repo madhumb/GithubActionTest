@@ -152,8 +152,8 @@ platform :ios do
   # 🧱 Helper Method — Builds a Flavor
   ##############################################################
   def build_flavor(flavor, bundle_id, config)
-    keychain_name = lane_context[SharedValues::KEYCHAIN_NAME] || "build.keychain"
-    keychain_password = lane_context[SharedValues::KEYCHAIN_PASSWORD] || ENV["KEYCHAIN_PASSWORD"]
+    keychain_name = "login.keychain-db" # Default macOS keychain in GitHub Actions
+    keychain_password = ENV["KEYCHAIN_PASSWORD"]
   
     UI.message("=== 🔍 build_flavor Debugging App Store Connect ENV ===")
     UI.message("APP_STORE_CONNECT_API_KEY_PATH: #{ENV['APP_STORE_CONNECT_API_KEY_PATH']}")
