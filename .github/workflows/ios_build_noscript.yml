@@ -91,6 +91,7 @@ jobs:
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.IOS_CERT_PAT_BASE64 }}
+          SPACESHIP_CONNECT_API_IN_HOUSE: "false"
 
         run: |
           LANE="${{ github.event.inputs.lane || 'beta' }}"
