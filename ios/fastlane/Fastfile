@@ -208,7 +208,10 @@ platform :ios do
       sh("echo '🔑 Listing code signing identities:'")
       sh("security find-identity -v -p codesigning || echo 'No signing identities found'")
 
-    # match(type: "appstore", app_identifier: bundle_id,api_key: api_key)
+      ls /Applications/
+
+      # match(type: "appstore", app_identifier: bundle_id,api_key: api_key)
+    xcode_select "/Applications/Xcode.app"
 
     gym(
       workspace: "Runner.xcworkspace",
