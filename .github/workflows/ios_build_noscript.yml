@@ -50,14 +50,24 @@ jobs:
           bundler-cache: true
           working-directory: ios
 
-      # 💙 Setup Flutter
+      - name: 💾 Cache Flutter and pub packages
+        uses: actions/cache@v4
+        with:
+            path: |
+              ~/.pub-cache
+              ~/.flutter
+            key: flutter-${{ runner.os }}-${{ hashFiles('pubspec.yaml') }}
+            restore-keys: |
+              flutter-${{ runner.os }}-
+        
       - name: 💙 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.5"
-
+            flutter-version: "3.24.5"
+        
       - name: 📦 Get Flutter dependencies
         run: flutter pub get
+        
 
       - name: 🔑 Create API key file
         run: |
@@ -80,13 +90,13 @@ jobs:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.IOS_CERT_PAT }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.IOS_CERT_PAT_BASE64 }}
 
         run: |
           LANE="${{ github.event.inputs.lane || 'beta' }}"
           echo "🚀 Running lane: ${LANE}_${{ matrix.flavor }}"
           echo "🔍 Checking for API key at: fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8"
-          echo -n "madhumb:${MATCH_GIT_BASIC_AUTHORIZATION}" | base64
+          # echo -n "madhumb:${MATCH_GIT_BASIC_AUTHORIZATION}" | base64
 
           ls -l fastlane || true
       
@@ -176,7 +186,7 @@ jobs:
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
           MATCH_GIT_URL: https://github.com/madhumb/ios-certificates.git
-          MATCH_GIT_BASIC_AUTHORIZATION: Basic ${{ secrets.IOS_CERT_PAT }}
+          MATCH_GIT_BASIC_AUTHORIZATION: Basic ${{ secrets.secrets.IOS_CERT_PAT_BASE64 }}
         run: |
           echo "🚀 Running lane: ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}"
           git config --global url."https://${{ secrets.IOS_CERT_PAT }}@github.com/".insteadOf "https://github.com/"
