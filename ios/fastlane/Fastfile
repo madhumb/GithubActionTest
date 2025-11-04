@@ -197,6 +197,12 @@ platform :ios do
           git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"],
           
         )
+        # ✅ Debug installation results
+      sh("mkdir -p ~/Library/MobileDevice/Provisioning\\ Profiles/")
+      sh("echo '📂 Listing installed provisioning profiles:'")
+      sh("ls -l ~/Library/MobileDevice/Provisioning\\ Profiles/ || echo 'No profiles found'")
+      sh("echo '🔑 Listing code signing identities:'")
+      sh("security find-identity -v -p codesigning || echo 'No signing identities found'")
 
     # match(type: "appstore", app_identifier: bundle_id,api_key: api_key)
 
