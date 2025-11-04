@@ -36,7 +36,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flavor: [ "star", "moon" ] # 🔁 Add your other flavors here
+        flavor: [ "star" ] # 🔁 Add your other flavors here
 
     steps:
       - name: 🧾 Checkout repository
