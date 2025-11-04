@@ -151,7 +151,7 @@ platform :ios do
   ##############################################################
   # 🧱 Helper Method — Builds a Flavor
   ##############################################################
-  def build_flavor(flavor, bundle_id)
+  def build_flavor(flavor, bundle_id, config)
     UI.message("=== 🔍 Debugging App Store Connect ENV ===")
     UI.message("APP_STORE_CONNECT_API_KEY_PATH: #{ENV['APP_STORE_CONNECT_API_KEY_PATH']}")
     UI.message("APPSTORE_CONNECT_API_KEY_ID: #{ENV['APPSTORE_CONNECT_API_KEY_ID']}")
@@ -203,7 +203,7 @@ platform :ios do
     gym(
       workspace: "Runner.xcworkspace",
       scheme: flavor,
-      configuration: "#{flavor}Release",
+      configuration: "#{config}",
       export_method: "app-store",
       output_directory: "./build/ios",
       output_name: "#{flavor}.ipa",
@@ -234,7 +234,7 @@ platform :ios do
   ##############################################################
   # 🚢 Helper — Upload to App Store (for manual release)
   ##############################################################
-  def upload_appstore(flavor, bundle_id)
+  def upload_appstore(flavor, bundle_id, config)
     deliver(
       ipa: "./build/ios/#{flavor}.ipa",
       app_identifier: bundle_id,
@@ -248,26 +248,34 @@ platform :ios do
   ##############################################################
   # ✨ Define your flavors here
   ##############################################################
-  flavors = {
-    "moon" => "com.recode.bookmark",
-    "star" => "com.gnkbros.app",
-    
+  ##############################################################
+flavors = {
+  "moon" => {
+    bundle_id: "com.recode.bookmark",
+    config: "moonRelease"
+  },
+  "star" => {
+    bundle_id: "com.gnkbros.app",
+    config: "starRelease"
   }
+}
+##############################################################
+
 
   ##############################################################
   # 🧩 Dynamically Create Lanes for Each Flavor
   ##############################################################
-  flavors.each do |flavor, bundle_id|
+  flavors.each do |flavor, info|
     desc "Build #{flavor} and upload to TestFlight"
     lane :"beta_#{flavor}" do
-      build_flavor(flavor, bundle_id)
-      upload_testflight(flavor, bundle_id)
+      build_flavor(flavor, info[:bundle_id], infor[:config])
+      upload_testflight(flavor, info[:bundle_id], infor[:config]))
     end
 
     desc "Build #{flavor} and upload to App Store (manual release)"
     lane :"release_#{flavor}" do
-      build_flavor(flavor, bundle_id)
-      upload_appstore(flavor, bundle_id)
+      build_flavor(flavor, info[:bundle_id], infor[:config]))
+      upload_appstore(flavor, info[:bundle_id], infor[:config]))
     end
   end
 
