@@ -68,6 +68,7 @@ project 'Runner', {
   'Profile' => :release,
   'Release' => :release,
   'starRelease' => :release,
+  'moonRelease' => :release,
 }
 
 def flutter_root
