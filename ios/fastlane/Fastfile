@@ -195,7 +195,7 @@ platform :ios do
           git_url: "https://github.com/madhumb/ios-certificates.git",
           git_branch: "main",
           git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"],
-          in_house: false # 👈 Add this line
+          
         )
 
     # match(type: "appstore", app_identifier: bundle_id,api_key: api_key)
