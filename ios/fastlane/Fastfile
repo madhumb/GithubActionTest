@@ -7,16 +7,6 @@ lane :beta_star do
     flavor = "star"
     bundle_id = "com.gnkbros.app"
   
-    # Create CI keychain
-    create_keychain(
-      name: "ci.keychain",
-      password: "ci_password",
-      default_keychain: true,
-      unlock: true,
-      timeout: 3600,
-      lock_when_sleeps: false
-    )
-  
     # Fetch signing assets
     match(
       type: "appstore",
