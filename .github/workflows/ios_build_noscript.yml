@@ -185,7 +185,9 @@ jobs:
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
           MATCH_GIT_URL: https://github.com/madhumb/ios-certificates.git
-          MATCH_GIT_BASIC_AUTHORIZATION: Basic ${{ secrets.secrets.IOS_CERT_PAT_BASE64 }}
+
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.IOS_CERT_BASIC_AUTH }}
+
         run: |
           echo "🚀 Running lane: ${{ github.event.inputs.lane }}_${{ github.event.inputs.flavor }}"
           git config --global url."https://${{ secrets.IOS_CERT_PAT }}@github.com/".insteadOf "https://github.com/"
