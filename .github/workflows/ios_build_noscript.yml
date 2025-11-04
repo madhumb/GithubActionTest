@@ -102,6 +102,7 @@ jobs:
           LANE="${{ github.event.inputs.lane || 'beta' }}"
           FLAVOR="${{ matrix.flavor }}"
           echo "🚀 Running Fastlane: ${LANE}_${FLAVOR}"
+          
 
           git config --global url."https://${{ secrets.IOS_CERT_PAT }}@github.com/".insteadOf "https://github.com/"
 

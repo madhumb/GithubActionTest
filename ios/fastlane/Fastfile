@@ -24,6 +24,7 @@ platform :ios do
       key_filepath: ENV["APP_STORE_CONNECT_API_KEY_PATH"]
     #   is_key_content_base64: false
     )
+    sh("security find-identity -v -p codesigning || echo 'No signing identities found'")
 
     match(
       type: "appstore",
