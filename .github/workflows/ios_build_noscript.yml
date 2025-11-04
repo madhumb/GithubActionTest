@@ -79,8 +79,9 @@ jobs:
           MATCH_GIT_BASIC_AUTHORIZATION: Basic ${{ secrets.IOS_CERT_PAT }}
 
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
+          # APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
 
+          APP_STORE_CONNECT_API_KEY_PATH: ./ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
           APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
           APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         run: |
@@ -110,7 +111,8 @@ jobs:
     runs-on: macos-latest
     env:
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
+        # APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
+        APP_STORE_CONNECT_API_KEY_PATH: ./ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
         APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
         APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
         APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }} 

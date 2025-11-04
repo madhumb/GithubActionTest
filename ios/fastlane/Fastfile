@@ -138,10 +138,12 @@ platform :ios do
       api_key = app_store_connect_api_key(
         key_id: ENV["APPSTORE_CONNECT_API_KEY_ID"],
         issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
-        key_filepath: File.expand_path(ENV["APP_STORE_CONNECT_API_KEY_PATH"])
+        key_filepath: File.expand_path(ENV["APP_STORE_CONNECT_API_KEY_PATH"]),
+        in_house: false
       )
-      sh("echo '🔍 Checking API key file:' && ls -l #{ENV['APP_STORE_CONNECT_API_KEY']}")
-
+      puts "🔍 Using API key file: #{ENV['APP_STORE_CONNECT_API_KEY_PATH']}"
+      sh("ls -l #{ENV['APP_STORE_CONNECT_API_KEY_PATH']} || true")
+      
       ENV["APP_STORE_CONNECT_API_KEY"] = api_key
     end
   end
