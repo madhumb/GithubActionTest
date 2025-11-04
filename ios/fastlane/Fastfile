@@ -203,7 +203,7 @@ platform :ios do
     gym(
       workspace: "Runner.xcworkspace",
       scheme: flavor,
-      configuration: "Release",
+      configuration: "#{flavor}Release",
       export_method: "app-store",
       output_directory: "./build/ios",
       output_name: "#{flavor}.ipa",
