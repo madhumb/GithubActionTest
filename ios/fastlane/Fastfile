@@ -269,13 +269,13 @@ flavors = {
     desc "Build #{flavor} and upload to TestFlight"
     lane :"beta_#{flavor}" do
       build_flavor(flavor, info[:bundle_id], info[:config])
-      upload_testflight(flavor, info[:bundle_id], info[:config]))
+      upload_testflight(flavor, info[:bundle_id], info[:config])
     end
 
     desc "Build #{flavor} and upload to App Store (manual release)"
     lane :"release_#{flavor}" do
-      build_flavor(flavor, info[:bundle_id], info[:config]))
-      upload_appstore(flavor, info[:bundle_id], info[:config]))
+      build_flavor(flavor, info[:bundle_id], info[:config])
+      upload_appstore(flavor, info[:bundle_id], info[:config])
     end
   end
 
