@@ -122,7 +122,7 @@ platform :ios do
     ENV["MATCH_PASSWORD"] = ENV["MATCH_PASSWORD"] || "Harder@123Git"
 
     UI.message("=== 🔍 Debugging App Store Connect ENV === #{ENV["APP_STORE_CONNECT_API_KEY_PATH"]}")
-    UI.message("APP_STORE_CONNECT_API_KEY_PATH: #{ENV['APP_STORE_CONNECT_API_KEY']}")
+    UI.message("APP_STORE_CONNECT_API_KEY_PATH: #{ENV['APP_STORE_CONNECT_API_KEY_PATH']}")
     UI.message("APPSTORE_CONNECT_API_KEY_ID: #{ENV['APPSTORE_CONNECT_API_KEY_ID']}")
     UI.message("APP_STORE_CONNECT_ISSUER_ID: #{ENV['APPSTORE_CONNECT_ISSUER_ID']}")
     UI.message("Current working dir: #{Dir.pwd}")
@@ -204,7 +204,7 @@ platform :ios do
         # ✅ Debug installation results
       sh("mkdir -p ~/Library/MobileDevice/Provisioning\\ Profiles/")
       sh("echo '📂 Listing installed provisioning profiles:'")
-      sh("ls -l ~/Library/MobileDevice/Provisioning\\ Profiles/ || echo 'No profiles found'")
+      sh("ls -l ~/Library/MobileDevice/Provisioning\\ Profiles/")
       sh("echo '🔑 Listing code signing identities:'")
       sh("security find-identity -v -p codesigning || echo 'No signing identities found'")
 
