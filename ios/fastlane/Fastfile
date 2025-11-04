@@ -209,11 +209,12 @@ platform :ios do
       output_name: "#{flavor}.ipa",
       clean: true,
       export_options: {
-      provisioningProfiles: {
-        "com.recode.bookmark" => "Bookmark Apprstore profile",
-        "com.gnkbros.app" =>"com.gnkbros.app appstore"
-      }
-      },
+        provisioningProfiles: {
+          "com.gnkbros.app" => "match AppStore com.gnkbros.app 1762238155",
+          "com.recode.bookmark" => "Bookmark Apprstore profile"
+        }
+     },
+
        xcargs: "-allowProvisioningUpdates"
     )
   end
