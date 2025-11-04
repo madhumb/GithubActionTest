@@ -32,8 +32,8 @@ jobs:
     fail-fast: false
     matrix:
       flavor: ${{ fromJson(
-        github.event_name == 'push' && '["star","moon","sun"]' ||
-        github.event.inputs.mode == 'all' && '["star","moon","sun"]' ||
+        github.event_name == 'push' && '["star","moon"]' ||
+        github.event.inputs.mode == 'all' && '["star","moon"]' ||
         format('["{0}"]', github.event.inputs.flavor || 'star')) }}
 
   steps:
