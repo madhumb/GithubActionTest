@@ -27,7 +27,7 @@ platform :ios do
 
     match(
       type: "appstore",
-      readonly: false,
+      readonly: true,
       app_identifier: bundle_id,
       keychain_name: options[:keychain_name],
       keychain_password: options[:keychain_password],
