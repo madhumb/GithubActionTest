@@ -19,9 +19,9 @@ platform :ios do
   lane :beta do
     setup_ci if ENV['CI']
     match(app_identifier: "com.gnkbros.app", type: "appstore",readonly:true, git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
-    updated_version_number = bump_build_number()
-    increment_build_number(build_number: updated_version_number)
-    increment_version_number(version_number: ENV["FLUTTER_BUILD_NAME"])
+    # updated_version_number = bump_build_number()
+    # increment_build_number(build_number: updated_version_number)
+    # increment_version_number(version_number: ENV["FLUTTER_BUILD_NAME"])
    
     build_app(workspace: "Runner.xcworkspace", scheme: "Release", export_method: "app-store")
     pilot(api_key_path: "fastlane/store.json", skip_waiting_for_build_processing: true)
@@ -91,9 +91,9 @@ platform :ios do
   
     setup_ci if ENV['CI']
     match(app_identifier: config[:bundle_id], type: "appstore",readonly:true, git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
-    updated_version_number = bump_build_number()
-    increment_build_number(build_number: updated_version_number)
-    increment_version_number(version_number: ENV["FLUTTER_BUILD_NAME"])
+    # updated_version_number = bump_build_number()
+    # increment_build_number(build_number: updated_version_number)
+    # increment_version_number(version_number: ENV["FLUTTER_BUILD_NAME"])
    
     build_app(workspace: "Runner.xcworkspace", scheme: "Release", export_method: "app-store")
     pilot(api_key_path: "fastlane/store.json", skip_waiting_for_build_processing: true)
