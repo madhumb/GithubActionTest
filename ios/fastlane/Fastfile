@@ -30,12 +30,14 @@ FLAVOR_CONFIGS = {
   "star" => {
     name: "star",
     bundle_id: "com.gnkbros.app",
-    configuration: "starRelease"
+    configuration: "starRelease",
+    main: "lib/main_star.dart"
   },
   "moon" => {
     name: "moon",
     bundle_id: "com.recode.bookmark",
-    configuration: "moonRelease"
+    configuration: "moonRelease",
+    main: "lib/main_moon.dart"
   },
   "ahbenefits" => {
     name: "AH Benefits",
@@ -85,7 +87,10 @@ platform :ios do
   
     setup_ci if ENV['CI']
     match(app_identifier: config[:bundle_id], type: "appstore",readonly: ENV['CI'] ? true : false, git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
-   
+    sh("flutter clean")
+    sh("flutter pub get")
+    sh("flutter build ios --release -t #{config[:main]} --flavor #{flavor} --no-codesign")
+
     build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration: "#{congigname}Release")
     pilot(api_key_path: "fastlane/store.json", skip_waiting_for_build_processing: true)
   end
