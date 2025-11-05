@@ -88,7 +88,8 @@ jobs:
           FLAVOR="${{ matrix.flavor }}"
           echo "🚀 Running Fastlane: ${LANE}_${FLAVOR}"
           
-          bundle exec fastlane "${LANE}_${FLAVOR}" 
+          bundle exec fastlane betaFlavour flavor:${{ matrix.flavor }}
+
             
 
       # 📤 Upload IPA artifact
