@@ -48,11 +48,11 @@ platform :ios do
   lane :betaFlavour do |options|
     flavor = options[:flavor]
     config = FLAVOR_CONFIGS[flavor]
-    congigname = config[:configuration] || "Release"
+    config_name = config[:configuration] || "Release"
   
     setup_ci if ENV['CI']
     match(app_identifier: config[:bundle_id], type: "appstore",readonly: ENV['CI'] ? true : false, git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
-    build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration: "#{congigname}",
+    build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration:config_name,
     export_options: {
       provisioningProfiles: {
         "com.gnkbros.app" => "match AppStore com.gnkbros.app",
