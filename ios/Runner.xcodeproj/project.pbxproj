@@ -444,7 +444,7 @@
 				ENABLE_BITCODE = NO;
 				FLUTTER_APPLICATION_PATH = /Users/madhubhilawadi/Repository/github_projects/githubActionSep1/sep_roject;
 				FLUTTER_BUILD_DIR = build;
-				FLUTTER_BUILD_NAME = 1.0.0;
+				FLUTTER_BUILD_NAME = 1.0;
 				FLUTTER_BUILD_NUMBER = 1;
 				FLUTTER_ROOT = /Users/madhubhilawadi/Repository/flutter;
 				FLUTTER_TARGET = "$(SRCROOT)/../lib/main.dart";
@@ -533,7 +533,7 @@
 				ENABLE_BITCODE = NO;
 				FLUTTER_APPLICATION_PATH = /Users/madhubhilawadi/Repository/github_projects/githubActionSep1/sep_roject;
 				FLUTTER_BUILD_DIR = build;
-				FLUTTER_BUILD_NAME = 1.0.0;
+				FLUTTER_BUILD_NAME = 1.0;
 				FLUTTER_BUILD_NUMBER = 1;
 				FLUTTER_ROOT = /Users/madhubhilawadi/Repository/flutter;
 				FLUTTER_TARGET = "$(SRCROOT)/../lib/main_moon.dart";
@@ -639,7 +639,7 @@
 				ENABLE_BITCODE = NO;
 				FLUTTER_APPLICATION_PATH = /Users/madhubhilawadi/Repository/github_projects/githubActionSep1/sep_roject;
 				FLUTTER_BUILD_DIR = build;
-				FLUTTER_BUILD_NAME = 1.0.0;
+				FLUTTER_BUILD_NAME = 1.0;
 				FLUTTER_BUILD_NUMBER = 1;
 				FLUTTER_ROOT = /Users/madhubhilawadi/Repository/flutter;
 				FLUTTER_TARGET = "$(SRCROOT)/../lib/main_moon.dart";
@@ -746,7 +746,7 @@
 				ENABLE_BITCODE = NO;
 				FLUTTER_APPLICATION_PATH = /Users/madhubhilawadi/Repository/github_projects/githubActionSep1/sep_roject;
 				FLUTTER_BUILD_DIR = build;
-				FLUTTER_BUILD_NAME = 1.0.0;
+				FLUTTER_BUILD_NAME = 1.0;
 				FLUTTER_BUILD_NUMBER = 1;
 				FLUTTER_ROOT = /Users/madhubhilawadi/Repository/flutter;
 				FLUTTER_TARGET = "$(SRCROOT)/../lib/main_star.dart";
@@ -853,7 +853,7 @@
 				ENABLE_BITCODE = NO;
 				FLUTTER_APPLICATION_PATH = /Users/madhubhilawadi/Repository/github_projects/githubActionSep1/sep_roject;
 				FLUTTER_BUILD_DIR = build;
-				FLUTTER_BUILD_NAME = 1.0.0;
+				FLUTTER_BUILD_NAME = 1.0;
 				FLUTTER_BUILD_NUMBER = 1;
 				FLUTTER_ROOT = /Users/madhubhilawadi/Repository/flutter;
 				FLUTTER_TARGET = "$(SRCROOT)/../lib/main_star.dart";
@@ -1060,7 +1060,7 @@
 				ENABLE_BITCODE = NO;
 				FLUTTER_APPLICATION_PATH = /Users/madhubhilawadi/Repository/github_projects/githubActionSep1/sep_roject;
 				FLUTTER_BUILD_DIR = build;
-				FLUTTER_BUILD_NAME = 1.0.0;
+				FLUTTER_BUILD_NAME = 1.0;
 				FLUTTER_BUILD_NUMBER = 1;
 				FLUTTER_ROOT = /Users/madhubhilawadi/Repository/flutter;
 				FLUTTER_TARGET = "$(SRCROOT)/../lib/main.dart";
@@ -1094,7 +1094,7 @@
 				ENABLE_BITCODE = NO;
 				FLUTTER_APPLICATION_PATH = /Users/madhubhilawadi/Repository/github_projects/githubActionSep1/sep_roject;
 				FLUTTER_BUILD_DIR = build;
-				FLUTTER_BUILD_NAME = 1.0.0;
+				FLUTTER_BUILD_NAME = 1.0;
 				FLUTTER_BUILD_NUMBER = 1;
 				FLUTTER_ROOT = /Users/madhubhilawadi/Repository/flutter;
 				FLUTTER_TARGET = "$(SRCROOT)/../lib/main.dart";
