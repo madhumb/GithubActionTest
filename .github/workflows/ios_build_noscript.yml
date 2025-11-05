@@ -77,6 +77,11 @@ jobs:
           cd ios
           pod install
 
+
+      - name: Clean DerivedData
+        run: rm -rf ~/Library/Developer/Xcode/DerivedData
+               
+
       # 🏗️ Build & Upload flavor
       - name: 🏗️ Build & Upload (${{ matrix.flavor }})
         working-directory: ios

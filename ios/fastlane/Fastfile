@@ -83,7 +83,7 @@ platform :ios do
     config = FLAVOR_CONFIGS[flavor]
   
     setup_ci if ENV['CI']
-    match(app_identifier: config[:bundle_id], type: "appstore",readonly:true, git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
+    match(app_identifier: config[:bundle_id], type: "appstore",readonly: ENV['CI'] ? true : false, git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
    
     build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration: config[:configuration] || "Release")
     pilot(api_key_path: "fastlane/store.json", skip_waiting_for_build_processing: true)
