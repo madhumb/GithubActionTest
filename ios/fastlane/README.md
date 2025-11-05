@@ -15,37 +15,13 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
-### ios beta_moon
+### ios beta
 
 ```sh
-[bundle exec] fastlane ios beta_moon
+[bundle exec] fastlane ios beta
 ```
 
-Build moon and upload to TestFlight
-
-### ios release_moon
-
-```sh
-[bundle exec] fastlane ios release_moon
-```
-
-Build moon and upload to App Store (manual release)
-
-### ios beta_star
-
-```sh
-[bundle exec] fastlane ios beta_star
-```
-
-Build star and upload to TestFlight
-
-### ios release_star
-
-```sh
-[bundle exec] fastlane ios release_star
-```
-
-Build star and upload to App Store (manual release)
+Push a new beta build to TestFlight
 
 ----
 

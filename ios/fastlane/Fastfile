@@ -1,48 +1,33 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
 default_platform(:ios)
 
 platform :ios do
-  before_all do |lane, options|
-    # Create or use the CI keychain (idempotent)
-    create_keychain(
-      name: options[:keychain_name] || "build.keychain",
-      password: options[:keychain_password] || "ci_keychain_pass",
-      default_keychain: true,
-      unlock: true,
-      timeout: 3600,
-      lock_when_sleeps: false
-    )
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    setup_ci if ENV['CI']
+    match(app_identifier: "com.gnkbros.app", type: "appstore",readonly:true)
+    # updated_version_number = bump_build_number()
+    # increment_build_number(build_number: updated_version_number)
+    # increment_version_number(version_number: ENV["FLUTTER_BUILD_NAME"])
+    build_app(workspace: "Runner.xcworkspace", scheme: "star")
+    pilot(api_key_path: "fastlane/store.json", skip_waiting_for_build_processing: true)
   end
 
-  desc "Build and upload to TestFlight for star flavor"
-  lane :beta_star do |options|
-    flavor = "star"
-    bundle_id = "com.gnkbros.app"
-
-    api_key = app_store_connect_api_key(
-      key_id: ENV["APPSTORE_CONNECT_API_KEY_ID"],
-      issuer_id: ENV["APPSTORE_CONNECT_ISSUER_ID"],
-      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_PATH"]
-    #   is_key_content_base64: false
-    )
-    sh("security find-identity -v -p codesigning || echo 'No signing identities found'")
-
-    match(
-      type: "appstore",
-      readonly: true,
-      app_identifier: bundle_id,
-      keychain_name: options[:keychain_name],
-      keychain_password: options[:keychain_password],
-      api_key: api_key
-    )
-
-    gym(
-      workspace: "Runner.xcworkspace",
-      scheme: flavor,
-      export_method: "app-store",
-      configuration: "#{flavor.capitalize}Release",
-      clean: true
-    )
-
-    upload_to_testflight(api_key: api_key)
+  def bump_build_number()
+    latest_build_number = latest_testflight_build_number(initial_build_number: 0,api_key_path: "fastlane/store.json")
+    return (latest_build_number + 1)
   end
 end

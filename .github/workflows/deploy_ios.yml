@@ -1,48 +1,50 @@
-name: Deploy iOS Flavors
+name: 🍏🚀 Deploy to appstore
 
 on:
-  workflow_dispatch: # manual trigger
-#   push:
-#     tags:
-#       - "v*" # optional: trigger only on version tags
+  push:
+    branches: [ main ]
+
 
 jobs:
-  deploy:
+  deployIos:
     runs-on: macos-latest
-
-    strategy:
-      matrix:
-        environment: [strivenew, psf, prosper]
-
+    env:
+      ASC_JSON_KEY: ${{ secrets.ASC_JSON_KEY }}
+      FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+      FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
     steps:
-      - name: Checkout code
+      - name: ⬇️ Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Ruby
+      - name: ⚙️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+          channel: 'stable'
+          cache: true
+        id: flutter
+  
+
+      - name: 📦 Get Packages
+        run: flutter pub get
+
+      - name: Setup Fastlane
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'
+          ruby-version: "3.3.4"
           bundler-cache: true
+          working-directory: ios
 
-      - name: Install dependencies
-        run: |
-          gem install bundler
-          bundle install
 
-      - name: Setup App Store Connect API Key
-        run: |
-          mkdir -p ~/.appstoreconnect/private_keys
-          echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey.p8
-        env:
-          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-
-      - name: Deploy to store - ${{ matrix.environment }}
-        run: |
-            bundle exec fastlane ios build_ipa env:"${{ matrix.environment }}"
-
-            bundle exec fastlane ios release env:"${{ matrix.environment }}"
+      - name: Setup app store connect
+        run: echo "$ASC_JSON_KEY" >> ./ios/fastlane/store.json
+        
+      - name: Install pod
+        run: cd ios && pod install
+      - name: Build and Deploy to TestFlight
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-          APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+        run: |
+          cd ./ios
+          bundle exec fastlane ios beta
