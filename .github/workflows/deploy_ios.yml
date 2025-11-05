@@ -2,7 +2,7 @@ name: 🍏🚀 Deploy to appstore working copy
 
 on:
   push:
-    # branches: [ main ]
+    branches: [ dd ]
 
 jobs:
   deployIos:
