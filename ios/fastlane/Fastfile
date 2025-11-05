@@ -81,11 +81,12 @@ platform :ios do
   lane :betaFlavour do |options|
     flavor = options[:flavor]
     config = FLAVOR_CONFIGS[flavor]
+    congigname = config[:configuration] || "Release"
   
     setup_ci if ENV['CI']
     match(app_identifier: config[:bundle_id], type: "appstore",readonly: ENV['CI'] ? true : false, git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
    
-    build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration: config[:configuration] || "Release")
+    build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration: "#{congigname}Release")
     pilot(api_key_path: "fastlane/store.json", skip_waiting_for_build_processing: true)
   end
   
