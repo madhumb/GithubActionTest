@@ -89,6 +89,8 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
         run: |
+          xcode-select -p
+
           LANE="${{ github.event.inputs.lane || 'beta' }}"
           FLAVOR="${{ matrix.flavor }}"
           echo "🚀 Running Fastlane: ${LANE}_${FLAVOR}"
