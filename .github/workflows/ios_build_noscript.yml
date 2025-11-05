@@ -109,5 +109,6 @@ jobs:
         run: |
           ls /Users/runner/Library/Logs/gym/ || true
           FLAVOR="${{ matrix.flavor }}"
-          cat /Users/runner/Library/Logs/gym/Runner-${FLAVOR}Release.log  || true
+          cat /Users/runner/Library/Logs/gym/Runner-${FLAVOR}.log  || true
+          cat /Users/runner/Library/Logs/gym/Runner-Release.log  || true
        
