@@ -103,5 +103,6 @@ jobs:
         if: failure()
         run: |
           ls /Users/runner/Library/Logs/gym/ || true
-          cat /Users/runner/Library/Logs/gym/Runner-starRelease.log  || true
+          FLAVOR="${{ matrix.flavor }}"
+          cat /Users/runner/Library/Logs/gym/Runner-${FLAVOR}Release.log  || true
        
