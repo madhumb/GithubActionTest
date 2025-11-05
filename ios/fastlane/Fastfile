@@ -38,7 +38,7 @@ FLAVOR_CONFIGS = {
   "star" => {
     name: "star",
     bundle_id: "com.gnkbros.app"
-    
+    configuration: "starRelease"
   },
   "moon" => {
     name: "moon",
@@ -95,7 +95,7 @@ platform :ios do
     # increment_build_number(build_number: updated_version_number)
     # increment_version_number(version_number: ENV["FLUTTER_BUILD_NAME"])
    
-    build_app(workspace: "Runner.xcworkspace", scheme: "Release", export_method: "app-store")
+    build_app(workspace: "Runner.xcworkspace", scheme: config[:configuration], export_method: "app-store")
     pilot(api_key_path: "fastlane/store.json", skip_waiting_for_build_processing: true)
   end
   
