@@ -1,9 +1,8 @@
-name: 🍏🚀 Deploy to appstore
+name: 🍏🚀 Deploy to appstore working copy
 
 on:
   push:
-    branches: [ main ]
-
+  #   branches: [ main ]
 
 jobs:
   deployIos:

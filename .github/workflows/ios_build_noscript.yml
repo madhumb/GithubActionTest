@@ -1,8 +1,8 @@
 name: 🚀 iOS Flavored Upload
 
 on:
-  # push:
-  #   branches: [ main ]
+  push:
+    branches: [ main ]
 
   workflow_dispatch:
     inputs:
@@ -27,6 +27,11 @@ jobs:
  build:
   name: Build & Upload
   runs-on: macos-latest
+  env:
+    ASC_JSON_KEY: ${{ secrets.ASC_JSON_KEY }}
+    FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+    FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+
 
   strategy:
     fail-fast: false
@@ -40,49 +45,36 @@ jobs:
       - name: 🧾 Checkout repository
         uses: actions/checkout@v4
 
-      # 💎 Setup Ruby
-      - name: 🪄 Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3.4
-          bundler-cache: true
-          working-directory: ios
 
       # 💙 Setup Flutter
       - name: 💙 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.24.5"
+          channel: 'stable'
+          cache: true
+        id: flutter
 
       - name: 📦 Get Flutter dependencies
         run: flutter pub get
 
       # 🔐 Setup Keychain
-      - name: 🔐 Setup Keychain
-        run: |
-          security create-keychain -p "ci_keychain_pass" build.keychain
-          security set-keychain-settings -lut 21600 build.keychain
-          security unlock-keychain -p "ci_keychain_pass" build.keychain
-          security list-keychains -s build.keychain
+      - name: Setup Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3.4"
+          bundler-cache: true
+          working-directory: ios
 
+
+      - name: Setup app store connect
+        run: echo "$ASC_JSON_KEY" >> ./ios/fastlane/store.json
+  
       # 🔑 Create App Store API key file
-      - name: 🔑 Create API key file
-        run: |
-          mkdir -p ios/fastlane
-          echo "Creating API key file for $APPSTORE_CONNECT_API_KEY_ID"
-          printf "%s" "$APP_STORE_CONNECT_API_KEY" > ios/fastlane/AuthKey_${APPSTORE_CONNECT_API_KEY_ID}.p8
-          ls -l ios/fastlane/
-        env:
-          APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-
+    
       - name: 📦 Install iOS Pods
         run: |
           cd ios
-          rm -rf Pods Podfile.lock
-          flutter clean
-          flutter pub get
-          pod repo update
           pod install
 
       # 🏗️ Build & Upload flavor
@@ -90,25 +82,14 @@ jobs:
         working-directory: ios
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MATCH_GIT_URL: https://github.com/madhumb/ios-certificates.git
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.IOS_CERT_PAT_BASE64 }}
-          APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/ios/fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8
-          APPSTORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}
-          APPSTORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_ISSUER_ID }}
-          KEYCHAIN_PASSWORD: "ci_keychain_pass"
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
         run: |
-          ls -l fastlane
-          cat fastlane/AuthKey_${{ secrets.APPSTORE_CONNECT_API_KEY_ID }}.p8 | head -5
           LANE="${{ github.event.inputs.lane || 'beta' }}"
           FLAVOR="${{ matrix.flavor }}"
           echo "🚀 Running Fastlane: ${LANE}_${FLAVOR}"
           
-
-          git config --global url."https://${{ secrets.IOS_CERT_PAT }}@github.com/".insteadOf "https://github.com/"
-
-          bundle exec fastlane "${LANE}_${FLAVOR}" \
-            keychain_name:"build.keychain" \
-            keychain_password:"ci_keychain_pass"
+          bundle exec fastlane "${LANE}_${FLAVOR}" 
+            
 
       # 📤 Upload IPA artifact
       - name: 📤 Upload IPA
@@ -116,3 +97,8 @@ jobs:
         with:
           name: ${{ matrix.flavor }}-ipa
           path: ios/build/ios/**/*.ipa
+
+      - name: Print xcodebuild log if Fastlane fails
+        if: failure()
+        run: cat /Users/runner/Library/Logs/gym/Runner-Runner.log  || true
+       
