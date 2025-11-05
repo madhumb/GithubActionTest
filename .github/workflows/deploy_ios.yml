@@ -41,11 +41,11 @@ jobs:
 
       - name: Install pod
         run: cd ios && pod install
-        
+
       - name: Build and Deploy to TestFlight
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
         run: |
           cd ./ios
-          bundle exec fastlane ios beta
+          bundle exec fastlane ios beta --verbose
