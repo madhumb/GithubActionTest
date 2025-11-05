@@ -101,5 +101,5 @@ jobs:
 
       - name: Print xcodebuild log if Fastlane fails
         if: failure()
-        run: cat /Users/runner/Library/Logs/gym/Runner-Runner.log  || true
+        run: cat /Users/runner/Library/Logs/gym/Runner-starRelease.log  || true
        
