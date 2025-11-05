@@ -32,3 +32,75 @@ platform :ios do
     return (latest_build_number + 1)
   end
 end
+
+# Define all flavor configurations in a single object (Hash)
+FLAVOR_CONFIGS = {
+  "star" => {
+    name: "star",
+    bundle_id: "com.gnkbros.app"
+    
+  },
+  "moon" => {
+    name: "moon",
+    bundle_id: "com.recode.bookmark"
+  },
+  "ahbenefits" => {
+    name: "AH Benefits",
+    bundle_id: "com.strive.ahbenefits"
+  },
+  "pecoconnect" => {
+    name: "Peco Connect",
+    bundle_id: "com.strive.pecoconnect"
+  },
+  "geotekconnect" => {
+    name: "Geotek Connect",
+    bundle_id: "com.strive.geotekconnect"
+  },
+  "adapt" => {
+    name: "Adapt",
+    bundle_id: "com.strive.adapt"
+  },
+  "acrisure" => {
+    name: "Acrisure",
+    bundle_id: "com.strive.acrisure"
+  },
+  "aerodyne" => {
+    name: "Aerodyne",
+    bundle_id: "com.strive.aerodyne"
+  },
+  "quipthomemedical" => {
+    name: "Quipthome Medical",
+    bundle_id: "com.strive.quipthomemedical"
+  },
+  "pregis" => {
+    name: "Pregis",
+    bundle_id: "com.strive.pregis"
+  },
+  "pyramidhub" => {
+    name: "Pyramid Hub",
+    bundle_id: "com.strive.pyramidhub"
+  }
+}.freeze
+
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :betaFlavour do |options|
+    flavor = options[:flavor]
+    config = FLAVOR_CONFIGS[flavor]
+  
+    setup_ci if ENV['CI']
+    match(app_identifier: config[:bundle_id], type: "appstore",readonly:true, git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
+    updated_version_number = bump_build_number()
+    increment_build_number(build_number: updated_version_number)
+    increment_version_number(version_number: ENV["FLUTTER_BUILD_NAME"])
+   
+    build_app(workspace: "Runner.xcworkspace", scheme: "Release", export_method: "app-store")
+    pilot(api_key_path: "fastlane/store.json", skip_waiting_for_build_processing: true)
+  end
+  
+  def bump_build_number()
+    latest_build_number = latest_testflight_build_number(initial_build_number: 0,api_key_path: "fastlane/store.json")
+    return (latest_build_number + 1)
+  end
+end
