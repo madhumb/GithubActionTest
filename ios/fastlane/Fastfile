@@ -39,42 +39,7 @@ FLAVOR_CONFIGS = {
     configuration: "moonRelease",
     main: "lib/main_moon.dart"
   },
-  "ahbenefits" => {
-    name: "AH Benefits",
-    bundle_id: "com.strive.ahbenefits"
-  },
-  "pecoconnect" => {
-    name: "Peco Connect",
-    bundle_id: "com.strive.pecoconnect"
-  },
-  "geotekconnect" => {
-    name: "Geotek Connect",
-    bundle_id: "com.strive.geotekconnect"
-  },
-  "adapt" => {
-    name: "Adapt",
-    bundle_id: "com.strive.adapt"
-  },
-  "acrisure" => {
-    name: "Acrisure",
-    bundle_id: "com.strive.acrisure"
-  },
-  "aerodyne" => {
-    name: "Aerodyne",
-    bundle_id: "com.strive.aerodyne"
-  },
-  "quipthomemedical" => {
-    name: "Quipthome Medical",
-    bundle_id: "com.strive.quipthomemedical"
-  },
-  "pregis" => {
-    name: "Pregis",
-    bundle_id: "com.strive.pregis"
-  },
-  "pyramidhub" => {
-    name: "Pyramid Hub",
-    bundle_id: "com.strive.pyramidhub"
-  }
+ 
 }.freeze
 
 
@@ -87,11 +52,7 @@ platform :ios do
   
     setup_ci if ENV['CI']
     match(app_identifier: config[:bundle_id], type: "appstore",readonly: ENV['CI'] ? true : false, git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
-    # sh("flutter clean")
-    # sh("flutter pub get")
-    # sh("flutter build ios --release -t #{config[:main]} --flavor #{flavor} --no-codesign")
-
-    build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration: "#{congigname}Release",
+    build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration: "#{congigname}",
     export_options: {
       provisioningProfiles: {
         "com.gnkbros.app" => "match AppStore com.gnkbros.app",
