@@ -31,13 +31,15 @@ FLAVOR_CONFIGS = {
     name: "star",
     bundle_id: "com.gnkbros.app",
     configuration: "starRelease",
-    main: "lib/main_star.dart"
+    main: "lib/main_star.dart",
+    provisioning_profile: "match AppStore com.gnkbros.app"
   },
   "moon" => {
     name: "moon",
     bundle_id: "com.recode.bookmark",
     configuration: "moonRelease",
-    main: "lib/main_moon.dart"
+    main: "lib/main_moon.dart",
+    provisioning_profile: "match AppStore com.recode.bookmark"
   },
  
 }.freeze
@@ -55,8 +57,7 @@ platform :ios do
     build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration:config_name,
     export_options: {
       provisioningProfiles: {
-        "com.gnkbros.app" => "match AppStore com.gnkbros.app",
-        "com.recode.bookmark" => "match AppStore com.recode.bookmark",
+        config[:bundle_id] => config[:provisioning_profile]
       }
     })
     pilot(api_key_path: "fastlane/store.json", skip_waiting_for_build_processing: true)
