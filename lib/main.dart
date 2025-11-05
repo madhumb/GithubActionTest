@@ -1,21 +1,50 @@
-import 'dart:io';
+import 'package:flutter/material.dart';
 
-import 'main_star.dart' as star;
-import 'main_moon.dart' as moon; // add more if you have more flavors
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
+}
 
-void main(List<String> args) {
-  // Check FLAVOR environment variable (set in Xcode scheme or flutter build)
-  const flavor = String.fromEnvironment('FLUTTER_FLAVOR');
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    const primaryColor = Color(0xFFDE4435);
+    final theme = ThemeData(
+      primaryColor: primaryColor,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+    );
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: theme.copyWith(
+        colorScheme: theme.colorScheme.copyWith(
+          secondary: Colors.orange,
+          primary: primaryColor,
+        ),
+      ),
+      home: AdaptiveHome(),
+    );
+  }
+}
 
-  switch (flavor) {
-    case 'star':
-      star.main();
-      break;
-    case 'moon':
-      moon.main();
-      break;
-    default:
-      // Fallback to one flavor if nothing is set
-      star.main();
+class AdaptiveHome extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return WiderHomePage();
+  }
+}
+
+class WiderHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Wider Home Page'),
+        ),
+        body: Center(
+          child: Text('This is the wider home page layout.'),
+        ),
+      ),
+    );
   }
 }

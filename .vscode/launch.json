@@ -17,15 +17,14 @@
             ]
         },
         {
-            "name": "moon",
+            "name": "Main",
             "request": "launch",
             "type": "dart",
-            "program": "lib/main_moon.dart",
+            "program": "lib/main.dart",
             "args": [
                 "-t",
-                "lib/main_moon.dart",
-                "--flavor",
-                "moon"
+                "lib/main.dart",
+               
             ]
         },
        

@@ -49,3 +49,8 @@ jobs:
         run: |
           cd ./ios
           bundle exec fastlane ios beta --verbose
+
+      - name: Print xcodebuild log if Fastlane fails
+        if: failure()
+        run: cat /Users/runner/Library/Logs/gym/Runner-star.log || true
+             
