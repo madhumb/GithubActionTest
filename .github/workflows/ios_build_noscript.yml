@@ -17,7 +17,7 @@ on:
       flavor:
         description: "If single mode, specify flavor (e.g. star)"
         required: false
-        default: "star"
+        default: "moon"
       lane:
         description: "Choose Fastlane lane (beta for TestFlight / release for App Store)"
         required: true
@@ -37,9 +37,9 @@ jobs:
     fail-fast: false
     matrix:
       flavor: ${{ fromJson(
-        github.event_name == 'push' && '["star"]' ||
-        github.event.inputs.mode == 'all' && '["star"]' ||
-        format('["{0}"]', github.event.inputs.flavor || 'star')) }}
+        github.event_name == 'push' && '["moon"]' ||
+        github.event.inputs.mode == 'all' && '["moon"]' ||
+        format('["{0}"]', github.event.inputs.flavor || 'moon')) }}
 
   steps:
       - name: 🧾 Checkout repository
@@ -101,5 +101,7 @@ jobs:
 
       - name: Print xcodebuild log if Fastlane fails
         if: failure()
-        run: cat /Users/runner/Library/Logs/gym/Runner-starRelease.log  || true
+        run: |
+          ls /Users/runner/Library/Logs/gym/ || true
+          cat /Users/runner/Library/Logs/gym/Runner-starRelease.log  || true
        
