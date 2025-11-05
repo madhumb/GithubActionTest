@@ -18,7 +18,7 @@ platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
     setup_ci if ENV['CI']
-    match(app_identifier: "com.gnkbros.app", type: "appstore",readonly:true)
+    match(app_identifier: "com.gnkbros.app", type: "appstore",readonly:true, git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
     
 
     build_app(workspace: "Runner.xcworkspace", scheme: "star", export_method: "app-store")
