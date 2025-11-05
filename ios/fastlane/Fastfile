@@ -37,7 +37,7 @@ end
 FLAVOR_CONFIGS = {
   "star" => {
     name: "star",
-    bundle_id: "com.gnkbros.app"
+    bundle_id: "com.gnkbros.app",
     configuration: "starRelease"
   },
   "moon" => {
