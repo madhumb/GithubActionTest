@@ -57,7 +57,7 @@ platform :ios do
     xcode_select("/Applications/Xcode_16.4.app")
 
     update_project_provisioning(
-      xcodeproj: "ios/Runner.xcodeproj",
+      xcodeproj: "Runner.xcodeproj",
       target_filter: "Runner",
       build_configuration: config_name,
       profile: "match AppStore #{config[:bundle_id]}",
