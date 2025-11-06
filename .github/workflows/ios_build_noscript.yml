@@ -72,13 +72,13 @@ jobs:
           echo "$ASC_JSON_KEY" >> ./ios/fastlane/store.json
           echo "✅ Created ios/fastlane/store.json"
 
-      - name: Verify App Store Connect key file
-        run: |
-          echo "Checking file existence and size..."
-          ls -lh ios/fastlane/store.json
+      # - name: Verify App Store Connect key file
+      #   run: |
+      #     echo "Checking file existence and size..."
+      #     ls -lh ios/fastlane/store.json
   
-          echo "Validating JSON structure (safe partial print)..."
-          head -n 5 ios/fastlane/store.json || true
+      #     echo "Validating JSON structure (safe partial print)..."
+      #     head -n 5 ios/fastlane/store.json || true
   
       # 🔑 Create App Store API key file
     
