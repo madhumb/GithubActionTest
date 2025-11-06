@@ -56,20 +56,7 @@ platform :ios do
     setup_ci if ENV['CI']
     
     match(app_identifier: config[:bundle_id], type: "appstore",readonly: ENV['CI'] ? true : false, git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
-    gym(
-      workspace: "Runner.xcworkspace",
-      scheme: "moon",
-      configuration: "moonRelease",
-      export_method: "app-store",
-      export_options: {
-        provisioningProfiles: {
-          "com.recode.bookmark" => "match AppStore com.recode.bookmark"
-        }
-      },
-      xcargs: "",
-      skip_profile_detection: true
-    )
-    
+    sh("ls ~/Library/MobileDevice/Provisioning\ Profiles/")
     build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration:config_name,
     xcargs: "-allowProvisioningUpdates",
     export_options: {
