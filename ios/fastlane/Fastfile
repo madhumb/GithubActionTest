@@ -59,20 +59,14 @@ platform :ios do
     sh("rm -rf ~/Library/Developer/Xcode/DerivedData || true")
     sh("rm -rf ~/Library/MobileDevice/Provisioning\\ Profiles/* || true")
 
-  #   update_project_provisioning(
-  #     xcodeproj: "Runner.xcodeproj",
-  #     target_filter: "Runner",
-  #     build_configuration: config_name,
-  #     profile: "match AppStore #{config[:bundle_id]}",
-  #     code_sign_identity: "Apple Distribution"
-  # )
-
     build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration:config_name,
-    export_options: {
-      provisioningProfiles: {
-        config[:bundle_id] => config[:provisioning_profile]
-      }
-    })
+    xcargs: "-allowProvisioningUpdates",
+    # export_options: {
+    #   provisioningProfiles: {
+    #     config[:bundle_id] => config[:provisioning_profile]
+    #   }
+    # }
+    )
     pilot(api_key_path: "fastlane/store.json", skip_waiting_for_build_processing: true)
   end
   
