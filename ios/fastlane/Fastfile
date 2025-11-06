@@ -57,12 +57,12 @@ platform :ios do
     xcode_select("/Applications/Xcode_16.4.app")
 
     update_project_provisioning(
-    xcodeproj: "ios/Runner.xcodeproj",
-    target_filter: "Runner",
-    build_configuration: config_name,
-    profile: "match AppStore #{config[:bundle_id]}",
-    code_sign_identity: "Apple Distribution"
-)
+      xcodeproj: "ios/Runner.xcodeproj",
+      target_filter: "Runner",
+      build_configuration: config_name,
+      profile: "match AppStore #{config[:bundle_id]}",
+      code_sign_identity: "Apple Distribution"
+  )
 
     build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration:config_name,
     export_options: {
