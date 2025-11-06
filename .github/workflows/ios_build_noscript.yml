@@ -92,7 +92,16 @@ jobs:
 
       - name: Clean DerivedData
         run: rm -rf ~/Library/Developer/Xcode/DerivedData
-               
+       
+      - name: Install signing certificates and provisioning profiles
+        run: |
+          bundle exec fastlane match appstore --readonly --verbose
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          # MATCH_KEYCHAIN_NAME: "login.keychain"
+          # MATCH_KEYCHAIN_PASSWORD: "ci_keychain_password"
+            
 
       # 🏗️ Build & Upload flavor
       - name: 🏗️ Build & Upload (${{ matrix.flavor }})
