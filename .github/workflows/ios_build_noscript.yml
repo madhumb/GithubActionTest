@@ -56,7 +56,9 @@ jobs:
         id: flutter
 
       - name: 📦 Get Flutter dependencies
-        run: flutter pub get
+        run: |
+          flutter clean
+          flutter pub get
 
       # 🔐 Setup Keychain
       - name: Setup Fastlane
