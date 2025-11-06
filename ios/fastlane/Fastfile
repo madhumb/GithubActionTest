@@ -34,6 +34,7 @@ FLAVOR_CONFIGS = {
     main: "lib/main_star.dart",
     provisioning_profile: "match AppStore com.gnkbros.app"
   },
+  
   "moon" => {
     name: "moon",
     bundle_id: "com.recode.bookmark",
