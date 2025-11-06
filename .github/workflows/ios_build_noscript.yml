@@ -106,12 +106,13 @@ jobs:
           name: ${{ matrix.flavor }}-ipa
           path: ios/build/ios/**/*.ipa
 
-      - name: Print xcodebuild log if Fastlane fails
+      - name: Print Fastlane log if build fails
         if: failure()
         run: |
-          ls /Users/runner/Library/Logs/gym/ || true
-            
-          FLAVOR="${{ matrix.flavor }}"
-          filename = "/Users/runner/Library/Logs/gym/Runner-${FLAVOR}.log"
-          echo "=== Printing Runner-${FLAVOR}.log === FLAVOR=${FLAVOR} ${filename}"
-          cat filename || echo "Log file not found"       
+            filename="/Users/runner/Library/Logs/gym/Runner-${FLAVOR}.log"
+            echo "=== Printing log for FLAVOR=${FLAVOR} ==="
+            ls /Users/runner/Library/Logs/gym/ || true
+            cat "${filename}" || echo "Log file not found"
+        env:
+            FLAVOR: ${{ matrix.flavor }}
+        
