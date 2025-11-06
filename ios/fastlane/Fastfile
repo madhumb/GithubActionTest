@@ -56,7 +56,6 @@ platform :ios do
     
     match(app_identifier: config[:bundle_id], type: "appstore",readonly: ENV['CI'] ? true : false, git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"]
 
-
     build_app(workspace: "Runner.xcworkspace", scheme: config[:name], export_method: "app-store", configuration:config_name,
     xcargs: "-allowProvisioningUpdates",
     export_options: {
