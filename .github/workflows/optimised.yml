@@ -33,7 +33,7 @@ jobs:
   # Purpose: Calculate all cache keys upfront for consistent cache strategy
   # ==========================================================================
   compute-keys:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     outputs:
       podfile-lock-hash: ${{ steps.keys.outputs.podfile-lock-hash }}
       pubspec-lock-hash: ${{ steps.keys.outputs.pubspec-lock-hash }}
