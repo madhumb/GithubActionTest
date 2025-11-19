@@ -311,6 +311,12 @@ jobs:
             ~/Library/Caches/CocoaPods
           key: cocoapods-specs-${{ runner.os }}-v2
 
+      - name: Quick Flutter refresh
+        # working-directory: ./strive_health
+        run: |
+          flutter pub get  # Very fast with cache
+          flutter precache --ios
+
       # Quick pod install (should be < 1 min with binary cache)
       - name: Lightning-fast pod install
         working-directory: ./ios
@@ -343,11 +349,7 @@ jobs:
           restore-keys: |
             xcode-derived-${{ matrix.flavor }}-
 
-      - name: Quick Flutter refresh
-        # working-directory: ./strive_health
-        run: |
-          flutter pub get  # Very fast with cache
-          flutter precache --ios
+      
 
       - name: Build & Upload to TestFlight
         working-directory: ./ios
