@@ -49,11 +49,11 @@ jobs:
         id: keys
         run: |
           # Podfile.lock hash
-          PODFILE_HASH=$(shasum -a 256 strive_health/ios/Podfile.lock | cut -d' ' -f1)
+          PODFILE_HASH=$(shasum -a 256 ios/Podfile.lock | cut -d' ' -f1)
           echo "podfile-lock-hash=$PODFILE_HASH" >> "$GITHUB_OUTPUT"
           
           # Pubspec.lock hash
-          PUBSPEC_HASH=$(shasum -a 256 strive_health/pubspec.lock | cut -d' ' -f1)
+          PUBSPEC_HASH=$(shasum -a 256 pubspec.lock | cut -d' ' -f1)
           echo "pubspec-lock-hash=$PUBSPEC_HASH" >> "$GITHUB_OUTPUT"
           
           # Binary pods cache key (includes Swift version)
@@ -98,8 +98,8 @@ jobs:
         with:
           path: |
             ~/.cocoapods-binary-cache/prebuilt-frameworks
-            strive_health/ios/Pods
-            strive_health/ios/Podfile.lock
+            ios/Pods
+            ios/Podfile.lock
           key: ${{ needs.compute-keys.outputs.pods-binary-key }}
 
       # Only prebuild if cache miss
@@ -109,7 +109,7 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
-          working-directory: ./strive_health/ios
+          working-directory: ./ios
 
       - name: Cache CocoaPods Specs Repo
         if: steps.binary-cache.outputs.cache-hit != 'true'
@@ -130,7 +130,7 @@ jobs:
 
       - name: Flutter setup (if cache miss)
         if: steps.binary-cache.outputs.cache-hit != 'true'
-        working-directory: ./strive_health
+        # working-directory: ./strive_health
         run: |
           flutter pub get
           cd ios
@@ -138,7 +138,7 @@ jobs:
 
       - name: Prebuild pods as binaries (if cache miss)
         if: steps.binary-cache.outputs.cache-hit != 'true'
-        working-directory: ./strive_health/ios
+        working-directory: ./ios
         run: |
           echo "🔨 Prebuilding pods as binary frameworks..."
           
@@ -158,8 +158,8 @@ jobs:
         with:
           path: |
             ~/.cocoapods-binary-cache/prebuilt-frameworks
-            strive_health/ios/Pods
-            strive_health/ios/Podfile.lock
+            ios/Pods
+            ios/Podfile.lock
           key: ${{ needs.compute-keys.outputs.pods-binary-key }}
 
       - name: Cache hit summary
@@ -197,13 +197,13 @@ jobs:
         with:
           path: |
             ~/.pub-cache
-            strive_health/.dart_tool
+            .dart_tool
           key: ${{ needs.compute-keys.outputs.flutter-key }}
           restore-keys: |
             flutter-v2-
 
       - name: Decrypt config.json
-        working-directory: ./strive_health
+        # working-directory: ./strive_health
         env:
           ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
         run: |
@@ -214,7 +214,7 @@ jobs:
 
       - name: Extract flavors
         id: flavors
-        working-directory: ./strive_health
+        # working-directory: ./strive_health
         run: |
           FLAVORS_JSON=$(jq -c '.apps | keys' config.json)
           echo "json=$FLAVORS_JSON" >> "$GITHUB_OUTPUT"
@@ -223,11 +223,11 @@ jobs:
           jq -r '.common.env | to_entries[] | "\(.key)=\(.value)"' config.json >> .env
 
       - name: Flutter pub get
-        working-directory: ./strive_health
+        # working-directory: ./strive_health
         run: flutter pub get
 
       - name: Run build_runner
-        working-directory: ./strive_health
+        # working-directory: ./strive_health
         run: dart run build_runner build --delete-conflicting-outputs
 
       # Cache prepared workspace
@@ -235,11 +235,11 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: |
-            strive_health/.dart_tool
-            strive_health/.env
-            strive_health/config.json
-            strive_health/**/*.g.dart
-            strive_health/**/*.freezed.dart
+            .dart_tool
+            .env
+            config.json
+            **/*.g.dart
+            **/*.freezed.dart
           key: ${{ needs.compute-keys.outputs.workspace-key }}
 
   # ==========================================================================
@@ -275,8 +275,8 @@ jobs:
         with:
           path: |
             ~/.cocoapods-binary-cache/prebuilt-frameworks
-            strive_health/ios/Pods
-            strive_health/ios/Podfile.lock
+            ios/Pods
+            ios/Podfile.lock
           key: ${{ needs.compute-keys.outputs.pods-binary-key }}
           fail-on-cache-miss: true
 
@@ -285,11 +285,11 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: |
-            strive_health/.dart_tool
-            strive_health/.env
-            strive_health/config.json
-            strive_health/**/*.g.dart
-            strive_health/**/*.freezed.dart
+            .dart_tool
+            .env
+            config.json
+            **/*.g.dart
+            **/*.freezed.dart
           key: ${{ needs.compute-keys.outputs.workspace-key }}
           fail-on-cache-miss: true
 
@@ -298,7 +298,7 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
-          working-directory: ./strive_health/ios
+          working-directory: ./ios
 
       # Restore CocoaPods specs (for pod install)
       - name: Restore CocoaPods specs
@@ -311,7 +311,7 @@ jobs:
 
       # Quick pod install (should be < 1 min with binary cache)
       - name: Lightning-fast pod install
-        working-directory: ./strive_health/ios
+        working-directory: ./ios
         run: |
           echo "⚡ Starting pod install (should be < 1 minute)..."
           START_TIME=$(date +%s)
@@ -348,7 +348,7 @@ jobs:
           flutter precache --ios
 
       - name: Build & Upload to TestFlight
-        working-directory: ./strive_health/ios
+        working-directory: ./ios
         run: |
           echo "🚀 Building flavor: ${{ matrix.flavor }}"
           START_TIME=$(date +%s)
@@ -370,8 +370,8 @@ jobs:
         with:
           name: build-logs-${{ matrix.flavor }}-${{ github.run_id }}
           path: |
-            strive_health/ios/fastlane/report.xml
-            strive_health/ios/fastlane/*.log
+            ios/fastlane/report.xml
+            ios/fastlane/*.log
           retention-days: 7
 
   # ==========================================================================
