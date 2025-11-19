@@ -207,6 +207,8 @@ jobs:
         env:
           ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
         run: |
+          echo "ENCRYPTION_KEY = $ENCRYPTION_KEY"
+
           brew install jq
           openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -d -salt \
             -in config.json.enc -out config.json -base64 \
