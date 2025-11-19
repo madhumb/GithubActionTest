@@ -342,7 +342,7 @@ jobs:
             xcode-derived-${{ matrix.flavor }}-
 
       - name: Quick Flutter refresh
-        working-directory: ./strive_health
+        # working-directory: ./strive_health
         run: |
           flutter pub get  # Very fast with cache
           flutter precache --ios
