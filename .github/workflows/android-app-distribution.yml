@@ -78,7 +78,7 @@ jobs:
     runs-on: macos-latest
     defaults:
       run:
-        working-directory: ./strive_health
+        working-directory: .
     # Pass the list of flavors (as a JSON array) to the next job.
     outputs:
       flavors-json: ${{ steps.get-flavors.outputs.flavors-json }}
@@ -258,7 +258,7 @@ jobs:
     runs-on: macos-latest
     defaults:
       run:
-        working-directory: ./strive_health
+        working-directory: .
     # Strategy to run a separate job for each flavor (parallelism limited to 2)
     strategy:
       fail-fast: false
@@ -355,7 +355,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.flavor }}-build
-          path: strive_health/build/app/outputs/bundle/${{ matrix.flavor }}Release/*.aab
+          path: build/app/outputs/bundle/${{ matrix.flavor }}Release/*.aab
 
       # --- Distribution ---
       - name: Upload to Play Distribution with Fastlane
