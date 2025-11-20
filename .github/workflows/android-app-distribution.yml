@@ -47,9 +47,9 @@ on:
           - viewbenefits
 
 # Uncomment these sections to enable triggers on push or pull_request events
-  push:
-    branches:
-      - "*"
+  # push:
+  #   branches:
+  #     - "*"
 #  pull_request:
 #    branches:
 #      - production_v2  # PR must target main

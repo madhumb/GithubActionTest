@@ -1,9 +1,9 @@
 name: iOS Build & Deploy (Ultimate Optimization)
 
 on:
-  # push:
-  #     branches:
-  #       - main
+  push:
+      branches:
+        - main
   workflow_dispatch:
     inputs:
       flavor:
