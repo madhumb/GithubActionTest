@@ -357,7 +357,7 @@ jobs:
           echo "🚀 Building flavor: ${{ matrix.flavor }}"
           START_TIME=$(date +%s)
           
-          bundle exec fastlane beta flavor:${{ matrix.flavor }}
+          bundle exec fastlane betaFlavour flavor:${{ matrix.flavor }}
           
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
