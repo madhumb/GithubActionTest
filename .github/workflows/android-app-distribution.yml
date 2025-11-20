@@ -1,0 +1,386 @@
+name: Android App Build & Distribution
+
+# ------------------------------------------------------------------------------
+# 1. Trigger Configuration
+# ------------------------------------------------------------------------------
+on:
+  # Allows manual execution of the workflow via the GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      flavor:
+        description: "Choose which flavor to build"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - acrisure
+          - aerodyneapex
+          - ahbenefits
+          - benni
+          - bookmark
+          - bradford
+          - byersindustrial
+          - echogroupbenefits
+          - fcccares
+          - foundationwell
+          - geotekconnect
+          - gtrbenefits
+          - harborfoods
+          - ima
+          - innofiberconnect
+          - magis
+          - mbp
+          - mcgriff
+          - morrison
+          - pecoconnect
+          - pregis
+          - prosper
+          - psf
+          - pyramidhub
+          - quipthomemedical
+          - rbha
+          - rollwell
+          - saint
+          - strive
+          - tustin
+          - viewbenefits
+
+# Uncomment these sections to enable triggers on push or pull_request events
+  push:
+    branches:
+      - "*"
+#  pull_request:
+#    branches:
+#      - production_v2  # PR must target main
+
+# ------------------------------------------------------------------------------
+# 2. Global Environment Variables
+# ------------------------------------------------------------------------------
+env:
+  FLUTTER_VERSION: 3.24.5
+  # Primary Android SDK/Build Tools/Platform versions
+  ANDROID_SDK_VER: "35.0.0"
+  ANDROID_PLATFORM_VER: "36"
+  # Older versions required for compatibility
+  ANDROID_SDK_VER_2: "34.0.0"
+  ANDROID_PLATFORM_VER_2: "34"
+  ANDROID_PLATFORM_VER_3: "31"
+  NDK_VER: "29.0.14033849"
+
+# ------------------------------------------------------------------------------
+# 3. Jobs
+# ------------------------------------------------------------------------------
+jobs:
+  # Job 1: Dynamically determine the list of flavors to build.
+  extract-flavors:
+    name: Determine Build Matrix
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ./strive_health
+    # Pass the list of flavors (as a JSON array) to the next job.
+    outputs:
+      flavors-json: ${{ steps.get-flavors.outputs.flavors-json }}
+      config_b64: ${{ steps.config-file.outputs.config_b64 }}
+      signing_b64: ${{ steps.signing.outputs.signing_b64 }}
+      play_json_b64: ${{ steps.play-json.outputs.play_json_b64 }}
+      env_b64: ${{ steps.env-file.outputs.env_b64 }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install jq (JSON processor)
+        run: |
+          if ! command -v jq &> /dev/null; then
+            brew install jq
+          else
+            echo "jq already installed"
+          fi
+
+      - name: Decrypt config.json
+        # Uses a repository secret to decrypt the configuration file.
+        env:
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
+        run: |
+          openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -d -salt \
+            -in config.json.enc -out config.json \
+            -base64 -pass pass:"$ENCRYPTION_KEY"
+
+      - name: Load config.json as Base64
+        id: config-file
+        run: |
+          CONFIG_B64=$(base64 < config.json)
+          echo "config_b64=$CONFIG_B64" >> $GITHUB_OUTPUT
+
+      - name: Get and Filter flavors from config.json
+        id: get-flavors
+        run: |
+          INPUT_FLAVOR="${{ github.event.inputs.flavor }}"
+          
+          if [ "$INPUT_FLAVOR" == "all" ]; then
+            # Output the full list of flavor keys if 'all' is selected
+            FLAVORS_TO_BUILD=$(jq -c '.apps | keys' config.json)
+          else
+            # Output only the specified flavor in a JSON array
+            FLAVORS_TO_BUILD="[\"$INPUT_FLAVOR\"]"
+          fi
+          
+          # Set the output variable for the next job's matrix
+          echo "flavors-json=$FLAVORS_TO_BUILD" >> "$GITHUB_OUTPUT"
+
+      # ---- Generate signing.properties for all apps ----
+      - name: Generate signing.properties
+        id: signing
+        run: |
+          OUTPUT=""
+          # iterate app keys
+          APPS=$(jq -r '.apps | keys[]' config.json)
+
+          for APP in $APPS; do
+            # use --arg so keys with dashes or special chars work
+            STORE_FILE=$(jq -r --arg app "$APP" '.apps[$app].android.keystore.file_path' config.json)
+            STORE_PASS=$(jq -r --arg app "$APP" '.apps[$app].android.keystore.store_password' config.json)
+            KEY_ALIAS=$(jq -r --arg app "$APP" '.apps[$app].android.keystore.key_alias' config.json)
+            KEY_PASS=$(jq -r --arg app "$APP" '.apps[$app].android.keystore.key_password' config.json)
+
+            # append without extra leading spaces
+            OUTPUT+=$'\n# ---------- '"$APP"' ----------\n'
+            OUTPUT+="${APP}.storeFile=${STORE_FILE}\n"
+            OUTPUT+="${APP}.storePassword=${STORE_PASS}\n"
+            OUTPUT+="${APP}.keyAlias=${KEY_ALIAS}\n"
+            OUTPUT+="${APP}.keyPassword=${KEY_PASS}\n"
+          done
+
+          # Trim leading newline (optional)
+          OUTPUT="${OUTPUT#\\n}"
+
+          # encode and set output
+          SIGNING_B64=$(printf "%s" "$OUTPUT" | base64)
+          echo "signing_b64=$SIGNING_B64" >> $GITHUB_OUTPUT
+
+      - name: Extract Play JSON
+        id: play-json
+        run: |
+          PLAY_JSON=$(jq -c ".common.play.serviceAccountJson" config.json)
+          PLAY_JSON_B64=$(printf "%s" "$PLAY_JSON" | base64)
+          echo "play_json_b64=$PLAY_JSON_B64" >> $GITHUB_OUTPUT    
+
+      - name: Generate .env content
+        id: env-file
+        run: |
+          ENV_CONTENT=$(jq -r '.common.env | to_entries[] | "\(.key)=\(.value)"' config.json)
+          ENV_B64=$(printf "%s" "$ENV_CONTENT" | base64)
+          echo "env_b64=$ENV_B64" >> $GITHUB_OUTPUT
+
+  # Job 2: Setup all dependencies and populate the shared caches.
+  setup-caches:
+    name: Setup Environment & Caches
+    needs: extract-flavors # Must run after flavor list is determined
+    runs-on: macos-latest
+    steps:
+      # --- Android SDK Setup ---
+      - name: Setup Android SDK (Cache & Install)
+        uses: amyu/setup-android@v5
+        with:
+          cache-disabled: false
+          # Define a unique key for the Android SDK/NDK cache
+          cache-key: android-${{ runner.os }}-${{ env.ANDROID_SDK_VER }}-${{ env.NDK_VER }}
+          # Specify all required SDK versions for cache provisioning
+          sdk-version: |
+            ${{ env.ANDROID_PLATFORM_VER }}
+            ${{ env.ANDROID_PLATFORM_VER_2 }}
+            ${{ env.ANDROID_PLATFORM_VER_3 }}
+          build-tools-version: |
+            ${{ env.ANDROID_SDK_VER_2 }}
+          ndk-version: ${{ env.NDK_VER }}
+          command-line-tools-version: 10406996
+          generate-job-summary: false
+
+      # --- Flutter SDK Setup ---
+      - name: Set up Flutter (Cache & Install)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          # Enable built-in caching for Flutter SDK and artifacts
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+
+      ## Fastlane Bundler Caching (Provider)
+
+      # 1. Create a minimal Gemfile with the public source
+      - name: Create Gemfile for Fastlane
+        run: |
+          echo 'source "https://rubygems.org"' > Gemfile
+          echo "gem 'fastlane'" >> Gemfile
+
+      # 2. CHECK/RESTORE Cache for Gemfile/Gemfile.lock
+      - name: Restore Bundler Files Cache
+        id: restore_bundler_files
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            Gemfile
+            Gemfile.lock
+          key: ${{ runner.os }}-bundler-files-3.2
+          # Use restore-keys in case the primary key changes
+          restore-keys: |
+            ${{ runner.os }}-bundler-files-
+
+      # 3. Setup Ruby and use Bundler to install/cache gems
+      - name: Setup Ruby, Restore/Install Gems (Bundler)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+          # 'bundler-cache: true' manages:
+          # 1. Restoring the gem cache (keyed by Gemfile.lock hash).
+          # 2. Running 'bundle install' and saving the new cache if a miss occurs.
+          bundler-cache: true
+
+      # 4. Cache Gemfile and Gemfile.lock (for use by 'build' jobs)
+      - name: Save Bundler Files Cache
+        if: steps.restore_bundler_files.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            Gemfile
+            Gemfile.lock
+          # Key is simple since the files content is static for a given ruby version
+          key: ${{ runner.os }}-bundler-files-3.2
+
+  # Job 3: Build, Sign, and Distribute the Android App for each flavor.
+  build:
+    name: Build & Deploy ${{ matrix.flavor }}
+    needs: [extract-flavors, setup-caches]
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ./strive_health
+    # Strategy to run a separate job for each flavor (parallelism limited to 2)
+    strategy:
+      fail-fast: false
+      max-parallel: 2  # limits parallel jobs to prevent memory overload
+      matrix:
+        flavor: ${{ fromJson(needs.extract-flavors.outputs.flavors-json) }}
+    env:
+      ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
+      BUILD_FLAVOR: ${{ github.event.inputs.flavor || 'bookmark' }} # Default is 'bookmark' if input is null
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # --- Restore Android SDK ---
+      - name: Restore/Setup Android SDK
+        # The 'setup-android' action automatically restores based on the cache-key
+        uses: amyu/setup-android@v5
+        with:
+          cache-disabled: false
+          cache-key: android-${{ runner.os }}-${{ env.ANDROID_SDK_VER }}-${{ env.NDK_VER }}
+          sdk-version: ${{ env.ANDROID_PLATFORM_VER }}
+          build-tools-version: ${{ env.ANDROID_SDK_VER }}
+          ndk-version: ${{ env.NDK_VER }}
+          command-line-tools-version: 19.0
+          generate-job-summary: false
+
+      # --- Restore Flutter SDK & Artifacts ---
+      - name: Restore Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+
+      - name: Run Flutter Pub Get
+        run: flutter pub get
+
+      # Restore config.json
+      - name: Restore config.json
+        run: |
+          echo "${{ needs.extract-flavors.outputs.config_b64 }}" | base64 --decode > config.json
+
+      # Restore signing.properties
+      - name: Restore signing.properties
+        run: |
+          echo "${{ needs.extract-flavors.outputs.signing_b64 }}" | base64 --decode > android/signing.properties
+
+      - name: Restore Play JSON
+        run: |
+          echo "${{ needs.extract-flavors.outputs.play_json_b64 }}" | base64 --decode > google-play-key.json
+
+      - name: Restore .env file
+        run: |
+          echo "${{ needs.extract-flavors.outputs.env_b64 }}" | base64 --decode > .env
+
+      - name: Generate env.g.dart (Build Runner)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      ## Fastlane Bundler Caching (Restorer)
+
+      # 1. Restore Gemfile and Gemfile.lock
+      - name: Restore Bundler Files Cache
+        id: restore_bundler_files
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            Gemfile
+            Gemfile.lock
+          key: ${{ runner.os }}-bundler-files-3.2
+          restore-keys: |
+            ${{ runner.os }}-bundler-files-
+
+      # 2. Setup Ruby and restore gems using Bundler cache
+      - name: Setup Ruby and Restore Gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+          # Restores installed gems based on the restored Gemfile.lock hash.
+          bundler-cache: true
+
+      # --- Build Step ---
+      - name: Build AppBundle (AAB)
+        run: |
+          flutter build appbundle \
+            --flavor ${{ matrix.flavor }} \
+            --release \
+            -t lib/main_${{ matrix.flavor }}.dart
+
+      # --- Artifacts ---
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.flavor }}-build
+          path: strive_health/build/app/outputs/bundle/${{ matrix.flavor }}Release/*.aab
+
+      # --- Distribution ---
+      - name: Upload to Play Distribution with Fastlane
+        run: |
+          FLAVOR=${{ matrix.flavor }}
+          AAB="build/app/outputs/bundle/${FLAVOR}Release/app-${FLAVOR}-release.aab"
+          KEY="google-play-key.json"
+          
+          # Write the service account JSON to a file
+          # echo '${{ env.PLAY_PUBLISH_SERVICE_ACCOUNT_JSON }}' > $KEY
+          
+          # Get the package name from the properties file
+          PKG=$(grep "^${FLAVOR}\.applicationId=" android/flavors.properties | cut -d'=' -f2)
+          
+          # Use 'bundle exec' to run fastlane from the Bundler-managed path
+          bundle exec fastlane supply \
+            --aab "$AAB" \
+            --package_name "$PKG" \
+            --track production \
+            --json_key "$KEY" \
+            --metadata_path "./release-notes/metadata/android" \
+            --rollout 1.0 \
+            --skip_upload_metadata true \
+            --skip_upload_images true \
+            --skip_upload_screenshots true
+          
+          # Clean up the secret key file
+          rm -f "$KEY"
