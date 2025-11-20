@@ -15,7 +15,7 @@ on:
           - all
           - bookmark
           - star
-          - moon
+          - bookmark
       clear_cache:
         description: 'Clear all caches and rebuild from scratch'
         required: false

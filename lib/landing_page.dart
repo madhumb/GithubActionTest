@@ -22,7 +22,7 @@ class LandingPage extends StatelessWidget {
       body: Center(
         child: Text(
           "key: ${Env.secretKey}\n"
-          "url: ${Env.baseURL}",
+          "url: ${Env.prodBaseUrl}",
           textAlign: TextAlign.center,
           style: TextStyle(
               fontSize: 18,

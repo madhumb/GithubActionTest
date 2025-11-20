@@ -41,7 +41,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		072567AB884D6CA5D4352918 /* Pods-Runner.moonrelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.moonrelease.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.moonrelease.xcconfig"; sourceTree = "<group>"; };
+		072567AB884D6CA5D4352918 /* Pods-Runner.bookmarkrelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.bookmarkrelease.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.bookmarkrelease.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
@@ -63,7 +63,7 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AD48FFB447B065445137B07F /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
-		E5A9CEE86612B71C6F8EF046 /* Pods-Runner.moondebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.moondebug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.moondebug.xcconfig"; sourceTree = "<group>"; };
+		E5A9CEE86612B71C6F8EF046 /* Pods-Runner.bookmarkdebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.bookmarkdebug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.bookmarkdebug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,10 +90,10 @@
 			isa = PBXGroup;
 			children = (
 				9096775D538473644A31F9F9 /* Pods-Runner.debug.xcconfig */,
-				E5A9CEE86612B71C6F8EF046 /* Pods-Runner.moondebug.xcconfig */,
+				E5A9CEE86612B71C6F8EF046 /* Pods-Runner.bookmarkdebug.xcconfig */,
 				4EF489A4A341B5745AE7B612 /* Pods-Runner.stardebug.xcconfig */,
 				AD48FFB447B065445137B07F /* Pods-Runner.release.xcconfig */,
-				072567AB884D6CA5D4352918 /* Pods-Runner.moonrelease.xcconfig */,
+				072567AB884D6CA5D4352918 /* Pods-Runner.bookmarkrelease.xcconfig */,
 				4B975BEA3D15040D6B886F08 /* Pods-Runner.starrelease.xcconfig */,
 				8ED7D4457F4A72081ADE90CE /* Pods-Runner.profile.xcconfig */,
 			);
@@ -462,7 +462,7 @@
 			};
 			name = Profile;
 		};
-		3231AFFC2E71564800386C4D /* moonDebug */ = {
+		3231AFFC2E71564800386C4D /* bookmarkDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -518,11 +518,11 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = moonDebug;
+			name = bookmarkDebug;
 		};
-		3231AFFD2E71564800386C4D /* moonDebug */ = {
+		3231AFFD2E71564800386C4D /* bookmarkDebug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E5A9CEE86612B71C6F8EF046 /* Pods-Runner.moondebug.xcconfig */;
+			baseConfigurationReference = E5A9CEE86612B71C6F8EF046 /* Pods-Runner.bookmarkdebug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -536,7 +536,7 @@
 				FLUTTER_BUILD_NAME = 1.0;
 				FLUTTER_BUILD_NUMBER = 1;
 				FLUTTER_ROOT = /Users/madhubhilawadi/Repository/flutter;
-				FLUTTER_TARGET = "$(SRCROOT)/../lib/main_moon.dart";
+				FLUTTER_TARGET = "$(SRCROOT)/../lib/main_bookmark.dart";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -550,9 +550,9 @@
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = moonDebug;
+			name = bookmarkDebug;
 		};
-		3231AFFE2E71564800386C4D /* moonDebug */ = {
+		3231AFFE2E71564800386C4D /* bookmarkDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -567,9 +567,9 @@
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
-			name = moonDebug;
+			name = bookmarkDebug;
 		};
-		3231AFFF2E71566800386C4D /* moonRelease */ = {
+		3231AFFF2E71566800386C4D /* bookmarkRelease */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -622,11 +622,11 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = moonRelease;
+			name = bookmarkRelease;
 		};
-		3231B0002E71566800386C4D /* moonRelease */ = {
+		3231B0002E71566800386C4D /* bookmarkRelease */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 072567AB884D6CA5D4352918 /* Pods-Runner.moonrelease.xcconfig */;
+			baseConfigurationReference = 072567AB884D6CA5D4352918 /* Pods-Runner.bookmarkrelease.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -642,7 +642,7 @@
 				FLUTTER_BUILD_NAME = 1.0;
 				FLUTTER_BUILD_NUMBER = 1;
 				FLUTTER_ROOT = /Users/madhubhilawadi/Repository/flutter;
-				FLUTTER_TARGET = "$(SRCROOT)/../lib/main_moon.dart";
+				FLUTTER_TARGET = "$(SRCROOT)/../lib/main_bookmark.dart";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -656,9 +656,9 @@
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = moonRelease;
+			name = bookmarkRelease;
 		};
-		3231B0012E71566800386C4D /* moonRelease */ = {
+		3231B0012E71566800386C4D /* bookmarkRelease */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -671,7 +671,7 @@
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
-			name = moonRelease;
+			name = bookmarkRelease;
 		};
 		3231B0022E71567500386C4D /* starDebug */ = {
 			isa = XCBuildConfiguration;
@@ -1120,10 +1120,10 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				331C8088294A63A400263BE5 /* Debug */,
-				3231AFFE2E71564800386C4D /* moonDebug */,
+				3231AFFE2E71564800386C4D /* bookmarkDebug */,
 				3231B0042E71567500386C4D /* starDebug */,
 				331C8089294A63A400263BE5 /* Release */,
-				3231B0012E71566800386C4D /* moonRelease */,
+				3231B0012E71566800386C4D /* bookmarkRelease */,
 				3231B0072E71567D00386C4D /* starRelease */,
 				331C808A294A63A400263BE5 /* Profile */,
 			);
@@ -1134,10 +1134,10 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				97C147031CF9000F007C117D /* Debug */,
-				3231AFFC2E71564800386C4D /* moonDebug */,
+				3231AFFC2E71564800386C4D /* bookmarkDebug */,
 				3231B0022E71567500386C4D /* starDebug */,
 				97C147041CF9000F007C117D /* Release */,
-				3231AFFF2E71566800386C4D /* moonRelease */,
+				3231AFFF2E71566800386C4D /* bookmarkRelease */,
 				3231B0052E71567D00386C4D /* starRelease */,
 				249021D3217E4FDB00AE95B9 /* Profile */,
 			);
@@ -1148,10 +1148,10 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				97C147061CF9000F007C117D /* Debug */,
-				3231AFFD2E71564800386C4D /* moonDebug */,
+				3231AFFD2E71564800386C4D /* bookmarkDebug */,
 				3231B0032E71567500386C4D /* starDebug */,
 				97C147071CF9000F007C117D /* Release */,
-				3231B0002E71566800386C4D /* moonRelease */,
+				3231B0002E71566800386C4D /* bookmarkRelease */,
 				3231B0062E71567D00386C4D /* starRelease */,
 				249021D4217E4FDB00AE95B9 /* Profile */,
 			);

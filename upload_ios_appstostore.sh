@@ -7,7 +7,7 @@ export MATCH_PASSWORD="Harder@123Git"
 # CONFIG
 # -----------------------------
 # List all your build flavors/schemes here
-FLAVORS=(  star moon )
+FLAVORS=(  star bookmark )
 
 # Path to your iOS folder containing Gemfile
 IOS_DIR="ios"

@@ -17,15 +17,15 @@
             ]
         },
         {
-            "name": "moon",
+            "name": "bookmark",
             "request": "launch",
             "type": "dart",
-            "program": "lib/main_moon.dart",
+            "program": "lib/main_bookmark.dart",
             "args": [
                 "-t",
-                "lib/main_moon.dart",
+                "lib/main_bookmark.dart",
                 "--flavor",
-                "moon"
+                "bookmark"
             ]
         },
         {

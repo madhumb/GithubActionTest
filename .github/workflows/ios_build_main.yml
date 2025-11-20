@@ -15,8 +15,8 @@ jobs:
         include:
           - flavor: star
             profile_secret: PROV_PRO_APPStore_GNK
-          - flavor: moon
-            profile_secret: PROV_PRO_APPStore_MOON
+          - flavor: bookmark
+            profile_secret: PROV_PRO_APPStore_bookmark
 
     env:
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

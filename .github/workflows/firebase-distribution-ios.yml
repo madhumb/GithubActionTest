@@ -18,11 +18,11 @@ jobs:
             bundle_id: com.gnkbros.star
             entrypoint: lib/main_star.dart
 
-          - flavor: moon
-            profile_secret: PROV_PRO_APPStore_MOON
-            firebase_app: FIREBASE_APP_ID_MOON
+          - flavor: bookmark
+            profile_secret: PROV_PRO_APPStore_bookmark
+            firebase_app: FIREBASE_APP_ID_bookmark
             bundle_id: com.recode.bookmark
-            entrypoint: lib/main_moon.dart
+            entrypoint: lib/main_bookmark.dart
           
     env:
       KEYCHAIN_PASSWORD: "github"

@@ -17,7 +17,7 @@ on:
       flavor:
         description: "If single mode, specify flavor (e.g. star)"
         required: false
-        default: "moon"
+        default: "bookmark"
       lane:
         description: "Choose Fastlane lane (beta for TestFlight / release for App Store)"
         required: true
@@ -37,9 +37,9 @@ jobs:
     fail-fast: false
     matrix:
       flavor: ${{ fromJson(
-        github.event_name == 'push' && '["moon","star"]' ||
-        github.event.inputs.mode == 'all' && '["moon","star"]' ||
-        format('["{0}"]', github.event.inputs.flavor || 'moon')) }}
+        github.event_name == 'push' && '["bookmark","star"]' ||
+        github.event.inputs.mode == 'all' && '["bookmark","star"]' ||
+        format('["{0}"]', github.event.inputs.flavor || 'bookmark')) }}
 
   steps:
       - name: 🧾 Checkout repository
@@ -134,7 +134,7 @@ jobs:
           echo "=== Printing last 100 lines of ${filename} ==="
           if [ -f "${filename}" ]; then
             tail -n 100 "${filename}"
-            tail -n 50 ~/Library/Logs/gym/Runner-moon.log
+            tail -n 50 ~/Library/Logs/gym/Runner-bookmark.log
 
             tail -n 50 ~/Library/Logs/gym/Runner-star.log
 

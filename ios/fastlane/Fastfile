@@ -35,11 +35,11 @@ FLAVOR_CONFIGS = {
     provisioning_profile: "match AppStore com.gnkbros.app"
   },
   
-  "moon" => {
-    name: "moon",
+  "bookmark" => {
+    name: "bookmark",
     bundle_id: "com.recode.bookmark",
-    configuration: "moonRelease",
-    main: "lib/main_moon.dart",
+    configuration: "bookmarkRelease",
+    main: "lib/main_bookmark.dart",
     provisioning_profile: "match AppStore com.recode.bookmark"
   },
  

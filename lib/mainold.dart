@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'main_star.dart' as star;
-import 'main_moon.dart' as moon; // add more if you have more flavors
+import 'main_bookmark.dart' as bookmark; // add more if you have more flavors
 
 void main(List<String> args) {
   // Check FLAVOR environment variable (set in Xcode scheme or flutter build)
@@ -11,8 +11,8 @@ void main(List<String> args) {
     case 'star':
       star.main();
       break;
-    case 'moon':
-      moon.main();
+    case 'bookmark':
+      bookmark.main();
       break;
     default:
       // Fallback to one flavor if nothing is set
