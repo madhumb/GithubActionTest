@@ -9,7 +9,7 @@ on:
       flavor:
         description: 'Choose which flavor to build'
         required: true
-        default: 'all'
+        default: 'moon'
         type: choice
         options:
           - all
