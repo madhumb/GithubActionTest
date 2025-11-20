@@ -251,16 +251,19 @@ jobs:
   # ==========================================================================
   build:
     needs: [compute-keys, prebuild-pods, shared-setup]
-    name: Build (${{ matrix.flavor }})
+    name: Build (${{ github.event.inputs.flavor }})
     runs-on: macos-latest
     strategy:
       fail-fast: false
       max-parallel: 5  # Adjust based on GitHub plan (Team: 5, Enterprise: 20)
       matrix:
         # Conditional matrix based on input
-        flavor: ${{ github.event.inputs.flavor == 'all' && fromJson(needs.shared-setup.outputs.flavors-json) || fromJson(format('["{0}"]', github.event.inputs.flavor)) }}
+        # flavor: ${{ github.event.inputs.flavor == 'all' && fromJson(needs.shared-setup.outputs.flavors-json) || fromJson(format('["{0}"]', github.event.inputs.flavor)) }}
+        flavor: ${{ fromJson(needs.shared-setup.outputs.flavors-json) }}
+
 
     steps:
+ 
       - name: Checkout
         uses: actions/checkout@v4
 
